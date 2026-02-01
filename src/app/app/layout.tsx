@@ -2,7 +2,6 @@
 
 import { usePathname } from 'next/navigation'
 import { ConvexProvider } from '@/providers/ConvexProvider'
-import { ScaleProvider } from '@/providers/scale-context/ScaleProvider'
 import { ThemeProvider } from '@/components/common/ThemeProvider'
 import { CommandPaletteProvider } from '@/components/command-palette/CommandPaletteProvider'
 import { AppSidebar } from '@/components/layout/AppSidebar'
@@ -20,21 +19,19 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
         enableSystem
         disableTransitionOnChange
       >
-        <ScaleProvider>
         <CommandPaletteProvider>
           <SidebarProvider>
-          <div className="flex h-screen w-full">
-            <AppSidebar pathname={pathname} />
-            <SidebarInset className="flex-1 flex flex-col overflow-hidden">
-              <TopBar />
-              <main className="flex-1 overflow-auto p-8">
-                <div className="max-w-5xl mx-auto">{children}</div>
-              </main>
-            </SidebarInset>
-          </div>
-        </SidebarProvider>
+            <div className="flex h-screen w-full">
+              <AppSidebar pathname={pathname} />
+              <SidebarInset className="flex-1 flex flex-col overflow-hidden">
+                <TopBar />
+                <main className="flex-1 overflow-auto p-8">
+                  <div className="max-w-5xl mx-auto">{children}</div>
+                </main>
+              </SidebarInset>
+            </div>
+          </SidebarProvider>
         </CommandPaletteProvider>
-        </ScaleProvider>
       </ThemeProvider>
     </ConvexProvider>
   )
