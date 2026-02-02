@@ -82,6 +82,27 @@ pnpm cli             # CLI tool (commands TBD)
 - **Lesson View**: Concepts, code examples, exercises, clear scope boundaries
 - **Session Log**: Self-assessment, what clicked, what was confusing, visible progress
 
+### Interactive Components
+
+See `docs/interactive-components.md` for full reference. Quick summary:
+
+| Library | Use For |
+|---------|---------|
+| **Mafs** | Interactive math plots, draggable points, function visualization |
+| **Visx** | Custom 2D visualizations, neural network diagrams |
+| **React Three Fiber** | 3D visualizations, impressive demos |
+| **Recharts** | Training curves, loss/accuracy plots, standard charts |
+| **KaTeX** | Math formula rendering (LaTeX) |
+
+### Python Notebooks (Google Colab)
+
+Store `.ipynb` files in the repo (or separate repo). Link using:
+```
+https://colab.research.google.com/github/{user}/{repo}/blob/main/{path}.ipynb
+```
+
+User clicks link → notebook opens in Colab → user can run cells → saves copy to their Drive if needed.
+
 ## Claude Code Role
 
 Claude Code runs alongside the app as a mentor with full repo access:
