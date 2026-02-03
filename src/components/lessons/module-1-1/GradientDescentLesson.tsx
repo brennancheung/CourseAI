@@ -16,7 +16,7 @@ import {
 } from '@/components/lessons'
 import { Exercise } from '@/lib/exercises'
 import { GradientDescentExplorer } from '@/components/widgets/GradientDescentExplorer'
-import { ExpandableWidget } from '@/components/widgets/ExpandableWidget'
+import { ExercisePanel } from '@/components/widgets/ExercisePanel'
 import 'katex/dist/katex.min.css'
 import { InlineMath, BlockMath } from 'react-katex'
 
@@ -217,14 +217,14 @@ export function GradientDescentLesson() {
         <Row.Content>
           <div className="space-y-4">
             <h3 className="font-semibold">Watch Gradient Descent in Action</h3>
-            <ExpandableWidget title="Gradient Descent Animation">
+            <ExercisePanel title="Gradient Descent Animation">
               <GradientDescentExplorer
                 initialPosition={-2}
                 initialLearningRate={0.3}
                 showLearningRateSlider={true}
                 showGradientArrow={true}
               />
-            </ExpandableWidget>
+            </ExercisePanel>
           </div>
         </Row.Content>
         <Row.Aside>

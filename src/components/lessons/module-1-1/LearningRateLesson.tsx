@@ -17,7 +17,7 @@ import {
 } from '@/components/lessons'
 import { Exercise } from '@/lib/exercises'
 import { LearningRateExplorer } from '@/components/widgets/LearningRateExplorer'
-import { ExpandableWidget } from '@/components/widgets/ExpandableWidget'
+import { ExercisePanel } from '@/components/widgets/ExercisePanel'
 import 'katex/dist/katex.min.css'
 import { InlineMath, BlockMath } from 'react-katex'
 
@@ -226,9 +226,9 @@ export function LearningRateLesson() {
               title="Find the Sweet Spot"
               subtitle="Experiment with different learning rates"
             />
-            <ExpandableWidget title="Find the Sweet Spot">
+            <ExercisePanel title="Find the Sweet Spot">
               <LearningRateExplorer mode="interactive" />
-            </ExpandableWidget>
+            </ExercisePanel>
           </div>
         </Row.Content>
         <Row.Aside>

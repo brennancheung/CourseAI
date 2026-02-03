@@ -16,7 +16,7 @@ import {
 import { Exercise } from '@/lib/exercises'
 import { LinearFitExplorer } from '@/components/widgets/LinearFitExplorer'
 import { LossSurfaceExplorer } from '@/components/widgets/LossSurfaceExplorer'
-import { ExpandableWidget } from '@/components/widgets/ExpandableWidget'
+import { ExercisePanel } from '@/components/widgets/ExercisePanel'
 import 'katex/dist/katex.min.css'
 import { InlineMath, BlockMath } from 'react-katex'
 
@@ -119,14 +119,14 @@ export function LossFunctionsLesson() {
         <Row.Content>
           <div className="space-y-4">
             <h3 className="font-semibold">Visualizing Residuals</h3>
-            <ExpandableWidget title="Visualizing Residuals">
+            <ExercisePanel title="Visualizing Residuals">
               <LinearFitExplorer
                 initialSlope={0.3}
                 initialIntercept={-0.5}
                 showResiduals={true}
                 showMSE={true}
               />
-            </ExpandableWidget>
+            </ExercisePanel>
           </div>
         </Row.Content>
         <Row.Aside>
@@ -270,9 +270,9 @@ export function LossFunctionsLesson() {
         <Row.Content>
           <div className="space-y-4">
             <h3 className="font-semibold">Explore the Loss Surface</h3>
-            <ExpandableWidget title="Loss Surface Explorer">
+            <ExercisePanel title="Loss Surface Explorer">
               <LossSurfaceExplorer />
-            </ExpandableWidget>
+            </ExercisePanel>
           </div>
         </Row.Content>
         <Row.Aside>

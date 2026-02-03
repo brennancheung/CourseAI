@@ -15,7 +15,7 @@ import {
 } from '@/components/lessons'
 import { Exercise } from '@/lib/exercises'
 import { LinearFitExplorer } from '@/components/widgets/LinearFitExplorer'
-import { ExpandableWidget } from '@/components/widgets/ExpandableWidget'
+import { ExercisePanel } from '@/components/widgets/ExercisePanel'
 import 'katex/dist/katex.min.css'
 import { InlineMath, BlockMath } from 'react-katex'
 
@@ -150,14 +150,14 @@ export function LinearRegressionLesson() {
         <Row.Content>
           <div className="space-y-4">
             <h3 className="font-semibold">Try Fitting a Line</h3>
-            <ExpandableWidget title="Try Fitting a Line">
+            <ExercisePanel title="Try Fitting a Line">
               <LinearFitExplorer
                 initialSlope={0.3}
                 initialIntercept={-0.5}
                 showResiduals={false}
                 showMSE={false}
               />
-            </ExpandableWidget>
+            </ExercisePanel>
           </div>
         </Row.Content>
         <Row.Aside>
