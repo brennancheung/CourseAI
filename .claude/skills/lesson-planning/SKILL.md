@@ -106,6 +106,57 @@ Use lesson blocks from `@/components/lessons` for visual consistency.
 
 See `interactive-widgets` skill → `references/component-catalog.md` for full component reference.
 
+### CodeBlock for Code Examples
+
+Use `CodeBlock` from `@/components/common/CodeBlock` for syntax-highlighted code in lessons.
+
+```tsx
+import { CodeBlock } from '@/components/common/CodeBlock'
+
+<CodeBlock
+  code={`def forward(self, x):
+    return self.linear(x)`}
+  language="python"
+  filename="model.py"  // Optional - shows in header
+/>
+```
+
+**Features:**
+- Syntax highlighting via Prism (react-syntax-highlighter)
+- Faint line numbers with proper spacing
+- Theme-aware (dark/light mode via next-themes)
+- Copy to clipboard button (appears on hover)
+- Optional filename header
+
+**Styling notes (from ventures):**
+- Line number color: `rgb(156 163 175 / 0.5)` for dark, `rgb(107 114 128 / 0.5)` for light
+- Container: `text-xs` for appropriate code size
+- Background: `transparent` (inherits from container)
+- Uses `oneDark` / `oneLight` themes from react-syntax-highlighter
+
+**Hydration safety:** The component handles SSR by defaulting to dark theme until mounted, avoiding hydration mismatches.
+
+### Google Colab Notebooks
+
+For hands-on exercises, link to Colab notebooks stored in the `/notebooks/` directory.
+
+**Notebook naming:** `{module}-{lesson}-{topic}.ipynb` (e.g., `1-1-6-linear-regression.ipynb`)
+
+**Colab link format:**
+```tsx
+<a
+  href="https://colab.research.google.com/github/brennancheung/CourseAI/blob/main/notebooks/1-1-6-linear-regression.ipynb"
+  target="_blank"
+  rel="noopener noreferrer"
+  className="inline-flex items-center gap-2 px-4 py-2 rounded-md bg-primary text-primary-foreground font-medium text-sm hover:bg-primary/90 transition-colors"
+>
+  <ExternalLink className="w-4 h-4" />
+  Open in Google Colab
+</a>
+```
+
+**Best practice:** Use the in-app interactive widgets (like `TrainingLoopExplorer`) for visualization, and link to Colab for the "implement it yourself" exercises. The widget shows what happens; the notebook lets them write the code.
+
 ### Expandable Card Pattern
 
 For lessons with multiple items to explore (concepts, techniques, models), use expandable cards **wrapped in Row**:
