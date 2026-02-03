@@ -215,17 +215,14 @@ export function GradientDescentLesson() {
       {/* Interactive: Gradient Descent Animation */}
       <Row>
         <Row.Content>
-          <div className="space-y-4">
-            <h3 className="font-semibold">Watch Gradient Descent in Action</h3>
-            <ExercisePanel title="Gradient Descent Animation">
-              <GradientDescentExplorer
-                initialPosition={-2}
-                initialLearningRate={0.3}
-                showLearningRateSlider={true}
-                showGradientArrow={true}
-              />
-            </ExercisePanel>
-          </div>
+          <ExercisePanel title="Watch Gradient Descent in Action">
+            <GradientDescentExplorer
+              initialPosition={-2}
+              initialLearningRate={0.3}
+              showLearningRateSlider={true}
+              showGradientArrow={true}
+            />
+          </ExercisePanel>
         </Row.Content>
         <Row.Aside>
           <TryThisBlock title="Experiment">

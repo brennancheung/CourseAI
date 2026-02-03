@@ -120,10 +120,9 @@ export function LearningRateLesson() {
       {/* Interactive: Side by Side Comparison */}
       <Row>
         <Row.Content>
-          <div className="space-y-4">
-            <h3 className="font-semibold">Compare Learning Rates</h3>
+          <ExercisePanel title="Compare Learning Rates">
             <LearningRateExplorer mode="comparison" />
-          </div>
+          </ExercisePanel>
         </Row.Content>
         <Row.Aside>
           <TryThisBlock title="Observe">
@@ -221,15 +220,9 @@ export function LearningRateLesson() {
       {/* Section 4: Interactive Exploration */}
       <Row>
         <Row.Content>
-          <div className="space-y-4">
-            <SectionHeader
-              title="Find the Sweet Spot"
-              subtitle="Experiment with different learning rates"
-            />
-            <ExercisePanel title="Find the Sweet Spot">
-              <LearningRateExplorer mode="interactive" />
-            </ExercisePanel>
-          </div>
+          <ExercisePanel title="Find the Sweet Spot" subtitle="Experiment with different learning rates">
+            <LearningRateExplorer mode="interactive" />
+          </ExercisePanel>
         </Row.Content>
         <Row.Aside>
           <TryThisBlock title="Try These">

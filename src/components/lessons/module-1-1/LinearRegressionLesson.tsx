@@ -148,17 +148,14 @@ export function LinearRegressionLesson() {
       {/* Interactive Widget */}
       <Row>
         <Row.Content>
-          <div className="space-y-4">
-            <h3 className="font-semibold">Try Fitting a Line</h3>
-            <ExercisePanel title="Try Fitting a Line">
-              <LinearFitExplorer
-                initialSlope={0.3}
-                initialIntercept={-0.5}
-                showResiduals={false}
-                showMSE={false}
-              />
-            </ExercisePanel>
-          </div>
+          <ExercisePanel title="Try Fitting a Line">
+            <LinearFitExplorer
+              initialSlope={0.3}
+              initialIntercept={-0.5}
+              showResiduals={false}
+              showMSE={false}
+            />
+          </ExercisePanel>
         </Row.Content>
         <Row.Aside>
           <TryThisBlock title="Experiment">

@@ -117,17 +117,14 @@ export function LossFunctionsLesson() {
       {/* Interactive: Residuals */}
       <Row>
         <Row.Content>
-          <div className="space-y-4">
-            <h3 className="font-semibold">Visualizing Residuals</h3>
-            <ExercisePanel title="Visualizing Residuals">
-              <LinearFitExplorer
-                initialSlope={0.3}
-                initialIntercept={-0.5}
-                showResiduals={true}
-                showMSE={true}
-              />
-            </ExercisePanel>
-          </div>
+          <ExercisePanel title="Visualizing Residuals">
+            <LinearFitExplorer
+              initialSlope={0.3}
+              initialIntercept={-0.5}
+              showResiduals={true}
+              showMSE={true}
+            />
+          </ExercisePanel>
         </Row.Content>
         <Row.Aside>
           <TryThisBlock title="Experiment">
@@ -268,12 +265,9 @@ export function LossFunctionsLesson() {
       {/* Interactive: Loss Surface */}
       <Row>
         <Row.Content>
-          <div className="space-y-4">
-            <h3 className="font-semibold">Explore the Loss Surface</h3>
-            <ExercisePanel title="Loss Surface Explorer">
-              <LossSurfaceExplorer />
-            </ExercisePanel>
-          </div>
+          <ExercisePanel title="Explore the Loss Surface">
+            <LossSurfaceExplorer />
+          </ExercisePanel>
         </Row.Content>
         <Row.Aside>
           <TryThisBlock title="Experiment">
