@@ -19,6 +19,8 @@ import 'katex/dist/katex.min.css'
 import { BlockMath } from 'react-katex'
 import { ExercisePanel } from '@/components/widgets/ExercisePanel'
 import { TrainingLoopExplorer } from '@/components/widgets/TrainingLoopExplorer'
+import { CodeBlock } from '@/components/common/CodeBlock'
+import { ExternalLink } from 'lucide-react'
 
 /**
  * Lesson 1.1.6: Implementing Linear Regression
@@ -189,30 +191,31 @@ export function ImplementingLinearRegressionLesson() {
             <p className="text-muted-foreground">
               Here&apos;s what the code looks like:
             </p>
-            <div className="rounded-lg bg-muted/50 p-4 font-mono text-sm space-y-2">
-              <p className="text-muted-foreground"># Generate synthetic data</p>
-              <p>X, y = generate_data(100)</p>
-              <p></p>
-              <p className="text-muted-foreground"># Initialize parameters</p>
-              <p>w, b = 0.0, 0.0</p>
-              <p>lr = 0.01</p>
-              <p></p>
-              <p className="text-muted-foreground"># Training loop</p>
-              <p>for epoch in range(1000):</p>
-              <p className="pl-4"># Forward pass</p>
-              <p className="pl-4">y_pred = w * X + b</p>
-              <p className="pl-4"></p>
-              <p className="pl-4"># Compute loss</p>
-              <p className="pl-4">loss = np.mean((y - y_pred) ** 2)</p>
-              <p className="pl-4"></p>
-              <p className="pl-4"># Compute gradients</p>
-              <p className="pl-4">dw = np.mean(-2 * X * (y - y_pred))</p>
-              <p className="pl-4">db = np.mean(-2 * (y - y_pred))</p>
-              <p className="pl-4"></p>
-              <p className="pl-4"># Update parameters</p>
-              <p className="pl-4">w = w - lr * dw</p>
-              <p className="pl-4">b = b - lr * db</p>
-            </div>
+            <CodeBlock
+              language="python"
+              code={`# Generate synthetic data
+X, y = generate_data(100)
+
+# Initialize parameters
+w, b = 0.0, 0.0
+lr = 0.01
+
+# Training loop
+for epoch in range(1000):
+    # Forward pass
+    y_pred = w * X + b
+
+    # Compute loss
+    loss = np.mean((y - y_pred) ** 2)
+
+    # Compute gradients
+    dw = np.mean(-2 * X * (y - y_pred))
+    db = np.mean(-2 * (y - y_pred))
+
+    # Update parameters
+    w = w - lr * dw
+    b = b - lr * db`}
+            />
             <p className="text-muted-foreground mt-4">
               That&apos;s it! This simple loop is the foundation of all deep
               learning.
@@ -267,6 +270,44 @@ export function ImplementingLinearRegressionLesson() {
             Every neural network — from linear regression to GPT — follows this
             exact pattern. Forward, loss, backward, update. Over and over.
           </InsightBlock>
+        </Row.Aside>
+      </Row>
+
+      {/* Try It Yourself - Colab */}
+      <Row>
+        <Row.Content>
+          <SectionHeader
+            title="Try It Yourself"
+            subtitle="Implement the training loop in Python"
+          />
+          <div className="rounded-lg border-2 border-primary/50 bg-primary/5 p-6">
+            <div className="space-y-4">
+              <p className="text-muted-foreground">
+                The interactive explorer shows what happens during training.
+                Now write the code yourself in a Jupyter notebook.
+              </p>
+              <a
+                href="https://colab.research.google.com/github/brennancheung/CourseAI/blob/main/notebooks/1-1-6-linear-regression.ipynb"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-md bg-primary text-primary-foreground font-medium text-sm hover:bg-primary/90 transition-colors"
+              >
+                <ExternalLink className="w-4 h-4" />
+                Open in Google Colab
+              </a>
+              <p className="text-xs text-muted-foreground">
+                The notebook includes exercises: try different learning rates,
+                add more noise, use fewer samples. See how each change affects
+                training.
+              </p>
+            </div>
+          </div>
+        </Row.Content>
+        <Row.Aside>
+          <TipBlock title="Save a Copy">
+            Colab opens in read-only mode. Click &quot;Copy to Drive&quot; to
+            save your own version that you can edit and experiment with.
+          </TipBlock>
         </Row.Aside>
       </Row>
 
