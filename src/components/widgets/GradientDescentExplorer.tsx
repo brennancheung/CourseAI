@@ -1,7 +1,8 @@
 'use client'
 
 import { useState, useCallback, useRef, useEffect } from 'react'
-import { Stage, Layer, Line, Circle, Text, Arrow, Group } from 'react-konva'
+import { Line, Circle, Text, Arrow, Group } from 'react-konva'
+import { ZoomableCanvas } from '@/components/canvas/ZoomableCanvas'
 import { Button } from '@/components/ui/button'
 import { Play, Pause, RotateCcw } from 'lucide-react'
 
@@ -144,8 +145,7 @@ export function GradientDescentExplorer({
   return (
     <div className="space-y-4">
       <div className="rounded-lg border bg-card overflow-hidden">
-        <Stage width={width} height={height} style={{ backgroundColor: '#1a1a2e' }}>
-          <Layer>
+        <ZoomableCanvas width={width} height={height} backgroundColor="#1a1a2e">
             {/* Grid */}
             {gridLines.map((line) => (
               <Line
@@ -310,8 +310,7 @@ export function GradientDescentExplorer({
               shadowBlur={8}
               shadowOpacity={0.4}
             />
-          </Layer>
-        </Stage>
+        </ZoomableCanvas>
       </div>
 
       {/* Controls */}
