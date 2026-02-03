@@ -4,8 +4,7 @@ import { useState, useEffect } from 'react'
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
 import { oneDark, oneLight } from 'react-syntax-highlighter/dist/esm/styles/prism'
 import { useTheme } from 'next-themes'
-import { Check, Copy } from 'lucide-react'
-import { Button } from '@/components/ui/button'
+import { ClipboardCopy } from '@/components/common/ClipboardCopy'
 
 type CodeBlockProps = {
   code: string
@@ -29,21 +28,10 @@ export function CodeBlock({
 }: CodeBlockProps) {
   const { resolvedTheme } = useTheme()
   const [mounted, setMounted] = useState(false)
-  const [copied, setCopied] = useState(false)
 
   useEffect(() => {
     setMounted(true)
   }, [])
-
-  const handleCopy = async () => {
-    try {
-      await navigator.clipboard.writeText(code.trim())
-      setCopied(true)
-      setTimeout(() => setCopied(false), 2000)
-    } catch (err) {
-      console.error('Failed to copy:', err)
-    }
-  }
 
   // Default to dark until mounted to avoid hydration mismatch
   const isDark = !mounted || resolvedTheme === 'dark'
@@ -54,19 +42,10 @@ export function CodeBlock({
         <span className="text-xs text-muted-foreground font-mono">
           {filename ?? language}
         </span>
-        <Button
-          variant="ghost"
-          size="icon"
+        <ClipboardCopy
+          text={code.trim()}
           className="h-7 w-7 opacity-0 group-hover:opacity-100 transition-opacity"
-          onClick={handleCopy}
-          title={copied ? 'Copied!' : 'Copy to clipboard'}
-        >
-          {copied ? (
-            <Check className="h-3.5 w-3.5 text-green-500" />
-          ) : (
-            <Copy className="h-3.5 w-3.5" />
-          )}
-        </Button>
+        />
       </div>
       <div className="text-xs overflow-x-auto">
         <SyntaxHighlighter
