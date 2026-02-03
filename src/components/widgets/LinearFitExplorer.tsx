@@ -1,29 +1,25 @@
 'use client'
 
 import { useState, useMemo, useCallback, useRef } from 'react'
-import { Mafs, Coordinates, Plot, Point, Line, Theme } from 'mafs'
-import 'mafs/core.css'
+import { Stage, Layer, Line, Circle, Text, Arrow } from 'react-konva'
 
 /**
  * LinearFitExplorer - Interactive widget for exploring line fitting
  *
+ * Built with react-konva for reliable canvas rendering.
  * Features:
  * - Draggable numbers in the equation to control slope and intercept
  * - Data points scattered around a "true" line
  * - Always shows MSE with color feedback
  * - Optional: Show residuals
- *
- * Used in:
- * - Lesson 1.1.2: Linear Regression from Scratch
- * - Lesson 1.1.3: Loss Functions (with residuals)
  */
 
-interface DataPoint {
+type DataPoint = {
   x: number
   y: number
 }
 
-interface LinearFitExplorerProps {
+type LinearFitExplorerProps = {
   /** Show residual lines from points to the fitted line */
   showResiduals?: boolean
   /** Show MSE calculation */
@@ -38,10 +34,16 @@ interface LinearFitExplorerProps {
   height?: number
 }
 
+// Viewport config
+const VIEW = {
+  xMin: -4,
+  xMax: 4,
+  yMin: -2,
+  yMax: 4,
+}
+
 // Generate deterministic data points around a line with noise
-// Using a seed-like approach for consistent data across renders
 function generateDataPoints(): DataPoint[] {
-  // Fixed "random" data that looks scattered but is deterministic
   return [
     { x: -3, y: -1.5 },
     { x: -2.5, y: -0.8 },
@@ -89,7 +91,7 @@ function findOptimalParams(points: DataPoint[]): { slope: number; intercept: num
 /**
  * DraggableNumber - A number that can be dragged left/right to change value
  */
-interface DraggableNumberProps {
+type DraggableNumberProps = {
   value: number
   onChange: (value: number) => void
   min: number
@@ -114,11 +116,9 @@ function DraggableNumber({ value, onChange, min, max, step, color = '#f97316', l
     const handleMouseMove = (e: MouseEvent) => {
       if (!isDragging.current) return
       const dx = e.clientX - startX.current
-      // Sensitivity: 100px drag = full range
       const range = max - min
       const delta = (dx / 150) * range
       const newValue = Math.max(min, Math.min(max, startValue.current + delta))
-      // Round to step
       const rounded = Math.round(newValue / step) * step
       onChange(rounded)
     }
@@ -155,8 +155,14 @@ export function LinearFitExplorer({
   dataPoints: providedPoints,
   height = 350,
 }: LinearFitExplorerProps) {
+  const width = 600
+
   const [slope, setSlope] = useState(initialSlope)
   const [intercept, setIntercept] = useState(initialIntercept)
+
+  // Coordinate transforms
+  const toPixelX = (x: number) => ((x - VIEW.xMin) / (VIEW.xMax - VIEW.xMin)) * width
+  const toPixelY = (y: number) => height - ((y - VIEW.yMin) / (VIEW.yMax - VIEW.yMin)) * height
 
   // Use provided points or generate fixed ones
   const dataPoints = useMemo(() => {
@@ -169,7 +175,7 @@ export function LinearFitExplorer({
   const optimal = useMemo(() => findOptimalParams(dataPoints), [dataPoints])
   const optimalMSE = useMemo(() => calculateMSE(dataPoints, optimal.slope, optimal.intercept), [dataPoints, optimal])
 
-  // MSE quality indicator (green when close to optimal)
+  // MSE quality indicator
   const mseRatio = optimalMSE > 0 ? mse / optimalMSE : 1
   const getMSEColor = () => {
     if (mseRatio < 1.1) return 'text-green-400'
@@ -178,41 +184,124 @@ export function LinearFitExplorer({
     return 'text-red-400'
   }
 
+  // Grid lines
+  const gridLines: { points: number[]; key: string }[] = []
+  for (let x = Math.ceil(VIEW.xMin); x <= VIEW.xMax; x++) {
+    gridLines.push({ key: `v${x}`, points: [toPixelX(x), 0, toPixelX(x), height] })
+  }
+  for (let y = Math.ceil(VIEW.yMin); y <= VIEW.yMax; y++) {
+    gridLines.push({ key: `h${y}`, points: [0, toPixelY(y), width, toPixelY(y)] })
+  }
+
+  // Line endpoints (extend beyond viewport)
+  const lineY1 = slope * VIEW.xMin + intercept
+  const lineY2 = slope * VIEW.xMax + intercept
+
   return (
     <div className="space-y-4">
       {/* Graph */}
       <div className="rounded-lg border bg-card overflow-hidden">
-        <Mafs
-          height={height}
-          viewBox={{ x: [-4, 4], y: [-3, 4] }}
-          preserveAspectRatio={false}
-        >
-          <Coordinates.Cartesian />
+        <Stage width={width} height={height} style={{ backgroundColor: '#1a1a2e' }}>
+          <Layer>
+            {/* Grid */}
+            {gridLines.map((line) => (
+              <Line
+                key={line.key}
+                points={line.points}
+                stroke="#333355"
+                strokeWidth={1}
+              />
+            ))}
 
-          {/* Data points */}
-          {dataPoints.map((point, i) => (
-            <Point key={i} x={point.x} y={point.y} color={Theme.blue} />
-          ))}
+            {/* Axes */}
+            <Arrow
+              points={[0, toPixelY(0), width, toPixelY(0)]}
+              stroke="#666688"
+              strokeWidth={2}
+              fill="#666688"
+              pointerLength={8}
+              pointerWidth={6}
+            />
+            <Arrow
+              points={[toPixelX(0), height, toPixelX(0), 0]}
+              stroke="#666688"
+              strokeWidth={2}
+              fill="#666688"
+              pointerLength={8}
+              pointerWidth={6}
+            />
 
-          {/* Residual lines */}
-          {showResiduals &&
-            dataPoints.map((point, i) => {
-              const predicted = slope * point.x + intercept
-              return (
-                <Line.Segment
-                  key={`residual-${i}`}
-                  point1={[point.x, point.y]}
-                  point2={[point.x, predicted]}
-                  color={Theme.red}
-                  opacity={0.6}
-                  style="dashed"
-                />
-              )
-            })}
+            {/* Axis labels */}
+            <Text x={width - 20} y={toPixelY(0) + 10} text="x" fontSize={14} fill="#888" />
+            <Text x={toPixelX(0) + 10} y={10} text="y" fontSize={14} fill="#888" />
 
-          {/* The fitted line */}
-          <Plot.OfX y={(x) => slope * x + intercept} color={Theme.green} />
-        </Mafs>
+            {/* X axis numbers */}
+            {[-3, -2, -1, 1, 2, 3].map((x) => (
+              <Text
+                key={`xl${x}`}
+                x={toPixelX(x) - 6}
+                y={toPixelY(0) + 8}
+                text={x.toString()}
+                fontSize={11}
+                fill="#888"
+              />
+            ))}
+
+            {/* Y axis numbers */}
+            {[-1, 1, 2, 3].map((y) => (
+              <Text
+                key={`yl${y}`}
+                x={toPixelX(0) + 8}
+                y={toPixelY(y) - 5}
+                text={y.toString()}
+                fontSize={11}
+                fill="#888"
+              />
+            ))}
+
+            {/* Residual lines */}
+            {showResiduals &&
+              dataPoints.map((point, i) => {
+                const predicted = slope * point.x + intercept
+                return (
+                  <Line
+                    key={`residual-${i}`}
+                    points={[
+                      toPixelX(point.x),
+                      toPixelY(point.y),
+                      toPixelX(point.x),
+                      toPixelY(predicted),
+                    ]}
+                    stroke="#ef4444"
+                    strokeWidth={2}
+                    dash={[4, 4]}
+                    opacity={0.7}
+                  />
+                )
+              })}
+
+            {/* The fitted line */}
+            <Line
+              points={[toPixelX(VIEW.xMin), toPixelY(lineY1), toPixelX(VIEW.xMax), toPixelY(lineY2)]}
+              stroke="#22c55e"
+              strokeWidth={3}
+            />
+
+            {/* Data points */}
+            {dataPoints.map((point, i) => (
+              <Circle
+                key={i}
+                x={toPixelX(point.x)}
+                y={toPixelY(point.y)}
+                radius={8}
+                fill="#6366f1"
+                shadowColor="black"
+                shadowBlur={4}
+                shadowOpacity={0.3}
+              />
+            ))}
+          </Layer>
+        </Stage>
       </div>
 
       {/* Interactive Equation */}

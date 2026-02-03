@@ -134,6 +134,9 @@ importers:
       katex:
         specifier: ^0.16.28
         version: 0.16.28
+      konva:
+        specifier: ^10.2.0
+        version: 10.2.0
       leva:
         specifier: ^0.10.1
         version: 0.10.1(@types/react-dom@19.2.3(@types/react@19.2.8))(@types/react@19.2.8)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
@@ -167,6 +170,9 @@ importers:
       react-katex:
         specifier: ^3.1.0
         version: 3.1.0(prop-types@15.8.1)(react@19.2.3)
+      react-konva:
+        specifier: ^19.2.1
+        version: 19.2.1(@types/react@19.2.8)(konva@10.2.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       react-markdown:
         specifier: ^10.1.0
         version: 10.1.0(@types/react@19.2.8)(react@19.2.3)
@@ -2310,6 +2316,11 @@ packages:
     peerDependencies:
       '@types/react': '*'
 
+  '@types/react-reconciler@0.32.3':
+    resolution: {integrity: sha512-cMi5ZrLG7UtbL7LTK6hq9w/EZIRk4Mf1Z5qHoI+qBh7/WkYkFXQ7gOto2yfUvPzF5ERMAhaXS5eTQ2SAnHjLzA==}
+    peerDependencies:
+      '@types/react': '*'
+
   '@types/react@19.2.8':
     resolution: {integrity: sha512-3MbSL37jEchWZz2p2mjntRZtPt837ij10ApxKfgmXCTuHWagYg7iA5bqPw6C8BMPfwidlvfPI/fxOc42HLhcyg==}
 
@@ -3801,6 +3812,9 @@ packages:
   keyv@4.5.4:
     resolution: {integrity: sha512-oxVHkHR/EJf2CNXnWxRLW6mg7JyCCUcG0DtEGmL2ctUo1PNTin1PUil+r/+4r5MpVgC/fn1kjsx7mjSujKqIpw==}
 
+  konva@10.2.0:
+    resolution: {integrity: sha512-JBoz0Xjbf49UPxCZegZ4WseqOzJ+C4AUDOtJ9eBve5RS5Fcq/u8TdBD5fDl/uPFInpC3a9uycm0sRyZpF4hheg==}
+
   language-subtag-registry@0.3.23:
     resolution: {integrity: sha512-0K65Lea881pHotoGEa5gDlMxt3pctLi2RplBb7Ezh4rRdLEOtgi7n4EwK9lamnUCkKBqaeKRVebTq6BAxSkpXQ==}
 
@@ -4268,11 +4282,24 @@ packages:
       prop-types: ^15.8.1
       react: '>=15.3.2 <20'
 
+  react-konva@19.2.1:
+    resolution: {integrity: sha512-sqZWCzQGpdMrU5aeunR0oxUY8UeCPbU8gnAYxMtAn6BT4coeSpiATKOctsoxRu6F56TAcF+s0c6Lul9ansNqQA==}
+    peerDependencies:
+      konva: ^8.0.1 || ^7.2.5 || ^9.0.0 || ^10.0.0
+      react: ^19.2.0
+      react-dom: ^19.2.0
+
   react-markdown@10.1.0:
     resolution: {integrity: sha512-qKxVopLT/TyA6BX3Ue5NwabOsAzm0Q7kAPwq6L+wWDwisYs7R8vZ0nRXqq6rkueboxpkjvLGU9fWifiX/ZZFxQ==}
     peerDependencies:
       '@types/react': '>=18'
       react: '>=18'
+
+  react-reconciler@0.33.0:
+    resolution: {integrity: sha512-KetWRytFv1epdpJc3J4G75I4WrplZE5jOL7Yq0p34+OVOKF4Se7WrdIdVC45XsSSmUTlht2FM/fM1FZb1mfQeA==}
+    engines: {node: '>=0.10.0'}
+    peerDependencies:
+      react: ^19.2.0
 
   react-redux@9.2.0:
     resolution: {integrity: sha512-ROY9fvHhwOD9ySfrF0wmvu//bKCQ6AeZZq1nJNtbDC+kk5DuSuNX/n6YWYF/SYy7bSba4D4FSz8DJeKY/S/r+g==}
@@ -7275,6 +7302,10 @@ snapshots:
     dependencies:
       '@types/react': 19.2.8
 
+  '@types/react-reconciler@0.32.3(@types/react@19.2.8)':
+    dependencies:
+      '@types/react': 19.2.8
+
   '@types/react@19.2.8':
     dependencies:
       csstype: 3.2.3
@@ -9127,6 +9158,8 @@ snapshots:
     dependencies:
       json-buffer: 3.0.1
 
+  konva@10.2.0: {}
+
   language-subtag-registry@0.3.23: {}
 
   language-tags@1.0.9:
@@ -9724,6 +9757,18 @@ snapshots:
       prop-types: 15.8.1
       react: 19.2.3
 
+  react-konva@19.2.1(@types/react@19.2.8)(konva@10.2.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3):
+    dependencies:
+      '@types/react-reconciler': 0.32.3(@types/react@19.2.8)
+      its-fine: 2.0.0(@types/react@19.2.8)(react@19.2.3)
+      konva: 10.2.0
+      react: 19.2.3
+      react-dom: 19.2.3(react@19.2.3)
+      react-reconciler: 0.33.0(react@19.2.3)
+      scheduler: 0.27.0
+    transitivePeerDependencies:
+      - '@types/react'
+
   react-markdown@10.1.0(@types/react@19.2.8)(react@19.2.3):
     dependencies:
       '@types/hast': 3.0.4
@@ -9741,6 +9786,11 @@ snapshots:
       vfile: 6.0.3
     transitivePeerDependencies:
       - supports-color
+
+  react-reconciler@0.33.0(react@19.2.3):
+    dependencies:
+      react: 19.2.3
+      scheduler: 0.27.0
 
   react-redux@9.2.0(@types/react@19.2.8)(react@19.2.3)(redux@5.0.1):
     dependencies:

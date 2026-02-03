@@ -1,25 +1,21 @@
 'use client'
 
 import { useState, useCallback, useRef, useEffect } from 'react'
-import { Mafs, Coordinates, Plot, Point, Vector, Text, Theme } from 'mafs'
-import 'mafs/core.css'
+import { Stage, Layer, Line, Circle, Text, Arrow, Group } from 'react-konva'
 import { Button } from '@/components/ui/button'
 import { Play, Pause, RotateCcw } from 'lucide-react'
 
 /**
  * GradientDescentExplorer - Animated gradient descent on 1D loss curve
  *
+ * Built with react-konva for reliable canvas rendering.
  * Shows a ball rolling downhill on a loss function, demonstrating:
  * - Gradient as the slope at current position
  * - Update step moving opposite to gradient
  * - Convergence to minimum
- *
- * Used in:
- * - Lesson 1.1.4: Gradient Descent
- * - Lesson 1.1.5: Learning Rate (with adjustable LR)
  */
 
-interface GradientDescentExplorerProps {
+type GradientDescentExplorerProps = {
   /** Allow adjusting learning rate */
   showLearningRateSlider?: boolean
   /** Initial learning rate */
@@ -28,86 +24,86 @@ interface GradientDescentExplorerProps {
   initialPosition?: number
   /** Show the gradient arrow */
   showGradientArrow?: boolean
-  /** Custom loss function (default: quadratic bowl) */
-  lossFunction?: (x: number) => number
-  /** Derivative of loss function */
-  lossFunctionDerivative?: (x: number) => number
+  /** Height of canvas */
+  height?: number
 }
 
-// Default: simple quadratic loss L(x) = (x - 1)^2 + 0.5
-const defaultLoss = (x: number) => Math.pow(x - 1, 2) + 0.5
-const defaultLossDerivative = (x: number) => 2 * (x - 1)
+// Loss function: L(x) = (x - 1)^2 + 0.5, minimum at x=1
+const loss = (x: number) => Math.pow(x - 1, 2) + 0.5
+const lossDerivative = (x: number) => 2 * (x - 1)
+
+// Viewport config
+const VIEW = {
+  xMin: -4,
+  xMax: 6,
+  yMin: -0.5,
+  yMax: 10,
+}
 
 export function GradientDescentExplorer({
   showLearningRateSlider = true,
-  initialLearningRate = 0.3,
-  initialPosition = -2,
+  initialLearningRate = 0.15,
+  initialPosition = -2.5,
   showGradientArrow = true,
-  lossFunction = defaultLoss,
-  lossFunctionDerivative = defaultLossDerivative,
+  height = 350,
 }: GradientDescentExplorerProps) {
+  const width = 600 // Fixed width for consistent rendering
+
   const [position, setPosition] = useState(initialPosition)
   const [learningRate, setLearningRate] = useState(initialLearningRate)
   const [isRunning, setIsRunning] = useState(false)
-  const [history, setHistory] = useState<number[]>([initialPosition])
   const [stepCount, setStepCount] = useState(0)
+  const [history, setHistory] = useState<number[]>([initialPosition])
 
   const animationRef = useRef<number | null>(null)
   const lastStepTime = useRef<number>(0)
 
-  // Calculate current gradient and loss
-  const currentLoss = lossFunction(position)
-  const currentGradient = lossFunctionDerivative(position)
+  // Coordinate transforms
+  const toPixelX = (x: number) => ((x - VIEW.xMin) / (VIEW.xMax - VIEW.xMin)) * width
+  const toPixelY = (y: number) => height - ((y - VIEW.yMin) / (VIEW.yMax - VIEW.yMin)) * height
 
-  // Single step of gradient descent
+  // Current values
+  const currentLoss = loss(position)
+  const currentGradient = lossDerivative(position)
+
+  // Single step
   const step = useCallback(() => {
     setPosition((pos) => {
-      const grad = lossFunctionDerivative(pos)
+      const grad = lossDerivative(pos)
       const newPos = pos - learningRate * grad
-
       // Clamp to viewport
-      const clampedPos = Math.max(-4, Math.min(4, newPos))
-
-      setHistory((h) => [...h.slice(-50), clampedPos]) // Keep last 50 positions
+      const clamped = Math.max(VIEW.xMin + 0.5, Math.min(VIEW.xMax - 0.5, newPos))
+      setHistory((h) => [...h.slice(-30), clamped])
       setStepCount((c) => c + 1)
-
-      return clampedPos
+      return clamped
     })
-  }, [learningRate, lossFunctionDerivative])
+  }, [learningRate])
 
   // Animation loop
   useEffect(() => {
     if (!isRunning) {
-      if (animationRef.current) {
-        cancelAnimationFrame(animationRef.current)
-      }
+      if (animationRef.current) cancelAnimationFrame(animationRef.current)
       return
     }
 
     const animate = (time: number) => {
-      // Step every 500ms
-      if (time - lastStepTime.current > 500) {
+      if (time - lastStepTime.current > 400) {
         step()
         lastStepTime.current = time
       }
-
-      // Stop if converged (gradient very small)
-      if (Math.abs(lossFunctionDerivative(position)) < 0.01) {
+      // Stop if converged
+      if (Math.abs(lossDerivative(position)) < 0.05) {
         setIsRunning(false)
         return
       }
-
       animationRef.current = requestAnimationFrame(animate)
     }
 
     animationRef.current = requestAnimationFrame(animate)
-
     return () => {
-      if (animationRef.current) {
-        cancelAnimationFrame(animationRef.current)
-      }
+      if (animationRef.current) cancelAnimationFrame(animationRef.current)
     }
-  }, [isRunning, step, position, lossFunctionDerivative])
+  }, [isRunning, step, position])
 
   // Reset
   const reset = useCallback(() => {
@@ -117,104 +113,205 @@ export function GradientDescentExplorer({
     setStepCount(0)
   }, [initialPosition])
 
-  // Manual step
-  const manualStep = useCallback(() => {
-    setIsRunning(false)
-    step()
-  }, [step])
+  // Generate curve points
+  const curvePoints: number[] = []
+  for (let i = 0; i <= 100; i++) {
+    const x = VIEW.xMin + (i / 100) * (VIEW.xMax - VIEW.xMin)
+    const y = loss(x)
+    if (y <= VIEW.yMax) {
+      curvePoints.push(toPixelX(x), toPixelY(y))
+    }
+  }
+
+  // Grid lines
+  const gridLines: { points: number[]; key: string }[] = []
+  for (let x = Math.ceil(VIEW.xMin); x <= VIEW.xMax; x++) {
+    gridLines.push({
+      key: `v${x}`,
+      points: [toPixelX(x), 0, toPixelX(x), height],
+    })
+  }
+  for (let y = Math.ceil(VIEW.yMin); y <= VIEW.yMax; y += 2) {
+    gridLines.push({
+      key: `h${y}`,
+      points: [0, toPixelY(y), width, toPixelY(y)],
+    })
+  }
+
+  const ballX = toPixelX(position)
+  const ballY = toPixelY(currentLoss)
 
   return (
     <div className="space-y-4">
       <div className="rounded-lg border bg-card overflow-hidden">
-        <Mafs
-          height={350}
-          viewBox={{ x: [-4.5, 4.5], y: [-0.5, 6] }}
-          preserveAspectRatio={false}
-        >
-          <Coordinates.Cartesian
-            xAxis={{ labels: (x) => (x % 2 === 0 ? x.toString() : '') }}
-            yAxis={{ labels: (y) => (y % 2 === 0 ? y.toString() : '') }}
-          />
-
-          {/* Loss curve */}
-          <Plot.OfX y={lossFunction} color={Theme.blue} />
-
-          {/* History trail */}
-          {history.map((x, i) => {
-            if (i === history.length - 1) return null
-            const y = lossFunction(x)
-            const opacity = 0.2 + (0.6 * i) / history.length
-            return (
-              <Point
-                key={i}
-                x={x}
-                y={y}
-                color={Theme.green}
-                opacity={opacity}
+        <Stage width={width} height={height} style={{ backgroundColor: '#1a1a2e' }}>
+          <Layer>
+            {/* Grid */}
+            {gridLines.map((line) => (
+              <Line
+                key={line.key}
+                points={line.points}
+                stroke="#333355"
+                strokeWidth={1}
               />
-            )
-          })}
+            ))}
 
-          {/* Current position (the "ball") */}
-          <Point x={position} y={currentLoss} color={Theme.orange} />
+            {/* Axes */}
+            <Arrow
+              points={[0, toPixelY(0), width, toPixelY(0)]}
+              stroke="#666688"
+              strokeWidth={2}
+              fill="#666688"
+              pointerLength={8}
+              pointerWidth={6}
+            />
+            <Arrow
+              points={[toPixelX(0), height, toPixelX(0), 0]}
+              stroke="#666688"
+              strokeWidth={2}
+              fill="#666688"
+              pointerLength={8}
+              pointerWidth={6}
+            />
 
-          {/* Gradient arrow (tangent direction) */}
-          {showGradientArrow && Math.abs(currentGradient) > 0.1 && (
-            <>
-              {/* Tangent line segment */}
-              <Plot.OfX
-                y={(x) => currentLoss + currentGradient * (x - position)}
-                color={Theme.red}
-                opacity={0.5}
-                style="dashed"
-              />
+            {/* Axis labels */}
+            <Text x={width - 25} y={toPixelY(0) + 10} text="θ" fontSize={14} fill="#888" />
+            <Text x={toPixelX(0) + 10} y={10} text="L(θ)" fontSize={14} fill="#888" />
 
-              {/* Arrow showing gradient direction */}
-              <Vector
-                tip={[position + Math.sign(currentGradient) * 0.8, currentLoss + 0.5]}
-                tail={[position, currentLoss + 0.5]}
-                color={Theme.red}
-              />
+            {/* X axis numbers */}
+            {[-2, 0, 2, 4].map((x) => (
               <Text
-                x={position + Math.sign(currentGradient) * 0.5}
-                y={currentLoss + 0.9}
-                size={14}
-                color={Theme.red}
-              >
-                gradient
-              </Text>
-
-              {/* Arrow showing update direction (opposite to gradient) */}
-              <Vector
-                tip={[position - Math.sign(currentGradient) * 0.8, currentLoss - 0.3]}
-                tail={[position, currentLoss - 0.3]}
-                color={Theme.green}
+                key={`xl${x}`}
+                x={toPixelX(x) - 8}
+                y={toPixelY(0) + 8}
+                text={x.toString()}
+                fontSize={12}
+                fill="#888"
               />
+            ))}
+
+            {/* Y axis numbers */}
+            {[2, 4, 6, 8].map((y) => (
               <Text
-                x={position - Math.sign(currentGradient) * 0.5}
-                y={currentLoss - 0.7}
-                size={14}
-                color={Theme.green}
-              >
-                update
-              </Text>
-            </>
-          )}
+                key={`yl${y}`}
+                x={toPixelX(0) + 8}
+                y={toPixelY(y) - 6}
+                text={y.toString()}
+                fontSize={12}
+                fill="#888"
+              />
+            ))}
 
-          {/* Minimum marker */}
-          <Point x={1} y={0.5} color={Theme.green} />
-          <Text x={1} y={0.1} size={12} color={Theme.green}>
-            minimum
-          </Text>
+            {/* Loss curve */}
+            <Line
+              points={curvePoints}
+              stroke="#6366f1"
+              strokeWidth={3}
+              lineCap="round"
+              lineJoin="round"
+            />
 
-          {/* Labels */}
-          <Text x={-4} y={5.5} size={14}>
-            Loss L(θ)
-          </Text>
-          <Text x={4} y={0.2} size={14}>
-            θ
-          </Text>
-        </Mafs>
+            {/* History trail */}
+            {history.map((x, i) => {
+              const y = loss(x)
+              const opacity = 0.2 + (0.6 * i) / history.length
+              return (
+                <Circle
+                  key={i}
+                  x={toPixelX(x)}
+                  y={toPixelY(y)}
+                  radius={4}
+                  fill="#22c55e"
+                  opacity={opacity}
+                />
+              )
+            })}
+
+            {/* Gradient arrow */}
+            {showGradientArrow && Math.abs(currentGradient) > 0.1 && (
+              <Group>
+                {/* Tangent line */}
+                <Line
+                  points={[
+                    toPixelX(position - 1),
+                    toPixelY(currentLoss - currentGradient),
+                    toPixelX(position + 1),
+                    toPixelY(currentLoss + currentGradient),
+                  ]}
+                  stroke="#ef4444"
+                  strokeWidth={1}
+                  dash={[6, 4]}
+                  opacity={0.6}
+                />
+
+                {/* Gradient direction arrow */}
+                <Arrow
+                  points={[
+                    ballX,
+                    ballY - 25,
+                    ballX + Math.sign(currentGradient) * 40,
+                    ballY - 25,
+                  ]}
+                  stroke="#ef4444"
+                  strokeWidth={2}
+                  fill="#ef4444"
+                  pointerLength={8}
+                  pointerWidth={6}
+                />
+                <Text
+                  x={ballX + Math.sign(currentGradient) * 20 - 25}
+                  y={ballY - 45}
+                  text="gradient"
+                  fontSize={11}
+                  fill="#ef4444"
+                />
+
+                {/* Update direction arrow */}
+                <Arrow
+                  points={[
+                    ballX,
+                    ballY + 25,
+                    ballX - Math.sign(currentGradient) * 40,
+                    ballY + 25,
+                  ]}
+                  stroke="#22c55e"
+                  strokeWidth={2}
+                  fill="#22c55e"
+                  pointerLength={8}
+                  pointerWidth={6}
+                />
+                <Text
+                  x={ballX - Math.sign(currentGradient) * 20 - 20}
+                  y={ballY + 30}
+                  text="update"
+                  fontSize={11}
+                  fill="#22c55e"
+                />
+              </Group>
+            )}
+
+            {/* Minimum marker */}
+            <Circle x={toPixelX(1)} y={toPixelY(0.5)} radius={6} fill="#22c55e" />
+            <Text
+              x={toPixelX(1) - 25}
+              y={toPixelY(0.5) + 12}
+              text="minimum"
+              fontSize={11}
+              fill="#22c55e"
+            />
+
+            {/* Current position (the ball) */}
+            <Circle
+              x={ballX}
+              y={ballY}
+              radius={12}
+              fill="#f97316"
+              shadowColor="black"
+              shadowBlur={8}
+              shadowOpacity={0.4}
+            />
+          </Layer>
+        </Stage>
       </div>
 
       {/* Controls */}
@@ -228,7 +325,12 @@ export function GradientDescentExplorer({
             {isRunning ? <Pause className="w-4 h-4 mr-1" /> : <Play className="w-4 h-4 mr-1" />}
             {isRunning ? 'Pause' : 'Run'}
           </Button>
-          <Button variant="outline" size="sm" onClick={manualStep} disabled={isRunning}>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => { setIsRunning(false); step() }}
+            disabled={isRunning}
+          >
             Step
           </Button>
           <Button variant="outline" size="sm" onClick={reset}>
@@ -242,9 +344,9 @@ export function GradientDescentExplorer({
             <span className="text-sm text-muted-foreground">Learning rate (α):</span>
             <input
               type="range"
-              min="0.05"
-              max="1"
-              step="0.05"
+              min="0.01"
+              max="0.5"
+              step="0.01"
               value={learningRate}
               onChange={(e) => setLearningRate(parseFloat(e.target.value))}
               className="w-24"
@@ -274,7 +376,7 @@ export function GradientDescentExplorer({
         </div>
       </div>
 
-      {/* Update rule display */}
+      {/* Update rule */}
       <div className="p-3 rounded-md bg-muted/50 font-mono text-sm">
         θ_new = {position.toFixed(2)} - {learningRate.toFixed(2)} × ({currentGradient.toFixed(2)})
         = {(position - learningRate * currentGradient).toFixed(3)}
