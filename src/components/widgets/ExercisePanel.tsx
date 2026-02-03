@@ -8,11 +8,12 @@ import {
   createContext,
   cloneElement,
   isValidElement,
+  useRef,
   ReactNode,
   ReactElement,
 } from 'react'
 import { createPortal } from 'react-dom'
-import { Maximize2, Minimize2, X } from 'lucide-react'
+import { Maximize2, Minimize2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 
 /**
@@ -39,7 +40,6 @@ import { Button } from '@/components/ui/button'
 type ExercisePanelContextType = {
   isExpanded: boolean
   setIsExpanded: (expanded: boolean) => void
-  expandedWidth: number
   title?: string
 }
 
@@ -93,15 +93,36 @@ type ContentProps = {
 }
 
 function Content({ children }: ContentProps) {
-  const { isExpanded, expandedWidth } = useExercisePanelContext()
+  const { isExpanded } = useExercisePanelContext()
+  const containerRef = useRef<HTMLDivElement>(null)
+  const [measuredWidth, setMeasuredWidth] = useState<number | undefined>(undefined)
 
-  // Clone child with expanded width when in fullscreen
+  // Measure container width when expanded
+  useEffect(() => {
+    if (!isExpanded || !containerRef.current) {
+      setMeasuredWidth(undefined)
+      return
+    }
+
+    const observer = new ResizeObserver((entries) => {
+      const entry = entries[0]
+      if (entry) {
+        // Subtract padding (p-4 = 16px * 2)
+        setMeasuredWidth(entry.contentRect.width)
+      }
+    })
+
+    observer.observe(containerRef.current)
+    return () => observer.disconnect()
+  }, [isExpanded])
+
+  // Clone child with measured width when in fullscreen
   const renderChild = () => {
     if (!isValidElement(children)) return children
 
-    if (isExpanded) {
+    if (isExpanded && measuredWidth) {
       return cloneElement(children, {
-        width: expandedWidth,
+        width: measuredWidth,
       })
     }
 
@@ -109,7 +130,7 @@ function Content({ children }: ContentProps) {
   }
 
   return (
-    <div className="p-4">
+    <div ref={containerRef} className="p-4">
       {renderChild()}
     </div>
   )
@@ -128,26 +149,11 @@ type ExercisePanelProps = {
 function ExercisePanelBase({ children, title, subtitle }: ExercisePanelProps) {
   const [isExpanded, setIsExpanded] = useState(false)
   const [portalContainer, setPortalContainer] = useState<HTMLElement | null>(null)
-  const [expandedWidth, setExpandedWidth] = useState(900)
 
   // Set up portal container
   useEffect(() => {
     setPortalContainer(document.body)
   }, [])
-
-  // Calculate expanded width
-  useEffect(() => {
-    if (!isExpanded) return
-
-    const updateWidth = () => {
-      const width = Math.min(window.innerWidth - 96, 1000)
-      setExpandedWidth(width)
-    }
-
-    updateWidth()
-    window.addEventListener('resize', updateWidth)
-    return () => window.removeEventListener('resize', updateWidth)
-  }, [isExpanded])
 
   // Handle ESC key
   useEffect(() => {
@@ -184,7 +190,6 @@ function ExercisePanelBase({ children, title, subtitle }: ExercisePanelProps) {
   const contextValue: ExercisePanelContextType = {
     isExpanded,
     setIsExpanded,
-    expandedWidth,
     title,
   }
 
@@ -225,26 +230,11 @@ function ExercisePanelBase({ children, title, subtitle }: ExercisePanelProps) {
   // Fullscreen modal
   const fullscreenModal = isExpanded && portalContainer && createPortal(
     <div
-      className="fixed inset-0 z-50 bg-black/90 flex items-start justify-center overflow-y-auto py-8"
+      className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center overflow-y-auto p-4"
       onClick={handleBackdropClick}
     >
-      <div className="bg-card rounded-lg overflow-hidden max-w-[1100px] w-full mx-6 relative">
-        {/* Modal close button */}
-        <Button
-          variant="ghost"
-          size="icon"
-          className="absolute top-2 right-2 z-10 hover:bg-muted"
-          onClick={() => setIsExpanded(false)}
-        >
-          <X className="w-5 h-5" />
-        </Button>
-
+      <div className="bg-card rounded-lg overflow-hidden w-[90vw] max-w-[1400px] max-h-[90vh] overflow-y-auto">
         {panelContent}
-
-        {/* Help text */}
-        <p className="text-muted-foreground text-sm py-3 text-center border-t border-border">
-          Press ESC or click outside to close
-        </p>
       </div>
     </div>,
     portalContainer
