@@ -31,6 +31,8 @@ type LinearFitExplorerProps = {
   initialIntercept?: number
   /** Fixed data points (optional - will generate random if not provided) */
   dataPoints?: DataPoint[]
+  /** Width of the visualization */
+  width?: number
   /** Height of the visualization */
   height?: number
 }
@@ -154,9 +156,9 @@ export function LinearFitExplorer({
   initialSlope = 0.3,
   initialIntercept = 0,
   dataPoints: providedPoints,
+  width = 600,
   height = 350,
 }: LinearFitExplorerProps) {
-  const width = 600
 
   const [slope, setSlope] = useState(initialSlope)
   const [intercept, setIntercept] = useState(initialIntercept)

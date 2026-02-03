@@ -25,6 +25,8 @@ type GradientDescentExplorerProps = {
   initialPosition?: number
   /** Show the gradient arrow */
   showGradientArrow?: boolean
+  /** Width of canvas */
+  width?: number
   /** Height of canvas */
   height?: number
 }
@@ -46,9 +48,9 @@ export function GradientDescentExplorer({
   initialLearningRate = 0.15,
   initialPosition = -2.5,
   showGradientArrow = true,
+  width = 600,
   height = 350,
 }: GradientDescentExplorerProps) {
-  const width = 600 // Fixed width for consistent rendering
 
   const [position, setPosition] = useState(initialPosition)
   const [learningRate, setLearningRate] = useState(initialLearningRate)
