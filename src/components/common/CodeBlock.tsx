@@ -48,6 +48,7 @@ export function CodeBlock({
           language={language}
           style={isDark ? oneDark : oneLight}
           showLineNumbers={showLineNumbers}
+          wrapLines={true}
           lineNumberStyle={{
             minWidth: '2.5em',
             paddingRight: '1em',
