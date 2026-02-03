@@ -316,7 +316,7 @@ export function GradientDescentExplorer({
       </div>
 
       {/* Controls */}
-      <div className="flex flex-wrap gap-4 items-center">
+      <div className="flex flex-wrap gap-4 items-center justify-center">
         <div className="flex gap-2">
           <Button
             variant="outline"
@@ -358,7 +358,7 @@ export function GradientDescentExplorer({
       </div>
 
       {/* Stats */}
-      <div className="flex flex-wrap gap-4 text-sm">
+      <div className="flex flex-wrap gap-4 text-sm justify-center">
         <div className="px-3 py-2 rounded-md bg-muted">
           <span className="text-muted-foreground">Step: </span>
           <span className="font-mono">{stepCount}</span>
@@ -378,12 +378,12 @@ export function GradientDescentExplorer({
       </div>
 
       {/* Update rule */}
-      <div className="p-3 rounded-md bg-muted/50 font-mono text-sm">
-        θ_new = {position.toFixed(2)} - {learningRate.toFixed(2)} × ({currentGradient.toFixed(2)})
+      <div className="p-3 rounded-md bg-muted/50 font-mono text-sm text-center">
+        θ<sub>new</sub> = {position.toFixed(2)} - {learningRate.toFixed(2)} × ({currentGradient.toFixed(2)})
         = {(position - learningRate * currentGradient).toFixed(3)}
       </div>
 
-      <p className="text-xs text-muted-foreground">
+      <p className="text-xs text-muted-foreground text-center">
         Watch the ball roll down the loss curve. The <span className="text-red-400">red arrow</span> shows
         the gradient (slope) direction. The <span className="text-green-400">green arrow</span> shows
         the update direction (opposite to gradient). Click &quot;Step&quot; to move one step at a time.

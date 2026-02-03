@@ -372,7 +372,7 @@ export function LinearFitExplorer({
 
       {/* MSE Display */}
       {showMSE && (
-        <div className="flex flex-wrap gap-4 text-sm">
+        <div className="flex flex-wrap gap-4 text-sm justify-center">
           <div className="px-3 py-2 rounded-md bg-muted flex items-center gap-2">
             <span className="text-muted-foreground">MSE:</span>
             <span className={`font-mono font-bold ${getMSEColor()}`}>{mse.toFixed(3)}</span>

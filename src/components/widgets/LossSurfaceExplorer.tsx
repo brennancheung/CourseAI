@@ -422,7 +422,7 @@ export function LossSurfaceExplorer() {
       </div>
 
       {/* Stats */}
-      <div className="flex flex-wrap gap-4 text-sm">
+      <div className="flex flex-wrap gap-4 text-sm justify-center">
         <div className="px-3 py-2 rounded-md bg-muted">
           <span className="text-muted-foreground">Current MSE: </span>
           <span className="font-mono">{mse.toFixed(3)}</span>
@@ -434,7 +434,7 @@ export function LossSurfaceExplorer() {
         </div>
       </div>
 
-      <p className="text-xs text-muted-foreground">
+      <p className="text-xs text-muted-foreground text-center">
         Use the sliders to explore the loss surface. The orange point shows your current position.
         The green point marks the optimal (minimum loss) parameters. Drag to rotate the 3D view.
       </p>
