@@ -294,3 +294,112 @@ import { Suspense } from 'react'
   </Suspense>
 </Canvas>
 ```
+
+---
+
+## Custom Widgets Library
+
+Pre-built interactive components for common ML concepts. Import from `@/components/widgets`.
+
+### LinearFitExplorer
+
+Interactive line fitting with draggable slope/intercept controls.
+
+```tsx
+import { LinearFitExplorer } from '@/components/widgets'
+
+<LinearFitExplorer
+  showResiduals={true}      // Show error lines to the fit
+  showMSE={true}            // Display MSE calculation
+  initialSlope={0.5}
+  initialIntercept={0}
+  interactive={true}        // Allow dragging
+  height={400}
+/>
+```
+
+**Used in:** Linear Regression, Loss Functions lessons
+
+---
+
+### LossSurfaceExplorer
+
+3D visualization of loss landscape with parameter sliders.
+
+```tsx
+import { LossSurfaceExplorer } from '@/components/widgets'
+
+<LossSurfaceExplorer />
+```
+
+**Features:**
+- 3D rotatable loss surface
+- Sliders for slope/intercept
+- Shows optimal minimum point
+- Connected 2D line preview
+
+**Used in:** Loss Functions lesson
+
+---
+
+### GradientDescentExplorer
+
+Animated gradient descent on a 1D loss curve.
+
+```tsx
+import { GradientDescentExplorer } from '@/components/widgets'
+
+<GradientDescentExplorer
+  showLearningRateSlider={true}
+  initialLearningRate={0.3}
+  initialPosition={-2}
+  showGradientArrow={true}
+  // Optional: custom loss function
+  lossFunction={(x) => x * x}
+  lossFunctionDerivative={(x) => 2 * x}
+/>
+```
+
+**Features:**
+- Animated ball rolling downhill
+- Gradient and update direction arrows
+- Step-by-step or continuous animation
+- Configurable learning rate
+
+**Used in:** Gradient Descent lesson
+
+---
+
+### LearningRateExplorer
+
+Side-by-side comparison of different learning rates.
+
+```tsx
+import { LearningRateExplorer } from '@/components/widgets'
+
+// Comparison mode: shows 4 panels with different LRs
+<LearningRateExplorer mode="comparison" />
+
+// Interactive mode: single panel with adjustable LR
+<LearningRateExplorer mode="interactive" />
+```
+
+**Features:**
+- Shows too small / just right / too large / diverging
+- Demonstrates oscillation and divergence
+- Clear visual comparison
+
+**Used in:** Learning Rate Deep Dive lesson
+
+---
+
+## Widget Design Guidelines
+
+When creating new widgets:
+
+1. **Make them reusable** — Accept props for customization
+2. **Document usage** — Add JSDoc comments and update this file
+3. **Consider mobile** — Use responsive sizing
+4. **Add controls** — Sliders, buttons, toggles increase engagement
+5. **Show the math** — Display equations/values that change with interaction
+6. **Export from index.ts** — Add to `@/components/widgets/index.ts`

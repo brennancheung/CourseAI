@@ -27,8 +27,26 @@ export type Exercise = {
   content?: string
 }
 
-// TODO: Populate with AI/ML lessons
-export const exercises: Record<string, Exercise> = {}
+// Import exercises from lesson modules
+import {
+  whatIsLearningExercise,
+  linearRegressionExercise,
+  lossFunctionsExercise,
+  gradientDescentExercise,
+  learningRateExercise,
+  implementingLinearRegressionExercise,
+} from '@/components/lessons/module-1-1'
+
+// Register all exercises
+export const exercises: Record<string, Exercise> = {
+  // Module 1.1: The Learning Problem
+  [whatIsLearningExercise.slug]: whatIsLearningExercise,
+  [linearRegressionExercise.slug]: linearRegressionExercise,
+  [lossFunctionsExercise.slug]: lossFunctionsExercise,
+  [gradientDescentExercise.slug]: gradientDescentExercise,
+  [learningRateExercise.slug]: learningRateExercise,
+  [implementingLinearRegressionExercise.slug]: implementingLinearRegressionExercise,
+}
 
 // Get all exercises as array
 export const getAllExercises = (): Exercise[] => Object.values(exercises)
