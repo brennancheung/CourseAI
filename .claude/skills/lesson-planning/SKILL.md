@@ -136,6 +136,27 @@ import { CodeBlock } from '@/components/common/CodeBlock'
 
 **Hydration safety:** The component handles SSR by defaulting to dark theme until mounted, avoiding hydration mismatches.
 
+### ClipboardCopy Component
+
+Reusable clipboard copy button from `@/components/common/ClipboardCopy`.
+
+```tsx
+import { ClipboardCopy } from '@/components/common/ClipboardCopy'
+
+<ClipboardCopy text="content to copy" />
+<ClipboardCopy text={code} className="h-7 w-7" />
+<ClipboardCopy text={url} label="Copy URL" />
+```
+
+**Props:**
+- `text` — Content to copy (required)
+- `variant` — Button variant: `'ghost'` (default), `'default'`, `'outline'`
+- `size` — Button size: `'icon'` (default), `'sm'`, `'default'`, `'lg'`
+- `label` — Optional text label (shows "Copied!" on success)
+- `className` — Additional classes
+
+Uses `useTimeout` hook for the 2-second "copied" state reset.
+
 ### Google Colab Notebooks
 
 For hands-on exercises, link to Colab notebooks stored in the `/notebooks/` directory.
