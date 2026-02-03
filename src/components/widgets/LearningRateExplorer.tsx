@@ -134,9 +134,11 @@ function SimulationPanel({
           />
           <span className="font-medium text-sm">{label}</span>
         </div>
-        <span className="font-mono text-xs text-muted-foreground">
-          α = {currentLR}
-        </span>
+        {!showSlider && (
+          <span className="font-mono text-xs text-muted-foreground">
+            α = {currentLR}
+          </span>
+        )}
       </div>
 
       <div className="rounded-lg border bg-card overflow-hidden">
@@ -203,21 +205,50 @@ function SimulationPanel({
       </div>
 
       {showSlider && (
-        <div className="flex items-center gap-2">
-          <input
-            type="range"
-            min="0.01"
-            max="1.2"
-            step="0.01"
-            value={currentLR}
-            onChange={(e) => {
-              const newLR = parseFloat(e.target.value)
-              setCurrentLR(newLR)
-              onLearningRateChange?.(newLR)
-              reset()
-            }}
-            className="flex-1"
-          />
+        <div className="space-y-2">
+          <div className="flex items-center gap-3">
+            <span className="font-mono text-sm text-orange-400 w-16">α = {currentLR.toFixed(2)}</span>
+            <input
+              type="range"
+              min="0.01"
+              max="1.2"
+              step="0.01"
+              value={currentLR}
+              onChange={(e) => {
+                const newLR = parseFloat(e.target.value)
+                setCurrentLR(newLR)
+                onLearningRateChange?.(newLR)
+                reset()
+              }}
+              className="flex-1"
+            />
+          </div>
+          <div className="flex gap-2 text-xs">
+            <span className="text-muted-foreground">Presets:</span>
+            {[
+              { value: 0.1, label: '0.1', desc: 'slow' },
+              { value: 0.5, label: '0.5', desc: 'good' },
+              { value: 0.9, label: '0.9', desc: 'oscillating' },
+              { value: 1.05, label: '1.05', desc: 'diverges' },
+            ].map((preset) => (
+              <button
+                key={preset.value}
+                onClick={() => {
+                  setCurrentLR(preset.value)
+                  onLearningRateChange?.(preset.value)
+                  reset()
+                }}
+                className={`px-2 py-0.5 rounded border transition-colors ${
+                  Math.abs(currentLR - preset.value) < 0.01
+                    ? 'border-orange-500 bg-orange-500/20 text-orange-400'
+                    : 'border-muted hover:border-muted-foreground hover:bg-muted'
+                }`}
+                title={preset.desc}
+              >
+                {preset.label}
+              </button>
+            ))}
+          </div>
         </div>
       )}
 
