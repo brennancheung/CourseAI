@@ -2,9 +2,10 @@
 
 import { use } from 'react'
 import { notFound } from 'next/navigation'
-import { getExercise } from '@/lib/exercises'
+import { curriculum, findNodeBySlug, isLesson } from '@/data/curriculum'
 
 // Import lesson components
+// These are mapped by the lessonComponent field in curriculum data
 import {
   WhatIsLearningLesson,
   LinearRegressionLesson,
@@ -14,14 +15,15 @@ import {
   ImplementingLinearRegressionLesson,
 } from '@/components/lessons/module-1-1'
 
-// Map slugs to lesson components
-const lessonComponents: Record<string, React.ComponentType> = {
-  'what-is-learning': WhatIsLearningLesson,
-  'linear-regression': LinearRegressionLesson,
-  'loss-functions': LossFunctionsLesson,
-  'gradient-descent': GradientDescentLesson,
-  'learning-rate': LearningRateLesson,
-  'implementing-linear-regression': ImplementingLinearRegressionLesson,
+// Map lessonComponent names to actual components
+// This is the only place components need to be registered
+const componentRegistry: Record<string, React.ComponentType> = {
+  WhatIsLearningLesson,
+  LinearRegressionLesson,
+  LossFunctionsLesson,
+  GradientDescentLesson,
+  LearningRateLesson,
+  ImplementingLinearRegressionLesson,
 }
 
 interface LessonPageProps {
@@ -31,17 +33,23 @@ interface LessonPageProps {
 export default function LessonPage({ params }: LessonPageProps) {
   const { slug } = use(params)
 
-  // Check if exercise exists
-  const exercise = getExercise(slug)
-  if (!exercise) {
+  // Find the lesson in curriculum
+  const node = findNodeBySlug(curriculum, slug)
+
+  // Must exist and be a lesson (leaf node)
+  if (!node || !isLesson(node)) {
     notFound()
   }
 
-  // Get the lesson component
-  const LessonComponent = lessonComponents[slug]
+  // Must have a component registered
+  const componentName = node.lessonComponent
+  if (!componentName) {
+    notFound()
+  }
+
+  const LessonComponent = componentRegistry[componentName]
   if (!LessonComponent) {
-    // If no custom component, could render a default template
-    // For now, show not found
+    console.error(`Missing component registration for: ${componentName}`)
     notFound()
   }
 
