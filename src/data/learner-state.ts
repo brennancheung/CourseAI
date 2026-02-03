@@ -3,7 +3,7 @@
  *
  * This file is updated by Claude Code after review conversations.
  * It captures the current state of skill development, active struggles,
- * and patterns discovered through practice.
+ * and patterns discovered through learning sessions.
  *
  * Don't update this on every session — only when there's a meaningful shift.
  */
@@ -29,7 +29,7 @@ export type LearnerState = {
   // Skill assessments from review conversations
   skills: Record<string, SkillAssessment>
 
-  // Active struggles to address in upcoming exercises
+  // Active struggles to address in upcoming lessons
   struggles: Struggle[]
 
   // Patterns noticed across sessions
@@ -37,7 +37,7 @@ export type LearnerState = {
 
   // Preferences discovered
   preferences: {
-    preferredKeys?: string[]
+    preferredTopics?: string[]
     sessionLength?: string
     notes?: string
   }
@@ -47,92 +47,94 @@ export type LearnerState = {
  * Current learner state
  *
  * Updated by Claude Code based on review conversations.
- * Initial state reflects baseline from venture notes.
+ * Initial state reflects baseline from CLAUDE.md.
  */
 export const learnerState: LearnerState = {
-  lastUpdated: '2026-01-17',
+  lastUpdated: '2026-02-02',
 
   skills: {
-    // Foundations
-    'daw-navigation': {
+    // Deep Learning Fundamentals
+    'ml-intuition': {
       level: 'learning',
-      notes: 'Basic Cubase navigation. Knows some shortcuts but still learning workflow.',
+      notes: 'Previous DL course (pre-transformer era). Understands concepts but rusty on details.',
     },
-    'midi-recording': {
+    'linear-models': {
       level: 'learning',
-      notes: 'Can record MIDI. Limited experience with editing and quantizing.',
+      notes: 'Knows the basics. Needs refresher on implementation.',
     },
-    'layering-basics': {
-      level: 'unexplored',
-      notes: 'Mostly single-track playing so far.',
-    },
-
-    // Orchestration
-    'string-voicing': {
-      level: 'unexplored',
-      notes: 'Has piano voicing intuition. Needs to learn orchestral distribution.',
-    },
-    'brass-basics': {
+    'loss-functions': {
       level: 'unexplored',
       notes: '',
     },
-    'woodwind-color': {
+    'gradient-descent': {
       level: 'unexplored',
       notes: '',
     },
-
-    // Hybrid
-    'braams': {
+    'backprop': {
       level: 'unexplored',
-      notes: 'Knows the sound, not how to create it.',
+      notes: 'Learned before but forgotten. Needs animated walkthrough.',
     },
-    'risers-drops': {
+    'activation-functions': {
       level: 'unexplored',
       notes: '',
     },
-    'hybrid-blending': {
+    'regularization': {
       level: 'unexplored',
       notes: '',
     },
 
-    // Rhythm
-    'percussion-layering': {
+    // Math Foundations
+    'calculus': {
+      level: 'learning',
+      notes: 'High school calculus. Familiar with more through self-study.',
+    },
+    'linear-algebra': {
+      level: 'learning',
+      notes: 'Basic matrix operations. Needs practice with transformations.',
+    },
+
+    // PyTorch / Implementation
+    'python': {
+      level: 'comfortable',
+      notes: 'Strong programming background.',
+    },
+    'numpy': {
+      level: 'learning',
+      notes: 'Can use but not fluent.',
+    },
+    'pytorch': {
+      level: 'unexplored',
+      notes: 'Has used AI tools but not trained models.',
+    },
+
+    // Transformers & LLMs
+    'attention': {
+      level: 'unexplored',
+      notes: 'Knows it exists. Needs deep dive on mechanics.',
+    },
+    'transformers': {
+      level: 'unexplored',
+      notes: 'Primary learning goal.',
+    },
+    'llm-training': {
       level: 'unexplored',
       notes: '',
     },
-    'rhythm-ostinatos': {
-      level: 'unexplored',
-      notes: '',
-    },
-    'rhythm-accents': {
+    'lora': {
       level: 'unexplored',
       notes: '',
     },
 
-    // Emotion
-    'tension-building': {
-      level: 'unexplored',
-      notes: 'Has intuitive sense from listening. Needs technical vocabulary.',
-    },
-    'release-resolution': {
+    // Diffusion Models
+    'diffusion-basics': {
       level: 'unexplored',
       notes: '',
     },
-    'quiet-intensity': {
+    'stable-diffusion': {
       level: 'unexplored',
       notes: '',
     },
-
-    // Production
-    'mixing-basics': {
-      level: 'unexplored',
-      notes: '',
-    },
-    'reverb-space': {
-      level: 'unexplored',
-      notes: '',
-    },
-    'final-polish': {
+    'sd-finetuning': {
       level: 'unexplored',
       notes: '',
     },
@@ -141,15 +143,16 @@ export const learnerState: LearnerState = {
   struggles: [],
 
   patterns: [
-    'ADHD: needs very constrained exercises to avoid paralysis',
-    'Piano background: thinks in terms of keyboard voicings',
-    'Prefers C# minor as comfort zone',
+    'ADHD: needs constrained lessons with clear objectives',
+    'Previous DL course was pre-transformer era',
+    'Learns best with interactive visualizations',
+    'Strong programming background — can implement if shown the math',
   ],
 
   preferences: {
-    preferredKeys: ['C# minor', 'C minor'],
+    preferredTopics: ['transformers', 'llms', 'stable-diffusion'],
     sessionLength: '15-25 min',
-    notes: 'Responds well to clear constraints and single-focus exercises.',
+    notes: 'Goal is deep intuition, not just surface understanding.',
   },
 }
 

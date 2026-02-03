@@ -432,10 +432,10 @@ export function LessonHeader({
 //
 // GradientCard - Single standalone card with gradient background
 //   Use for: Feature highlights, categorized info, any content needing visual prominence
-//   Colors convey meaning: amber=orchestral, blue=electronic, cyan=build, orange=impact, purple=resolve
+//   Colors convey meaning: amber=warning, blue=primary, cyan=info, orange=highlight, purple=insight
 //
 // ComparisonRow - Two side-by-side gradient cards
-//   Use for: A vs B comparisons, contrasting approaches, before/after, orchestral vs electronic
+//   Use for: A vs B comparisons, contrasting approaches, before/after
 //   Always use with two complementary colors (e.g., amber+blue, cyan+orange)
 //
 // PhaseCard - Numbered sequential card with icon
