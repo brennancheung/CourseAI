@@ -8,13 +8,171 @@ This document covers the visualization and interactive libraries available for b
 |---------|----------|--------|
 | **react-konva** | Interactive canvases (primary choice) | `import { Stage, Layer, Circle } from 'react-konva'` |
 | **ZoomableCanvas** | Pan/zoom wrapper for react-konva | `import { ZoomableCanvas } from '@/components/canvas/ZoomableCanvas'` |
-| **ExpandableWidget** | Fullscreen modal for any widget | `import { ExpandableWidget } from '@/components/widgets/ExpandableWidget'` |
+| **ExercisePanel** | Bordered panel with header + fullscreen | `import { ExercisePanel } from '@/components/widgets/ExercisePanel'` |
 | **Visx** | Custom 2D visualizations, neural net diagrams | `import { Group, Line } from '@visx/visx'` |
 | **React Three Fiber** | 3D visualizations | `import { Canvas } from '@react-three/fiber'` |
 | **Recharts** | Training curves, metrics, standard charts | `import { LineChart, Line } from 'recharts'` |
 | **KaTeX** | Math formula rendering | `import { InlineMath, BlockMath } from 'react-katex'` |
 
 > **Note:** We previously used Mafs but found it unreliable for complex interactions. react-konva provides better control over the canvas and supports pan/zoom natively.
+
+---
+
+## ExercisePanel — Compound Component for Exercises
+
+**Always wrap interactive widgets in ExercisePanel.** It provides:
+- Visible border around the entire exercise
+- Header with title and expand button
+- Fullscreen modal for larger viewing
+- Automatic width/height passing to child widgets
+
+### Basic Usage (Shorthand)
+
+```tsx
+import { ExercisePanel } from '@/components/widgets/ExercisePanel'
+import { GradientDescentExplorer } from '@/components/widgets/GradientDescentExplorer'
+
+<ExercisePanel title="Watch Gradient Descent in Action">
+  <GradientDescentExplorer />
+</ExercisePanel>
+```
+
+### With Subtitle
+
+```tsx
+<ExercisePanel title="Find the Sweet Spot" subtitle="Experiment with different learning rates">
+  <LearningRateExplorer mode="interactive" />
+</ExercisePanel>
+```
+
+### Compound Component Syntax (Advanced)
+
+For custom headers or more control:
+
+```tsx
+<ExercisePanel>
+  <ExercisePanel.Header title="Custom Title" subtitle="With subtitle" />
+  <ExercisePanel.Content>
+    <MyWidget />
+  </ExercisePanel.Content>
+</ExercisePanel>
+```
+
+### How It Works
+
+1. **Inline view:** Shows bordered card with header (title + expand icon) and content
+2. **User clicks expand:** Modal opens at 90vw width, 90vh max height
+3. **ResizeObserver** measures actual container width
+4. **Passes dimensions:** Child receives `width` (measured) and `height` (60% of viewport)
+5. **Close:** ESC key, click outside, or click minimize icon
+
+### Requirements for Child Widgets
+
+Widgets must accept optional `width` and `height` props with sensible defaults:
+
+```tsx
+type MyWidgetProps = {
+  width?: number   // Will be ~90vw when expanded
+  height?: number  // Will be ~60vh when expanded
+}
+
+export function MyWidget({ width = 600, height = 350 }: MyWidgetProps) {
+  return (
+    <div className="space-y-4">
+      <ZoomableCanvas width={width} height={height}>
+        {/* Canvas content */}
+      </ZoomableCanvas>
+
+      {/* Controls - MUST be centered for wide canvases */}
+      <div className="flex flex-wrap gap-4 items-center justify-center">
+        {/* buttons, sliders */}
+      </div>
+    </div>
+  )
+}
+```
+
+### Important: No Duplicate Titles
+
+**Do NOT put a heading above ExercisePanel.** The panel header IS the title:
+
+```tsx
+// ❌ WRONG - duplicate titles
+<h3>Gradient Descent</h3>
+<ExercisePanel title="Gradient Descent">
+  ...
+</ExercisePanel>
+
+// ✅ CORRECT - panel provides the title
+<ExercisePanel title="Gradient Descent">
+  ...
+</ExercisePanel>
+```
+
+---
+
+## Widget Layout Guidelines
+
+### Center Controls When Canvas is Wide
+
+When a canvas expands to fullscreen, left-aligned controls look awkward. **Always center:**
+
+```tsx
+{/* Controls */}
+<div className="flex flex-wrap gap-4 items-center justify-center">
+  <Button>Run</Button>
+  <Button>Step</Button>
+  <input type="range" />
+</div>
+
+{/* Stats */}
+<div className="flex flex-wrap gap-4 text-sm justify-center">
+  <div className="px-3 py-2 rounded-md bg-muted">Loss: 0.5</div>
+</div>
+
+{/* Help text */}
+<p className="text-xs text-muted-foreground text-center">
+  Click "Step" to move one step at a time.
+</p>
+```
+
+### Widget Structure Pattern
+
+```tsx
+export function MyWidget({ width = 600, height = 350 }: Props) {
+  return (
+    <div className="space-y-4">
+      {/* 1. Canvas - full width */}
+      <div className="rounded-lg border bg-card overflow-hidden">
+        <ZoomableCanvas width={width} height={height} backgroundColor="#1a1a2e">
+          {/* Konva elements */}
+        </ZoomableCanvas>
+      </div>
+
+      {/* 2. Controls - centered */}
+      <div className="flex flex-wrap gap-4 items-center justify-center">
+        <Button>...</Button>
+        <Slider />
+      </div>
+
+      {/* 3. Stats/info - centered */}
+      <div className="flex flex-wrap gap-4 text-sm justify-center">
+        <div className="px-3 py-2 rounded-md bg-muted">...</div>
+      </div>
+
+      {/* 4. Dynamic equation display - centered */}
+      <div className="p-3 rounded-md bg-muted/50 font-mono text-sm text-center">
+        θ_new = ...
+      </div>
+
+      {/* 5. Help text - centered */}
+      <p className="text-xs text-muted-foreground text-center">
+        Interaction instructions here.
+      </p>
+    </div>
+  )
+}
+```
 
 ---
 
@@ -129,60 +287,6 @@ function InteractiveVisualization() {
 
 ---
 
-## ExpandableWidget — Fullscreen Modal
-
-Wraps any widget to provide a fullscreen expansion option. Essential for complex visualizations that benefit from more space.
-
-```tsx
-import { ExpandableWidget } from '@/components/widgets/ExpandableWidget'
-import { LinearFitExplorer } from '@/components/widgets/LinearFitExplorer'
-
-function LessonSection() {
-  return (
-    <ExpandableWidget title="Try Fitting a Line">
-      <LinearFitExplorer showResiduals={true} />
-    </ExpandableWidget>
-  )
-}
-```
-
-### Features
-
-- **Hover to reveal** — Expand button appears on hover (top-right corner)
-- **Fullscreen modal** — Dark backdrop, widget fills available space
-- **Keyboard support** — Press ESC to close
-- **Click outside** — Click backdrop to close
-- **Responsive sizing** — Passes expanded `width` and `height` to child
-
-### How It Works
-
-1. Widget renders inline at its default size
-2. User hovers → expand icon appears
-3. User clicks expand → modal opens with widget at full size
-4. Widget receives new `width` and `height` props automatically
-
-### Requirements for Child Widgets
-
-Child widgets must accept optional `width` and `height` props:
-
-```tsx
-type MyWidgetProps = {
-  // ... other props
-  width?: number
-  height?: number
-}
-
-export function MyWidget({ width = 600, height = 400 }: MyWidgetProps) {
-  return (
-    <ZoomableCanvas width={width} height={height}>
-      {/* ... */}
-    </ZoomableCanvas>
-  )
-}
-```
-
----
-
 ## Custom Widgets Library
 
 Pre-built interactive components for common ML concepts. Import directly from their files (no barrel exports).
@@ -194,16 +298,14 @@ Interactive line fitting with draggable slope/intercept controls.
 ```tsx
 import { LinearFitExplorer } from '@/components/widgets/LinearFitExplorer'
 
-<ExpandableWidget title="Linear Regression">
+<ExercisePanel title="Try Fitting a Line">
   <LinearFitExplorer
     showResiduals={true}      // Show error lines to the fit
     showMSE={true}            // Display MSE calculation
     initialSlope={0.5}
     initialIntercept={0}
-    width={600}               // Optional, has default
-    height={400}              // Optional, has default
   />
-</ExpandableWidget>
+</ExercisePanel>
 ```
 
 **Features:**
@@ -224,16 +326,14 @@ Animated gradient descent on a 1D loss curve.
 ```tsx
 import { GradientDescentExplorer } from '@/components/widgets/GradientDescentExplorer'
 
-<ExpandableWidget title="Gradient Descent">
+<ExercisePanel title="Watch Gradient Descent in Action">
   <GradientDescentExplorer
     showLearningRateSlider={true}
     initialLearningRate={0.15}
     initialPosition={-2.5}
     showGradientArrow={true}
-    width={600}
-    height={350}
   />
-</ExpandableWidget>
+</ExercisePanel>
 ```
 
 **Features:**
@@ -259,9 +359,9 @@ import { LearningRateExplorer } from '@/components/widgets/LearningRateExplorer'
 <LearningRateExplorer mode="comparison" />
 
 // Interactive mode: single panel with adjustable LR
-<ExpandableWidget title="Find the Sweet Spot">
+<ExercisePanel title="Find the Sweet Spot" subtitle="Experiment with different learning rates">
   <LearningRateExplorer mode="interactive" />
-</ExpandableWidget>
+</ExercisePanel>
 ```
 
 **Features:**
@@ -281,9 +381,9 @@ import { LearningRateExplorer } from '@/components/widgets/LearningRateExplorer'
 ```tsx
 import { LossSurfaceExplorer } from '@/components/widgets/LossSurfaceExplorer'
 
-<ExpandableWidget title="Loss Landscape">
+<ExercisePanel title="Explore the Loss Surface">
   <LossSurfaceExplorer />
-</ExpandableWidget>
+</ExercisePanel>
 ```
 
 **Features:**
@@ -296,59 +396,141 @@ import { LossSurfaceExplorer } from '@/components/widgets/LossSurfaceExplorer'
 
 ---
 
-## Canvas Primitives (Atoms)
+## Lesson Integration Patterns
 
-Reusable building blocks for creating new widgets. Located in `@/components/canvas/primitives/`.
+### Placing Widgets in Lessons
 
-### Grid
-
-```tsx
-import { Grid } from '@/components/canvas/primitives/Grid'
-
-<Grid spacing={1} color="#333355" opacity={0.5} />
-```
-
-### Axis
+Use the `Row` component for layout. ExercisePanel goes in `Row.Content`:
 
 ```tsx
-import { Axis } from '@/components/canvas/primitives/Axis'
+import { Row } from '@/components/layout/Row'
+import { ExercisePanel } from '@/components/widgets/ExercisePanel'
+import { TryThisBlock } from '@/components/lessons'
 
-<Axis
-  showArrows={true}
-  color="#666688"
-  labelSpacing={1}
-  showLabels={true}
-  xLabel="θ"
-  yLabel="L(θ)"
-/>
+<Row>
+  <Row.Content>
+    <ExercisePanel title="Watch Gradient Descent in Action">
+      <GradientDescentExplorer />
+    </ExercisePanel>
+  </Row.Content>
+  <Row.Aside>
+    <TryThisBlock title="Experiment">
+      <ul className="space-y-2 text-sm">
+        <li>Click "Step" to see one update at a time</li>
+        <li>Try different learning rates</li>
+      </ul>
+    </TryThisBlock>
+  </Row.Aside>
+</Row>
 ```
 
-### Curve
+### Checklist for Adding a Widget to a Lesson
+
+1. Import the widget and ExercisePanel
+2. Wrap widget in ExercisePanel with descriptive title
+3. Put ExercisePanel inside `Row.Content`
+4. Add a `TryThisBlock` in `Row.Aside` with interaction hints
+5. **Do NOT add an h3 or SectionHeader above the panel** — the panel header is the title
+
+---
+
+## Creating New Widgets
+
+### Template
 
 ```tsx
-import { Curve } from '@/components/canvas/primitives/Curve'
+'use client'
 
-<Curve
-  fn={(x) => x * x}  // Function to plot
-  color="#6366f1"
-  strokeWidth={2}
-  samples={200}
-/>
+import { useState, useCallback } from 'react'
+import { Circle, Line, Text, Arrow } from 'react-konva'
+import { ZoomableCanvas } from '@/components/canvas/ZoomableCanvas'
+import { Button } from '@/components/ui/button'
+
+type MyWidgetProps = {
+  width?: number
+  height?: number
+  initialValue?: number
+}
+
+export function MyWidget({
+  width = 600,
+  height = 350,
+  initialValue = 0,
+}: MyWidgetProps) {
+  const [value, setValue] = useState(initialValue)
+
+  // Coordinate transforms for math → pixels
+  const VIEW = { xMin: -4, xMax: 4, yMin: -1, yMax: 10 }
+  const toPixelX = (x: number) => ((x - VIEW.xMin) / (VIEW.xMax - VIEW.xMin)) * width
+  const toPixelY = (y: number) => height - ((y - VIEW.yMin) / (VIEW.yMax - VIEW.yMin)) * height
+
+  const reset = useCallback(() => {
+    setValue(initialValue)
+  }, [initialValue])
+
+  return (
+    <div className="space-y-4">
+      {/* Canvas */}
+      <div className="rounded-lg border bg-card overflow-hidden">
+        <ZoomableCanvas width={width} height={height} backgroundColor="#1a1a2e">
+          {/* Grid lines, axes, curve, interactive elements */}
+          <Circle x={toPixelX(value)} y={toPixelY(value * value)} radius={12} fill="#f97316" />
+        </ZoomableCanvas>
+      </div>
+
+      {/* Controls - CENTERED */}
+      <div className="flex flex-wrap gap-4 items-center justify-center">
+        <Button variant="outline" size="sm" onClick={() => setValue(v => v + 0.1)}>
+          Step
+        </Button>
+        <Button variant="outline" size="sm" onClick={reset}>
+          Reset
+        </Button>
+        <div className="flex items-center gap-2">
+          <span className="text-sm text-muted-foreground">Value:</span>
+          <input
+            type="range"
+            min="-3"
+            max="3"
+            step="0.1"
+            value={value}
+            onChange={(e) => setValue(parseFloat(e.target.value))}
+            className="w-32"
+          />
+          <span className="font-mono text-sm w-12">{value.toFixed(2)}</span>
+        </div>
+      </div>
+
+      {/* Stats - CENTERED */}
+      <div className="flex flex-wrap gap-4 text-sm justify-center">
+        <div className="px-3 py-2 rounded-md bg-muted">
+          <span className="text-muted-foreground">Value: </span>
+          <span className="font-mono">{value.toFixed(3)}</span>
+        </div>
+      </div>
+
+      {/* Help text - CENTERED */}
+      <p className="text-xs text-muted-foreground text-center">
+        Drag the slider or click Step to change the value. The ball shows the current position.
+      </p>
+    </div>
+  )
+}
 ```
 
-### Ball
+### Widget Design Checklist
 
-```tsx
-import { Ball } from '@/components/canvas/primitives/Ball'
-
-<Ball
-  x={1}           // Math coordinates
-  y={2}
-  radius={10}     // Pixels
-  color="#f97316"
-  label="minimum"
-/>
-```
+- [ ] Accept `width` and `height` props with sensible defaults
+- [ ] Use `ZoomableCanvas` for pan/zoom support
+- [ ] Center all controls with `justify-center`
+- [ ] Center all stats with `justify-center`
+- [ ] Center help text with `text-center`
+- [ ] Wrap canvas in `rounded-lg border bg-card overflow-hidden`
+- [ ] Use `space-y-4` for vertical spacing
+- [ ] Show updating values (equations, stats) that respond to interaction
+- [ ] Add brief help text explaining how to interact
+- [ ] Default learning rate around 0.15 (not 0.5 — too high causes divergence)
+- [ ] Clamp positions to prevent elements flying off screen
 
 ---
 
@@ -437,6 +619,7 @@ function TrainingCurve({ data }) {
       </LineChart>
     </ResponsiveContainer>
   )
+</ResponsiveContainer>
 }
 ```
 
@@ -465,56 +648,32 @@ function GradientFormula() {
 
 ---
 
-## Widget Design Guidelines
+## Lessons Learned
 
-When creating new widgets:
+### Mafs → react-konva Migration
 
-1. **Use react-konva** — Primary choice for interactive visualizations
-2. **Wrap with ZoomableCanvas** — Users expect pan/zoom on any canvas
-3. **Accept width/height props** — Required for ExpandableWidget compatibility
-4. **Use ExpandableWidget in lessons** — Always wrap interactive widgets
-5. **Create sensible defaults** — Widget should look good without any props
-6. **Show values that change** — Display equations/numbers that update with interaction
-7. **Consider touch** — Pan/zoom should work on mobile
-8. **Add help text** — Brief instruction on how to interact
+We started with Mafs but found:
+- ViewBox issues caused content to render off-screen
+- High learning rates made balls "disappear" (flew off viewport)
+- No native pan/zoom support
+- Coordinate transform bugs
 
-### Template for New Widgets
+react-konva solved all of these with direct pixel control.
 
-```tsx
-'use client'
+### Default Values Matter
 
-import { useState } from 'react'
-import { Circle, Line, Text } from 'react-konva'
-import { ZoomableCanvas } from '@/components/canvas/ZoomableCanvas'
+- **Learning rate default: 0.15** (not 0.5) — 0.5 is too high and causes immediate oscillation
+- **Initial position: -2 to -2.5** — gives room to show the descent before reaching minimum
+- **Canvas height: 350px** inline, **60vh** expanded — good balance of visibility
 
-type MyWidgetProps = {
-  width?: number
-  height?: number
-  // ... other props
-}
+### Fullscreen Must Show Everything
 
-export function MyWidget({
-  width = 600,
-  height = 400,
-}: MyWidgetProps) {
-  const [value, setValue] = useState(0)
+The fullscreen modal must show the ENTIRE exercise (canvas + controls + stats), not just the canvas. Users need to interact with controls while viewing the larger canvas.
 
-  // Coordinate transforms
-  const VIEW = { xMin: -4, xMax: 4, yMin: -2, yMax: 4 }
-  const toPixelX = (x: number) => ((x - VIEW.xMin) / (VIEW.xMax - VIEW.xMin)) * width
-  const toPixelY = (y: number) => height - ((y - VIEW.yMin) / (VIEW.yMax - VIEW.yMin)) * height
+### Avoid Duplicate Titles
 
-  return (
-    <div className="space-y-4">
-      <ZoomableCanvas width={width} height={height}>
-        {/* Canvas content */}
-      </ZoomableCanvas>
+When ExercisePanel has a title, don't add an h3 or SectionHeader above it. The panel header IS the title.
 
-      {/* Controls below canvas */}
-      <div className="flex gap-4">
-        {/* Sliders, buttons, etc. */}
-      </div>
-    </div>
-  )
-}
-```
+### Use Tailwind for Layout, ResizeObserver for Measurement
+
+Don't use `window.innerWidth` directly for layout. Use Tailwind classes (90vw, 90vh) for the modal, then ResizeObserver to measure actual pixel dimensions for the canvas.
