@@ -9,14 +9,13 @@ type CodeBlockProps = {
   code: string
   language?: string
   filename?: string
-  showLineNumbers?: boolean
 }
 
 /**
  * Syntax-highlighted code block using Prism via react-syntax-highlighter
  *
  * Features:
- * - Line numbers
+ * - Line numbers (fainter, separated from code)
  * - Theme-aware (dark/light mode)
  * - Optional filename header
  */
@@ -24,7 +23,6 @@ export function CodeBlock({
   code,
   language = 'python',
   filename,
-  showLineNumbers = true,
 }: CodeBlockProps) {
   const { resolvedTheme } = useTheme()
   const [mounted, setMounted] = useState(false)
@@ -43,12 +41,11 @@ export function CodeBlock({
           {filename}
         </div>
       )}
-      <div className="text-sm overflow-x-auto">
+      <div className="text-xs overflow-x-auto">
         <SyntaxHighlighter
           language={language}
           style={isDark ? oneDark : oneLight}
-          showLineNumbers={showLineNumbers}
-          wrapLines={true}
+          showLineNumbers
           lineNumberStyle={{
             minWidth: '2.5em',
             paddingRight: '1em',
@@ -57,13 +54,13 @@ export function CodeBlock({
           }}
           customStyle={{
             margin: 0,
-            padding: '1rem',
-            background: isDark ? '#282c34' : '#fafafa',
+            padding: '0.5rem',
+            background: 'transparent',
             fontSize: 'inherit',
           }}
           codeTagProps={{
             style: {
-              fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace',
+              fontFamily: 'inherit',
             },
           }}
         >

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useCallback, useRef, useEffect, useMemo } from 'react'
+import { useState, useCallback, useRef, useEffect } from 'react'
 import { Line, Circle, Text, Arrow, Rect } from 'react-konva'
 import { ZoomableCanvas } from '@/components/canvas/ZoomableCanvas'
 import { Button } from '@/components/ui/button'
@@ -91,13 +91,10 @@ export function TrainingLoopExplorer({
   const trueW = 1.5
   const trueB = 2
 
-  // Generate data once
-  const data = useMemo(
-    () => generateData(numPoints, trueW, trueB, 3),
-    [numPoints]
-  )
+  // Generate data only on client to avoid hydration mismatch
+  const [data, setData] = useState<{ X: number[]; y: number[] } | null>(null)
 
-  // Model parameters
+  // Model parameters - must be declared before early return
   const [w, setW] = useState(0)
   const [b, setB] = useState(0)
   const [learningRate, setLearningRate] = useState(initialLearningRate)
@@ -108,30 +105,13 @@ export function TrainingLoopExplorer({
   const animationRef = useRef<number | null>(null)
   const lastStepTime = useRef<number>(0)
 
-  // Current loss
-  const currentLoss = computeLoss(data.X, data.y, w, b)
+  useEffect(() => {
+    setData(generateData(numPoints, trueW, trueB, 3))
+  }, [numPoints])
 
-  // Layout: split canvas into data view (left) and loss chart (right)
-  const dataWidth = Math.floor(width * 0.65)
-  const chartWidth = width - dataWidth - 20
-  const chartHeight = height - 60
-
-  // Coordinate transforms for data view
-  const toDataX = (x: number) =>
-    ((x - DATA_VIEW.xMin) / (DATA_VIEW.xMax - DATA_VIEW.xMin)) * dataWidth
-  const toDataY = (y: number) =>
-    height - ((y - DATA_VIEW.yMin) / (DATA_VIEW.yMax - DATA_VIEW.yMin)) * height
-
-  // Coordinate transforms for loss chart
-  const chartX = dataWidth + 20
-  const chartY = 30
-  const toLossX = (e: number) =>
-    chartX + (Math.min(e, LOSS_VIEW.xMax) / LOSS_VIEW.xMax) * chartWidth
-  const toLossY = (l: number) =>
-    chartY + chartHeight - (Math.min(l, LOSS_VIEW.yMax) / LOSS_VIEW.yMax) * chartHeight
-
-  // Single training step
+  // Single training step - must be before early return
   const doStep = useCallback(() => {
+    if (!data) return
     const { dw, db } = computeGradients(data.X, data.y, w, b)
     const newW = w - learningRate * dw
     const newB = b - learningRate * db
@@ -141,11 +121,11 @@ export function TrainingLoopExplorer({
     setB(newB)
     setLossHistory((prev) => [...prev, newLoss])
     setEpoch((e) => e + 1)
-  }, [data.X, data.y, w, b, learningRate])
+  }, [data, w, b, learningRate])
 
-  // Animation loop
+  // Animation loop - must be before early return
   useEffect(() => {
-    if (!isRunning) {
+    if (!isRunning || !data) {
       if (animationRef.current) cancelAnimationFrame(animationRef.current)
       return
     }
@@ -169,9 +149,9 @@ export function TrainingLoopExplorer({
     return () => {
       if (animationRef.current) cancelAnimationFrame(animationRef.current)
     }
-  }, [isRunning, doStep, epoch])
+  }, [isRunning, doStep, epoch, data])
 
-  // Reset
+  // Reset - must be before early return
   const reset = useCallback(() => {
     setIsRunning(false)
     setW(0)
@@ -179,6 +159,37 @@ export function TrainingLoopExplorer({
     setEpoch(0)
     setLossHistory([])
   }, [])
+
+  // Show nothing until data is generated (avoids hydration mismatch)
+  if (!data) {
+    return (
+      <div className="flex items-center justify-center" style={{ width, height }}>
+        <div className="text-muted-foreground">Loading...</div>
+      </div>
+    )
+  }
+
+  // Current loss
+  const currentLoss = computeLoss(data.X, data.y, w, b)
+
+  // Layout: split canvas into data view (left) and loss chart (right)
+  const dataWidth = Math.floor(width * 0.65)
+  const chartWidth = width - dataWidth - 20
+  const chartHeight = height - 60
+
+  // Coordinate transforms for data view
+  const toDataX = (x: number) =>
+    ((x - DATA_VIEW.xMin) / (DATA_VIEW.xMax - DATA_VIEW.xMin)) * dataWidth
+  const toDataY = (y: number) =>
+    height - ((y - DATA_VIEW.yMin) / (DATA_VIEW.yMax - DATA_VIEW.yMin)) * height
+
+  // Coordinate transforms for loss chart
+  const chartX = dataWidth + 20
+  const chartY = 30
+  const toLossX = (e: number) =>
+    chartX + (Math.min(e, LOSS_VIEW.xMax) / LOSS_VIEW.xMax) * chartWidth
+  const toLossY = (l: number) =>
+    chartY + chartHeight - (Math.min(l, LOSS_VIEW.yMax) / LOSS_VIEW.yMax) * chartHeight
 
   // Generate line points for current model
   const linePoints = [
