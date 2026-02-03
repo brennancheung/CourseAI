@@ -6,319 +6,271 @@ This document covers the visualization and interactive libraries available for b
 
 | Library | Use Case | Import |
 |---------|----------|--------|
-| **Mafs** | Interactive math (plots, draggable points) | `import { Mafs, Plot, Point } from 'mafs'` |
+| **react-konva** | Interactive canvases (primary choice) | `import { Stage, Layer, Circle } from 'react-konva'` |
+| **ZoomableCanvas** | Pan/zoom wrapper for react-konva | `import { ZoomableCanvas } from '@/components/canvas/ZoomableCanvas'` |
+| **ExpandableWidget** | Fullscreen modal for any widget | `import { ExpandableWidget } from '@/components/widgets/ExpandableWidget'` |
 | **Visx** | Custom 2D visualizations, neural net diagrams | `import { Group, Line } from '@visx/visx'` |
 | **React Three Fiber** | 3D visualizations | `import { Canvas } from '@react-three/fiber'` |
 | **Recharts** | Training curves, metrics, standard charts | `import { LineChart, Line } from 'recharts'` |
 | **KaTeX** | Math formula rendering | `import { InlineMath, BlockMath } from 'react-katex'` |
 
+> **Note:** We previously used Mafs but found it unreliable for complex interactions. react-konva provides better control over the canvas and supports pan/zoom natively.
+
 ---
 
-## Mafs — Interactive Math
+## react-konva — Primary Interactive Canvas
 
-Best for: Function plots, coordinate planes, draggable points, geometric visualizations.
+Best for: Any interactive visualization with draggable elements, animations, or custom graphics.
+
+### Why react-konva over Mafs?
+
+- **Full control** — Direct pixel manipulation, no viewBox issues
+- **Reliable rendering** — Canvas-based, not SVG coordinate transforms
+- **Pan/zoom support** — Built-in stage dragging and wheel zoom
+- **Touch support** — Pinch-to-zoom works out of the box
+- **Performance** — Canvas is faster for many animated elements
+
+### Basic Usage
 
 ```tsx
 'use client'
-import { Mafs, Coordinates, Plot, Point, useMovablePoint } from 'mafs'
-import 'mafs/core.css'
 
-function SigmoidExplorer() {
-  const point = useMovablePoint([0, 0.5])
+import { Stage, Layer, Circle, Line, Text } from 'react-konva'
 
+function SimpleCanvas() {
   return (
-    <Mafs>
-      <Coordinates.Cartesian />
-      <Plot.OfX y={(x) => 1 / (1 + Math.exp(-x))} color="#3b82f6" />
-      <Point x={point.x} y={point.y} color="#ef4444" />
-      {point.element}
-    </Mafs>
+    <Stage width={600} height={400} style={{ backgroundColor: '#1a1a2e' }}>
+      <Layer>
+        <Circle x={100} y={100} radius={20} fill="#f97316" />
+        <Line points={[0, 200, 600, 200]} stroke="#666" strokeWidth={2} />
+        <Text x={50} y={50} text="Hello" fontSize={16} fill="#fff" />
+      </Layer>
+    </Stage>
   )
 }
 ```
 
-**Key features:**
-- `useMovablePoint` — Draggable points for exploration
-- `Plot.OfX`, `Plot.Parametric` — Function plotting
-- `Vector`, `Line`, `Circle`, `Polygon` — Geometric primitives
-- `Transform` — Rotate, translate, scale groups of elements
+### Coordinate Transformation Pattern
 
-**When to use:** Activation functions, loss landscapes, decision boundaries, linear algebra concepts.
+For math visualizations, create transform functions to convert between math coordinates and pixel coordinates:
 
-**Docs:** https://mafs.dev/
+```tsx
+// Viewport in math coordinates
+const VIEW = {
+  xMin: -4,
+  xMax: 4,
+  yMin: -2,
+  yMax: 4,
+}
+
+// Transform functions
+const toPixelX = (x: number) => ((x - VIEW.xMin) / (VIEW.xMax - VIEW.xMin)) * width
+const toPixelY = (y: number) => height - ((y - VIEW.yMin) / (VIEW.yMax - VIEW.yMin)) * height
+
+// Usage
+<Circle x={toPixelX(mathX)} y={toPixelY(mathY)} radius={10} fill="#f97316" />
+```
+
+### Key Konva Components
+
+- `Circle`, `Rect`, `Line`, `Arrow` — Basic shapes
+- `Text` — Labels (note: limited font support on canvas)
+- `Group` — Group elements together
+- `Image` — Render images on canvas
+
+**Docs:** https://konvajs.org/docs/react/
 
 ---
 
-## Visx — Custom 2D Visualizations
+## ZoomableCanvas — Pan/Zoom Wrapper
 
-Best for: Neural network diagrams, custom data visualizations, anything Recharts can't handle.
+Wraps a react-konva Stage with pan and zoom support.
 
 ```tsx
-'use client'
-import { Group } from '@visx/group'
-import { LinePath } from '@visx/shape'
-import { scaleLinear } from '@visx/scale'
+import { ZoomableCanvas } from '@/components/canvas/ZoomableCanvas'
+import { Circle, Line } from 'react-konva'
 
-function NeuralNetworkLayer({ nodes, width, height }) {
-  const yScale = scaleLinear({
-    domain: [0, nodes - 1],
-    range: [20, height - 20],
-  })
-
+function InteractiveVisualization() {
   return (
-    <svg width={width} height={height}>
-      <Group>
-        {Array.from({ length: nodes }).map((_, i) => (
-          <circle
-            key={i}
-            cx={width / 2}
-            cy={yScale(i)}
-            r={15}
-            fill="#3b82f6"
-          />
-        ))}
-      </Group>
-    </svg>
+    <ZoomableCanvas
+      width={600}
+      height={400}
+      backgroundColor="#1a1a2e"
+      minScale={0.25}
+      maxScale={4}
+    >
+      <Circle x={300} y={200} radius={20} fill="#f97316" />
+      <Line points={[0, 200, 600, 200]} stroke="#666" />
+    </ZoomableCanvas>
   )
 }
 ```
 
-**Key modules:**
-- `@visx/shape` — Lines, areas, bars, arcs
-- `@visx/scale` — D3 scales for mapping data to pixels
-- `@visx/axis` — Axis components
-- `@visx/gradient` — SVG gradients
-- `@visx/group` — SVG grouping with transforms
+### Features
 
-**When to use:** Neural network architecture diagrams, attention visualizations, custom animated charts, anything requiring fine SVG control.
+- **Mouse wheel zoom** — Scroll to zoom, centered on cursor position
+- **Trackpad pinch** — Two-finger pinch gesture
+- **Touch pinch** — Works on mobile/tablets
+- **Drag to pan** — Click and drag to move the canvas
+- **Double-click reset** — Returns to initial view
 
-**Docs:** https://airbnb.io/visx/
+### Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `width` | number | required | Canvas width in pixels |
+| `height` | number | required | Canvas height in pixels |
+| `backgroundColor` | string | `'#1a1a2e'` | Background color |
+| `minScale` | number | `0.25` | Minimum zoom level |
+| `maxScale` | number | `4` | Maximum zoom level |
+| `initialScale` | number | `1` | Starting zoom level |
+| `initialX` | number | `0` | Starting X offset |
+| `initialY` | number | `0` | Starting Y offset |
 
 ---
 
-## React Three Fiber — 3D Visualizations
+## ExpandableWidget — Fullscreen Modal
 
-Best for: 3D neural networks, high-dimensional data projections, weight space visualizations.
+Wraps any widget to provide a fullscreen expansion option. Essential for complex visualizations that benefit from more space.
 
 ```tsx
-'use client'
-import { Canvas } from '@react-three/fiber'
-import { OrbitControls, Sphere } from '@react-three/drei'
+import { ExpandableWidget } from '@/components/widgets/ExpandableWidget'
+import { LinearFitExplorer } from '@/components/widgets/LinearFitExplorer'
 
-function Neuron3D({ position, color = '#3b82f6' }) {
+function LessonSection() {
   return (
-    <Sphere position={position} args={[0.2, 32, 32]}>
-      <meshStandardMaterial color={color} />
-    </Sphere>
-  )
-}
-
-function NeuralNet3D() {
-  return (
-    <Canvas camera={{ position: [0, 0, 5] }}>
-      <ambientLight intensity={0.5} />
-      <pointLight position={[10, 10, 10]} />
-      <Neuron3D position={[-1, 0, 0]} />
-      <Neuron3D position={[0, 1, 0]} />
-      <Neuron3D position={[1, 0, 0]} />
-      <OrbitControls />
-    </Canvas>
+    <ExpandableWidget title="Try Fitting a Line">
+      <LinearFitExplorer showResiduals={true} />
+    </ExpandableWidget>
   )
 }
 ```
 
-**Key @react-three/drei helpers:**
-- `OrbitControls` — Mouse-controlled camera rotation
-- `Sphere`, `Box`, `Plane` — Basic geometry
-- `Line` — 3D lines (for connections)
-- `Text` — 3D text labels
-- `Html` — Embed HTML in 3D scene
+### Features
 
-**Leva for controls:**
+- **Hover to reveal** — Expand button appears on hover (top-right corner)
+- **Fullscreen modal** — Dark backdrop, widget fills available space
+- **Keyboard support** — Press ESC to close
+- **Click outside** — Click backdrop to close
+- **Responsive sizing** — Passes expanded `width` and `height` to child
+
+### How It Works
+
+1. Widget renders inline at its default size
+2. User hovers → expand icon appears
+3. User clicks expand → modal opens with widget at full size
+4. Widget receives new `width` and `height` props automatically
+
+### Requirements for Child Widgets
+
+Child widgets must accept optional `width` and `height` props:
+
 ```tsx
-import { useControls } from 'leva'
-
-function Scene() {
-  const { learningRate } = useControls({ learningRate: { value: 0.01, min: 0, max: 1 } })
-  // ... use learningRate
+type MyWidgetProps = {
+  // ... other props
+  width?: number
+  height?: number
 }
-```
 
-**When to use:** 3D network architectures, t-SNE/UMAP projections, loss surface exploration, impressive "wow factor" visualizations.
-
-**Docs:** https://docs.pmnd.rs/react-three-fiber/
-
----
-
-## Recharts — Standard Charts
-
-Best for: Training curves, loss/accuracy plots, metrics dashboards, any standard chart type.
-
-```tsx
-'use client'
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts'
-
-const trainingData = [
-  { epoch: 1, loss: 2.5, accuracy: 0.3 },
-  { epoch: 2, loss: 1.8, accuracy: 0.5 },
-  { epoch: 3, loss: 1.2, accuracy: 0.7 },
-  // ...
-]
-
-function TrainingCurve() {
+export function MyWidget({ width = 600, height = 400 }: MyWidgetProps) {
   return (
-    <ResponsiveContainer width="100%" height={300}>
-      <LineChart data={trainingData}>
-        <CartesianGrid strokeDasharray="3 3" />
-        <XAxis dataKey="epoch" />
-        <YAxis />
-        <Tooltip />
-        <Legend />
-        <Line type="monotone" dataKey="loss" stroke="#ef4444" />
-        <Line type="monotone" dataKey="accuracy" stroke="#22c55e" />
-      </LineChart>
-    </ResponsiveContainer>
+    <ZoomableCanvas width={width} height={height}>
+      {/* ... */}
+    </ZoomableCanvas>
   )
 }
-```
-
-**Available chart types:** LineChart, AreaChart, BarChart, ScatterChart, PieChart, RadarChart, etc.
-
-**When to use:** Training metrics, performance comparisons, data distributions, any "standard" chart.
-
-**Docs:** https://recharts.org/
-
----
-
-## KaTeX — Math Formula Rendering
-
-Best for: Inline and block math notation in lessons.
-
-```tsx
-'use client'
-import 'katex/dist/katex.min.css'
-import { InlineMath, BlockMath } from 'react-katex'
-
-function AttentionFormula() {
-  return (
-    <div>
-      <p>
-        The attention function is <InlineMath math="softmax(QK^T / \sqrt{d_k})V" />
-      </p>
-
-      <BlockMath math={String.raw`
-        \text{Attention}(Q, K, V) = \text{softmax}\left(\frac{QK^T}{\sqrt{d_k}}\right)V
-      `} />
-    </div>
-  )
-}
-```
-
-**Tips:**
-- Use `String.raw` for complex formulas to avoid escaping backslashes
-- Import the CSS once in your layout or component
-- `InlineMath` for formulas within text, `BlockMath` for centered display
-
-**When to use:** Any mathematical notation — loss functions, gradients, attention equations, etc.
-
-**Docs:** https://katex.org/docs/supported.html
-
----
-
-## Decision Guide
-
-### "I want to show a mathematical function"
-→ **Mafs** if interactive (user can drag points, explore)
-→ **Recharts** if just plotting data points
-→ **KaTeX** if just showing the equation
-
-### "I want to visualize a neural network"
-→ **Visx** for 2D diagrams (cleaner, simpler)
-→ **React Three Fiber** for 3D (more impressive, more complex)
-
-### "I want to show training progress"
-→ **Recharts** (LineChart with loss/accuracy)
-
-### "I want to explain attention/transformers"
-→ **Mafs** for attention weight heatmaps (interactive)
-→ **Visx** for custom attention visualizations
-→ **KaTeX** for the math formulas
-
-### "I want something impressive for the landing page"
-→ **React Three Fiber** with animated 3D neural network
-
----
-
-## Common Patterns
-
-### Wrapper Component for Client-Side Only
-
-Many of these libraries need `'use client'` and may have SSR issues:
-
-```tsx
-'use client'
-import dynamic from 'next/dynamic'
-
-const MafsPlot = dynamic(() => import('./MafsPlot'), { ssr: false })
-
-export function LessonWithPlot() {
-  return (
-    <div>
-      <p>Here's an interactive visualization:</p>
-      <MafsPlot />
-    </div>
-  )
-}
-```
-
-### Responsive Container
-
-Always wrap visualizations in responsive containers:
-
-```tsx
-<div className="w-full aspect-video">
-  <Mafs>...</Mafs>
-</div>
-```
-
-### Loading States
-
-For heavy 3D scenes:
-
-```tsx
-import { Suspense } from 'react'
-
-<Canvas>
-  <Suspense fallback={null}>
-    <HeavyModel />
-  </Suspense>
-</Canvas>
 ```
 
 ---
 
 ## Custom Widgets Library
 
-Pre-built interactive components for common ML concepts. Import from `@/components/widgets`.
+Pre-built interactive components for common ML concepts. Import directly from their files (no barrel exports).
 
 ### LinearFitExplorer
 
 Interactive line fitting with draggable slope/intercept controls.
 
 ```tsx
-import { LinearFitExplorer } from '@/components/widgets'
+import { LinearFitExplorer } from '@/components/widgets/LinearFitExplorer'
 
-<LinearFitExplorer
-  showResiduals={true}      // Show error lines to the fit
-  showMSE={true}            // Display MSE calculation
-  initialSlope={0.5}
-  initialIntercept={0}
-  interactive={true}        // Allow dragging
-  height={400}
-/>
+<ExpandableWidget title="Linear Regression">
+  <LinearFitExplorer
+    showResiduals={true}      // Show error lines to the fit
+    showMSE={true}            // Display MSE calculation
+    initialSlope={0.5}
+    initialIntercept={0}
+    width={600}               // Optional, has default
+    height={400}              // Optional, has default
+  />
+</ExpandableWidget>
 ```
 
+**Features:**
+- Draggable numbers in equation (drag left/right to adjust)
+- Sliders for fine control
+- MSE display with color feedback (green=optimal, red=poor)
+- Shows optimal solution for comparison
+- Pan/zoom support via ZoomableCanvas
+
 **Used in:** Linear Regression, Loss Functions lessons
+
+---
+
+### GradientDescentExplorer
+
+Animated gradient descent on a 1D loss curve.
+
+```tsx
+import { GradientDescentExplorer } from '@/components/widgets/GradientDescentExplorer'
+
+<ExpandableWidget title="Gradient Descent">
+  <GradientDescentExplorer
+    showLearningRateSlider={true}
+    initialLearningRate={0.15}
+    initialPosition={-2.5}
+    showGradientArrow={true}
+    width={600}
+    height={350}
+  />
+</ExpandableWidget>
+```
+
+**Features:**
+- Animated ball rolling downhill
+- Gradient (red) and update (green) direction arrows
+- Step-by-step or continuous animation
+- Learning rate slider with sensible default (0.15)
+- Position clamping to prevent flying off screen
+- Pan/zoom support
+
+**Used in:** Gradient Descent lesson
+
+---
+
+### LearningRateExplorer
+
+Side-by-side comparison of different learning rates.
+
+```tsx
+import { LearningRateExplorer } from '@/components/widgets/LearningRateExplorer'
+
+// Comparison mode: shows 4 panels with different LRs
+<LearningRateExplorer mode="comparison" />
+
+// Interactive mode: single panel with adjustable LR
+<ExpandableWidget title="Find the Sweet Spot">
+  <LearningRateExplorer mode="interactive" />
+</ExpandableWidget>
+```
+
+**Features:**
+- Shows too small / just right / too large / diverging
+- Clickable preset buttons (0.1, 0.5, 0.9, 1.05)
+- Learning rate display next to slider
+- Demonstrates oscillation and divergence
+
+**Used in:** Learning Rate Deep Dive lesson
 
 ---
 
@@ -327,9 +279,11 @@ import { LinearFitExplorer } from '@/components/widgets'
 3D visualization of loss landscape with parameter sliders.
 
 ```tsx
-import { LossSurfaceExplorer } from '@/components/widgets'
+import { LossSurfaceExplorer } from '@/components/widgets/LossSurfaceExplorer'
 
-<LossSurfaceExplorer />
+<ExpandableWidget title="Loss Landscape">
+  <LossSurfaceExplorer />
+</ExpandableWidget>
 ```
 
 **Features:**
@@ -342,54 +296,172 @@ import { LossSurfaceExplorer } from '@/components/widgets'
 
 ---
 
-### GradientDescentExplorer
+## Canvas Primitives (Atoms)
 
-Animated gradient descent on a 1D loss curve.
+Reusable building blocks for creating new widgets. Located in `@/components/canvas/primitives/`.
+
+### Grid
 
 ```tsx
-import { GradientDescentExplorer } from '@/components/widgets'
+import { Grid } from '@/components/canvas/primitives/Grid'
 
-<GradientDescentExplorer
-  showLearningRateSlider={true}
-  initialLearningRate={0.3}
-  initialPosition={-2}
-  showGradientArrow={true}
-  // Optional: custom loss function
-  lossFunction={(x) => x * x}
-  lossFunctionDerivative={(x) => 2 * x}
+<Grid spacing={1} color="#333355" opacity={0.5} />
+```
+
+### Axis
+
+```tsx
+import { Axis } from '@/components/canvas/primitives/Axis'
+
+<Axis
+  showArrows={true}
+  color="#666688"
+  labelSpacing={1}
+  showLabels={true}
+  xLabel="θ"
+  yLabel="L(θ)"
 />
 ```
 
-**Features:**
-- Animated ball rolling downhill
-- Gradient and update direction arrows
-- Step-by-step or continuous animation
-- Configurable learning rate
+### Curve
 
-**Used in:** Gradient Descent lesson
+```tsx
+import { Curve } from '@/components/canvas/primitives/Curve'
+
+<Curve
+  fn={(x) => x * x}  // Function to plot
+  color="#6366f1"
+  strokeWidth={2}
+  samples={200}
+/>
+```
+
+### Ball
+
+```tsx
+import { Ball } from '@/components/canvas/primitives/Ball'
+
+<Ball
+  x={1}           // Math coordinates
+  y={2}
+  radius={10}     // Pixels
+  color="#f97316"
+  label="minimum"
+/>
+```
 
 ---
 
-### LearningRateExplorer
+## Other Libraries
 
-Side-by-side comparison of different learning rates.
+### Visx — Custom 2D SVG Visualizations
+
+Best for: Neural network diagrams, custom data visualizations, anything Recharts can't handle.
 
 ```tsx
-import { LearningRateExplorer } from '@/components/widgets'
+'use client'
+import { Group } from '@visx/group'
+import { scaleLinear } from '@visx/scale'
 
-// Comparison mode: shows 4 panels with different LRs
-<LearningRateExplorer mode="comparison" />
+function NeuralNetworkLayer({ nodes, width, height }) {
+  const yScale = scaleLinear({
+    domain: [0, nodes - 1],
+    range: [20, height - 20],
+  })
 
-// Interactive mode: single panel with adjustable LR
-<LearningRateExplorer mode="interactive" />
+  return (
+    <svg width={width} height={height}>
+      <Group>
+        {Array.from({ length: nodes }).map((_, i) => (
+          <circle key={i} cx={width / 2} cy={yScale(i)} r={15} fill="#3b82f6" />
+        ))}
+      </Group>
+    </svg>
+  )
+}
 ```
 
-**Features:**
-- Shows too small / just right / too large / diverging
-- Demonstrates oscillation and divergence
-- Clear visual comparison
+**When to use:** Neural network architecture diagrams, attention visualizations, static diagrams.
 
-**Used in:** Learning Rate Deep Dive lesson
+**Docs:** https://airbnb.io/visx/
+
+---
+
+### React Three Fiber — 3D Visualizations
+
+Best for: 3D neural networks, high-dimensional data projections, weight space visualizations.
+
+```tsx
+'use client'
+import { Canvas } from '@react-three/fiber'
+import { OrbitControls, Sphere } from '@react-three/drei'
+
+function NeuralNet3D() {
+  return (
+    <Canvas camera={{ position: [0, 0, 5] }}>
+      <ambientLight intensity={0.5} />
+      <pointLight position={[10, 10, 10]} />
+      <Sphere position={[0, 0, 0]} args={[0.2, 32, 32]}>
+        <meshStandardMaterial color="#3b82f6" />
+      </Sphere>
+      <OrbitControls />
+    </Canvas>
+  )
+}
+```
+
+**When to use:** 3D network architectures, loss surface exploration, impressive visualizations.
+
+**Docs:** https://docs.pmnd.rs/react-three-fiber/
+
+---
+
+### Recharts — Standard Charts
+
+Best for: Training curves, loss/accuracy plots, metrics dashboards.
+
+```tsx
+'use client'
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts'
+
+function TrainingCurve({ data }) {
+  return (
+    <ResponsiveContainer width="100%" height={300}>
+      <LineChart data={data}>
+        <CartesianGrid strokeDasharray="3 3" />
+        <XAxis dataKey="epoch" />
+        <YAxis />
+        <Tooltip />
+        <Line type="monotone" dataKey="loss" stroke="#ef4444" />
+        <Line type="monotone" dataKey="accuracy" stroke="#22c55e" />
+      </LineChart>
+    </ResponsiveContainer>
+  )
+}
+```
+
+**Docs:** https://recharts.org/
+
+---
+
+### KaTeX — Math Formula Rendering
+
+```tsx
+'use client'
+import 'katex/dist/katex.min.css'
+import { InlineMath, BlockMath } from 'react-katex'
+
+function GradientFormula() {
+  return (
+    <div>
+      <p>The gradient is <InlineMath math="\nabla L = 2(y - \hat{y})" /></p>
+      <BlockMath math={String.raw`\theta_{new} = \theta - \alpha \nabla L`} />
+    </div>
+  )
+}
+```
+
+**Docs:** https://katex.org/docs/supported.html
 
 ---
 
@@ -397,9 +469,52 @@ import { LearningRateExplorer } from '@/components/widgets'
 
 When creating new widgets:
 
-1. **Make them reusable** — Accept props for customization
-2. **Document usage** — Add JSDoc comments and update this file
-3. **Consider mobile** — Use responsive sizing
-4. **Add controls** — Sliders, buttons, toggles increase engagement
-5. **Show the math** — Display equations/values that change with interaction
-6. **Export from index.ts** — Add to `@/components/widgets/index.ts`
+1. **Use react-konva** — Primary choice for interactive visualizations
+2. **Wrap with ZoomableCanvas** — Users expect pan/zoom on any canvas
+3. **Accept width/height props** — Required for ExpandableWidget compatibility
+4. **Use ExpandableWidget in lessons** — Always wrap interactive widgets
+5. **Create sensible defaults** — Widget should look good without any props
+6. **Show values that change** — Display equations/numbers that update with interaction
+7. **Consider touch** — Pan/zoom should work on mobile
+8. **Add help text** — Brief instruction on how to interact
+
+### Template for New Widgets
+
+```tsx
+'use client'
+
+import { useState } from 'react'
+import { Circle, Line, Text } from 'react-konva'
+import { ZoomableCanvas } from '@/components/canvas/ZoomableCanvas'
+
+type MyWidgetProps = {
+  width?: number
+  height?: number
+  // ... other props
+}
+
+export function MyWidget({
+  width = 600,
+  height = 400,
+}: MyWidgetProps) {
+  const [value, setValue] = useState(0)
+
+  // Coordinate transforms
+  const VIEW = { xMin: -4, xMax: 4, yMin: -2, yMax: 4 }
+  const toPixelX = (x: number) => ((x - VIEW.xMin) / (VIEW.xMax - VIEW.xMin)) * width
+  const toPixelY = (y: number) => height - ((y - VIEW.yMin) / (VIEW.yMax - VIEW.yMin)) * height
+
+  return (
+    <div className="space-y-4">
+      <ZoomableCanvas width={width} height={height}>
+        {/* Canvas content */}
+      </ZoomableCanvas>
+
+      {/* Controls below canvas */}
+      <div className="flex gap-4">
+        {/* Sliders, buttons, etc. */}
+      </div>
+    </div>
+  )
+}
+```
