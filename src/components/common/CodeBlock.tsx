@@ -1,73 +1,73 @@
 'use client'
 
-import { useEffect, useState } from 'react'
-import { codeToHtml } from 'shiki'
+import { useState, useEffect } from 'react'
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
+import { oneDark, oneLight } from 'react-syntax-highlighter/dist/esm/styles/prism'
+import { useTheme } from 'next-themes'
 
 type CodeBlockProps = {
   code: string
   language?: string
   filename?: string
+  showLineNumbers?: boolean
 }
 
 /**
- * Syntax-highlighted code block using Shiki
+ * Syntax-highlighted code block using Prism via react-syntax-highlighter
  *
- * Uses VS Code's TextMate grammars for accurate highlighting.
- * Renders asynchronously since Shiki loads grammars on demand.
+ * Features:
+ * - Line numbers
+ * - Theme-aware (dark/light mode)
+ * - Optional filename header
  */
 export function CodeBlock({
   code,
   language = 'python',
   filename,
+  showLineNumbers = true,
 }: CodeBlockProps) {
-  const [html, setHtml] = useState<string>('')
-  const [isLoading, setIsLoading] = useState(true)
+  const { resolvedTheme } = useTheme()
+  const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
-    let cancelled = false
+    setMounted(true)
+  }, [])
 
-    async function highlight() {
-      try {
-        const result = await codeToHtml(code.trim(), {
-          lang: language,
-          theme: 'github-dark',
-        })
-        if (!cancelled) {
-          setHtml(result)
-          setIsLoading(false)
-        }
-      } catch (err) {
-        console.error('Shiki highlighting failed:', err)
-        if (!cancelled) {
-          setIsLoading(false)
-        }
-      }
-    }
-
-    highlight()
-    return () => {
-      cancelled = true
-    }
-  }, [code, language])
+  // Default to dark until mounted to avoid hydration mismatch
+  const isDark = !mounted || resolvedTheme === 'dark'
 
   return (
-    <div className="rounded-lg border border-border overflow-hidden bg-[#0d1117]">
+    <div className="rounded-lg border border-border overflow-hidden">
       {filename && (
         <div className="px-4 py-2 border-b border-border bg-muted/30 text-xs text-muted-foreground font-mono">
           {filename}
         </div>
       )}
-      <div className="overflow-x-auto">
-        {isLoading ? (
-          <pre className="p-4 font-mono text-sm text-muted-foreground">
-            <code>{code.trim()}</code>
-          </pre>
-        ) : (
-          <div
-            className="[&>pre]:p-4 [&>pre]:m-0 [&>pre]:bg-transparent [&>pre]:text-sm [&>pre]:leading-relaxed [&_code]:font-mono"
-            dangerouslySetInnerHTML={{ __html: html }}
-          />
-        )}
+      <div className="text-sm overflow-x-auto">
+        <SyntaxHighlighter
+          language={language}
+          style={isDark ? oneDark : oneLight}
+          showLineNumbers={showLineNumbers}
+          lineNumberStyle={{
+            minWidth: '2.5em',
+            paddingRight: '1em',
+            color: isDark ? 'rgb(156 163 175 / 0.5)' : 'rgb(107 114 128 / 0.5)',
+            userSelect: 'none',
+          }}
+          customStyle={{
+            margin: 0,
+            padding: '1rem',
+            background: isDark ? '#282c34' : '#fafafa',
+            fontSize: 'inherit',
+          }}
+          codeTagProps={{
+            style: {
+              fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace',
+            },
+          }}
+        >
+          {code.trim()}
+        </SyntaxHighlighter>
       </div>
     </div>
   )
