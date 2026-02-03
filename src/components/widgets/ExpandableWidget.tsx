@@ -8,12 +8,14 @@ import { Button } from '@/components/ui/button'
 /**
  * ExpandableWidget - Wrapper that allows any widget to be expanded to fullscreen
  *
+ * Wraps the ENTIRE widget (canvas + controls + stats) and shows it all in a modal.
+ *
  * Features:
  * - Shows widget inline at normal size
- * - Expand button opens fullscreen modal
+ * - Expand button opens fullscreen modal with entire widget
  * - ESC key closes modal
  * - Click backdrop to close
- * - Passes expanded dimensions to child widget
+ * - Passes expanded width to child for canvas sizing
  */
 
 type ExpandableWidgetProps = {
@@ -25,27 +27,26 @@ type ExpandableWidgetProps = {
 export function ExpandableWidget({ children, title }: ExpandableWidgetProps) {
   const [isExpanded, setIsExpanded] = useState(false)
   const [portalContainer, setPortalContainer] = useState<HTMLElement | null>(null)
-  const [dimensions, setDimensions] = useState({ width: 0, height: 0 })
+  const [expandedWidth, setExpandedWidth] = useState(900)
 
   // Set up portal container
   useEffect(() => {
     setPortalContainer(document.body)
   }, [])
 
-  // Calculate expanded dimensions
+  // Calculate expanded canvas width (leave room for padding)
   useEffect(() => {
     if (!isExpanded) return
 
-    const updateDimensions = () => {
-      // Leave padding for header and margins
-      const width = Math.min(window.innerWidth - 48, 1200)
-      const height = window.innerHeight - 120
-      setDimensions({ width, height })
+    const updateWidth = () => {
+      // Max canvas width, leaving room for modal padding
+      const width = Math.min(window.innerWidth - 96, 1000)
+      setExpandedWidth(width)
     }
 
-    updateDimensions()
-    window.addEventListener('resize', updateDimensions)
-    return () => window.removeEventListener('resize', updateDimensions)
+    updateWidth()
+    window.addEventListener('resize', updateWidth)
+    return () => window.removeEventListener('resize', updateWidth)
   }, [isExpanded])
 
   // Handle ESC key
@@ -80,29 +81,26 @@ export function ExpandableWidget({ children, title }: ExpandableWidgetProps) {
     }
   }, [])
 
-  // Clone child with expanded dimensions when in modal
-  const renderChild = (expanded: boolean) => {
+  // Clone child with expanded width when in modal
+  const renderExpandedChild = () => {
     if (!isValidElement(children)) return children
 
-    if (expanded) {
-      return cloneElement(children, {
-        width: dimensions.width,
-        height: dimensions.height,
-      })
-    }
-
-    return children
+    // Pass larger width for canvas, let height be natural
+    return cloneElement(children, {
+      width: expandedWidth,
+      // Don't pass height - let widget determine its own height
+    })
   }
 
   return (
     <>
       {/* Inline view with expand button */}
       <div className="relative group">
-        {renderChild(false)}
+        {children}
         <Button
           variant="ghost"
           size="icon"
-          className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity bg-background/80 hover:bg-background"
+          className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity bg-background/80 hover:bg-background z-10"
           onClick={() => setIsExpanded(true)}
           title="Expand to fullscreen"
         >
@@ -113,37 +111,36 @@ export function ExpandableWidget({ children, title }: ExpandableWidgetProps) {
       {/* Fullscreen modal */}
       {isExpanded && portalContainer && createPortal(
         <div
-          className="fixed inset-0 z-50 bg-black/90 flex flex-col items-center justify-center p-6"
+          className="fixed inset-0 z-50 bg-black/90 flex items-start justify-center overflow-y-auto py-8"
           onClick={handleBackdropClick}
         >
-          {/* Header */}
-          <div className="w-full max-w-[1200px] flex items-center justify-between mb-4">
-            {title && (
-              <h2 className="text-lg font-semibold text-white">{title}</h2>
-            )}
-            <div className="flex-1" />
-            <Button
-              variant="ghost"
-              size="icon"
-              className="text-white hover:bg-white/10"
-              onClick={() => setIsExpanded(false)}
-            >
-              <X className="w-5 h-5" />
-            </Button>
-          </div>
+          <div className="bg-card rounded-lg p-6 max-w-[1100px] w-full mx-6 relative">
+            {/* Header */}
+            <div className="flex items-center justify-between mb-4">
+              {title && (
+                <h2 className="text-xl font-semibold">{title}</h2>
+              )}
+              <div className="flex-1" />
+              <Button
+                variant="ghost"
+                size="icon"
+                className="hover:bg-muted"
+                onClick={() => setIsExpanded(false)}
+              >
+                <X className="w-5 h-5" />
+              </Button>
+            </div>
 
-          {/* Widget container */}
-          <div
-            className="bg-card rounded-lg overflow-hidden"
-            style={{ width: dimensions.width, height: dimensions.height }}
-          >
-            {renderChild(true)}
-          </div>
+            {/* Widget content - full widget with controls */}
+            <div>
+              {renderExpandedChild()}
+            </div>
 
-          {/* Help text */}
-          <p className="text-white/50 text-sm mt-4">
-            Press ESC or click outside to close • Scroll to zoom • Drag to pan • Double-click to reset
-          </p>
+            {/* Help text */}
+            <p className="text-muted-foreground text-sm mt-4 text-center">
+              Press ESC or click outside to close
+            </p>
+          </div>
         </div>,
         portalContainer
       )}
