@@ -89,26 +89,29 @@ function Header({ title, subtitle }: HeaderProps) {
 }
 
 type ContentProps = {
-  children: ReactElement<{ width?: number }>
+  children: ReactElement<{ width?: number; height?: number }>
 }
 
 function Content({ children }: ContentProps) {
   const { isExpanded } = useExercisePanelContext()
   const containerRef = useRef<HTMLDivElement>(null)
-  const [measuredWidth, setMeasuredWidth] = useState<number | undefined>(undefined)
+  const [dimensions, setDimensions] = useState<{ width: number; height: number } | undefined>(undefined)
 
-  // Measure container width when expanded
+  // Measure container when expanded
   useEffect(() => {
     if (!isExpanded || !containerRef.current) {
-      setMeasuredWidth(undefined)
+      setDimensions(undefined)
       return
     }
 
     const observer = new ResizeObserver((entries) => {
       const entry = entries[0]
       if (entry) {
-        // Subtract padding (p-4 = 16px * 2)
-        setMeasuredWidth(entry.contentRect.width)
+        const width = entry.contentRect.width
+        // Calculate canvas height: use ~60% of viewport height for canvas
+        // This leaves room for controls, header, and padding
+        const canvasHeight = Math.max(window.innerHeight * 0.6, 400)
+        setDimensions({ width, height: canvasHeight })
       }
     })
 
@@ -116,13 +119,14 @@ function Content({ children }: ContentProps) {
     return () => observer.disconnect()
   }, [isExpanded])
 
-  // Clone child with measured width when in fullscreen
+  // Clone child with measured dimensions when in fullscreen
   const renderChild = () => {
     if (!isValidElement(children)) return children
 
-    if (isExpanded && measuredWidth) {
+    if (isExpanded && dimensions) {
       return cloneElement(children, {
-        width: measuredWidth,
+        width: dimensions.width,
+        height: dimensions.height,
       })
     }
 
