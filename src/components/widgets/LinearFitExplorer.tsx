@@ -328,13 +328,6 @@ export function LinearFitExplorer({
             color="#8b5cf6"
             label="intercept"
           />
-          <button
-            onClick={() => setIntercept(-intercept)}
-            className="ml-1 text-xs text-muted-foreground hover:text-foreground px-1 rounded hover:bg-muted"
-            title="Toggle sign"
-          >
-            ±
-          </button>
         </div>
         <p className="text-xs text-muted-foreground mt-2">
           Drag the <span className="text-orange-400 font-medium">orange</span> and{' '}
