@@ -17,7 +17,8 @@ import {
 import { Exercise } from '@/lib/exercises'
 import 'katex/dist/katex.min.css'
 import { BlockMath } from 'react-katex'
-import { ExternalLink, Code2 } from 'lucide-react'
+import { ExercisePanel } from '@/components/widgets/ExercisePanel'
+import { TrainingLoopExplorer } from '@/components/widgets/TrainingLoopExplorer'
 
 /**
  * Lesson 1.1.6: Implementing Linear Regression
@@ -27,7 +28,7 @@ import { ExternalLink, Code2 } from 'lucide-react'
  * - NumPy implementation
  * - Computing gradients by hand
  * - Training loop structure
- * - Google Colab notebook
+ * - Interactive training visualization
  */
 
 export const implementingLinearRegressionExercise: Exercise = {
@@ -83,39 +84,19 @@ export function ImplementingLinearRegressionLesson() {
         </Row.Aside>
       </Row>
 
-      {/* Colab Link */}
+      {/* Interactive Training Loop */}
       <Row>
         <Row.Content>
-          <div className="rounded-lg border-2 border-primary/50 bg-primary/5 p-6">
-            <div className="flex items-start gap-4">
-              <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
-                <Code2 className="w-6 h-6 text-primary" />
-              </div>
-              <div className="space-y-3">
-                <div>
-                  <h3 className="font-semibold text-lg">Open the Notebook</h3>
-                  <p className="text-sm text-muted-foreground">
-                    This lesson is built around a hands-on Colab notebook. Open it
-                    to follow along and run the code yourself.
-                  </p>
-                </div>
-                <a
-                  href="https://colab.research.google.com/github/YOUR_USERNAME/CourseAI-notebooks/blob/main/1-1-6-linear-regression.ipynb"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 px-4 py-2 rounded-md bg-primary text-primary-foreground font-medium text-sm hover:bg-primary/90 transition-colors"
-                >
-                  <ExternalLink className="w-4 h-4" />
-                  Open in Google Colab
-                </a>
-                <p className="text-xs text-muted-foreground">
-                  The notebook will open in Colab. Save a copy to your Drive to
-                  edit and run the cells.
-                </p>
-              </div>
-            </div>
-          </div>
+          <ExercisePanel title="Training Loop Explorer">
+            <TrainingLoopExplorer />
+          </ExercisePanel>
         </Row.Content>
+        <Row.Aside>
+          <InsightBlock title="Watch the Learning">
+            This is what happens inside the training loop. Each step computes
+            gradients and nudges the parameters toward better values.
+          </InsightBlock>
+        </Row.Aside>
       </Row>
 
       {/* Section 1: The Training Loop */}
@@ -191,7 +172,8 @@ export function ImplementingLinearRegressionLesson() {
         <Row.Aside>
           <TipBlock title="Chain Rule">
             These gradients come from applying the chain rule to the MSE
-            formula. In the notebook, we derive them step by step.
+            formula. The key: derivative of squared error flows back through
+            the prediction.
           </TipBlock>
         </Row.Aside>
       </Row>
@@ -205,7 +187,7 @@ export function ImplementingLinearRegressionLesson() {
           />
           <div className="space-y-4">
             <p className="text-muted-foreground">
-              In the notebook, you&apos;ll implement:
+              Here&apos;s what the code looks like:
             </p>
             <div className="rounded-lg bg-muted/50 p-4 font-mono text-sm space-y-2">
               <p className="text-muted-foreground"># Generate synthetic data</p>
@@ -255,23 +237,23 @@ export function ImplementingLinearRegressionLesson() {
           />
           <div className="space-y-4">
             <p className="text-muted-foreground">
-              When you run the notebook, you&apos;ll see:
+              In the interactive explorer above, watch for:
             </p>
             <ul className="list-disc list-inside text-muted-foreground space-y-2 ml-4">
               <li>
-                <strong>Loss decreasing:</strong> The MSE drops from high to low
+                <strong>Loss decreasing:</strong> The red loss curve drops as training progresses
               </li>
               <li>
                 <strong>Parameters converging:</strong> w and b approach their
-                optimal values
+                true values shown in parentheses
               </li>
               <li>
-                <strong>The line fitting:</strong> Animated plot shows the line
-                getting better
+                <strong>The line fitting:</strong> The orange line moves closer
+                to the dashed green target line
               </li>
               <li>
                 <strong>Learning rate effects:</strong> Try different LRs and
-                see convergence change
+                see convergence speed change
               </li>
             </ul>
             <p className="text-muted-foreground mt-4">
