@@ -13,7 +13,6 @@ import {
   SummaryBlock,
   NextStepBlock,
 } from '@/components/lessons'
-import { Exercise } from '@/lib/exercises'
 import { LinearFitExplorer } from '@/components/widgets/LinearFitExplorer'
 import { ExercisePanel } from '@/components/widgets/ExercisePanel'
 import 'katex/dist/katex.min.css'
@@ -29,28 +28,6 @@ import { InlineMath, BlockMath } from 'react-katex'
  * - Interactive exploration of line fitting
  */
 
-export const linearRegressionExercise: Exercise = {
-  slug: 'linear-regression',
-  title: 'Linear Regression from Scratch',
-  description:
-    'Understand the simplest machine learning model: fitting a line to data points.',
-  category: 'Fundamentals',
-  duration: '20 min',
-  constraints: [
-    'Focus on intuition first',
-    'Math is secondary to understanding',
-    'Play with the interactive widget',
-  ],
-  steps: [
-    'Understand what a linear model is',
-    'Learn what parameters (slope, intercept) do',
-    'Explore fitting interactively',
-    'See why we need a way to measure "goodness" of fit',
-  ],
-  skills: ['linear-models', 'parameters'],
-  prerequisites: ['what-is-learning'],
-}
-
 export function LinearRegressionLesson() {
   return (
     <LessonLayout>
@@ -58,9 +35,9 @@ export function LinearRegressionLesson() {
       <Row>
         <Row.Content>
           <LessonHeader
-            title={linearRegressionExercise.title}
-            description={linearRegressionExercise.description}
-            category={linearRegressionExercise.category}
+            title="Linear Regression from Scratch"
+            description="Understand the simplest machine learning model: fitting a line to data points."
+            category="Fundamentals"
           />
         </Row.Content>
       </Row>

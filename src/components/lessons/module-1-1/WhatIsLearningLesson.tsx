@@ -14,7 +14,8 @@ import {
   SummaryBlock,
   NextStepBlock,
 } from '@/components/lessons'
-import { Exercise } from '@/lib/exercises'
+import { OverfittingWidget } from '@/components/widgets/OverfittingWidget'
+import { ExercisePanel } from '@/components/widgets/ExercisePanel'
 
 /**
  * Lesson 1.1.1: What is Learning?
@@ -26,27 +27,6 @@ import { Exercise } from '@/lib/exercises'
  * - Train/val/test splits
  */
 
-export const whatIsLearningExercise: Exercise = {
-  slug: 'what-is-learning',
-  title: 'What is Learning?',
-  description:
-    'Understand machine learning as function approximation and why generalization matters.',
-  category: 'Fundamentals',
-  duration: '15 min',
-  constraints: [
-    'Focus on intuition, not math',
-    'No code yet — just concepts',
-    'Build mental model first',
-  ],
-  steps: [
-    'Understand what "learning" means for a machine',
-    'See why generalization beats memorization',
-    'Grasp the bias-variance tradeoff intuitively',
-    'Learn why we need train/val/test splits',
-  ],
-  skills: ['ml-intuition', 'generalization'],
-}
-
 export function WhatIsLearningLesson() {
   return (
     <LessonLayout>
@@ -54,9 +34,9 @@ export function WhatIsLearningLesson() {
       <Row>
         <Row.Content>
           <LessonHeader
-            title={whatIsLearningExercise.title}
-            description={whatIsLearningExercise.description}
-            category={whatIsLearningExercise.category}
+            title="What is Learning?"
+            description="Understand machine learning as function approximation and why generalization matters."
+            category="Fundamentals"
           />
         </Row.Content>
       </Row>
@@ -208,6 +188,24 @@ export function WhatIsLearningLesson() {
             learn, simple enough to generalize. We&apos;ll see how to find this
             balance throughout the course.
           </InsightBlock>
+        </Row.Aside>
+      </Row>
+
+      {/* Interactive: Overfitting vs Underfitting */}
+      <Row>
+        <Row.Content>
+          <ExercisePanel title="See It Visually">
+            <OverfittingWidget />
+          </ExercisePanel>
+        </Row.Content>
+        <Row.Aside>
+          <TryThisBlock title="Compare">
+            <ul className="space-y-2 text-sm">
+              <li>• <strong>Underfitting:</strong> The line misses the curve entirely</li>
+              <li>• <strong>Good Fit:</strong> Captures the pattern, ignores noise</li>
+              <li>• <strong>Overfitting:</strong> Wiggles through every point</li>
+            </ul>
+          </TryThisBlock>
         </Row.Aside>
       </Row>
 

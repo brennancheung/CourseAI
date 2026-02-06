@@ -31,3 +31,8 @@ pnpm dev         # Start dev server
 - **Next.js 16** with App Router
 - **Convex** for backend
 - **Tailwind CSS v4** with shadcn/ui components
+
+### Adding Lessons
+
+1. Add a node to the curriculum tree in `src/data/curriculum/`
+2. Create `src/app/app/lesson/{slug}/page.tsx`

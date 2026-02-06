@@ -13,8 +13,8 @@ import {
   StepList,
   SummaryBlock,
   NextStepBlock,
+  ModuleCompleteBlock,
 } from '@/components/lessons'
-import { Exercise } from '@/lib/exercises'
 import 'katex/dist/katex.min.css'
 import { BlockMath } from 'react-katex'
 import { ExercisePanel } from '@/components/widgets/ExercisePanel'
@@ -33,28 +33,6 @@ import { ExternalLink } from 'lucide-react'
  * - Interactive training visualization
  */
 
-export const implementingLinearRegressionExercise: Exercise = {
-  slug: 'implementing-linear-regression',
-  title: 'Implementing Linear Regression',
-  description:
-    'Put it all together — implement linear regression with gradient descent from scratch in Python.',
-  category: 'Fundamentals',
-  duration: '30 min',
-  constraints: [
-    'Pure Python + NumPy only',
-    'No sklearn or PyTorch',
-    'Compute every gradient by hand',
-  ],
-  steps: [
-    'Understand the training loop structure',
-    'Derive the gradient formulas',
-    'Implement in Python',
-    'Watch the model learn',
-  ],
-  skills: ['python', 'numpy', 'implementation'],
-  prerequisites: ['learning-rate'],
-}
-
 export function ImplementingLinearRegressionLesson() {
   return (
     <LessonLayout>
@@ -62,9 +40,9 @@ export function ImplementingLinearRegressionLesson() {
       <Row>
         <Row.Content>
           <LessonHeader
-            title={implementingLinearRegressionExercise.title}
-            description={implementingLinearRegressionExercise.description}
-            category={implementingLinearRegressionExercise.category}
+            title="Implementing Linear Regression"
+            description="Put it all together — implement linear regression with gradient descent from scratch in Python."
+            category="Fundamentals"
           />
         </Row.Content>
       </Row>
@@ -341,28 +319,21 @@ for epoch in range(1000):
       {/* Module Complete */}
       <Row>
         <Row.Content>
-          <div className="rounded-lg bg-gradient-to-br from-emerald-500/10 via-emerald-500/5 to-transparent border border-emerald-500/20 p-6">
-            <h3 className="font-semibold text-lg text-emerald-400 mb-2">
-              🎉 Module 1.1 Complete!
-            </h3>
-            <p className="text-muted-foreground mb-4">
-              You&apos;ve learned the core concepts of the learning problem:
-            </p>
-            <ul className="list-disc list-inside text-muted-foreground space-y-1 ml-4 mb-4">
-              <li>ML as function approximation</li>
-              <li>Generalization vs memorization</li>
-              <li>Linear models and parameters</li>
-              <li>Loss functions (MSE)</li>
-              <li>Gradient descent optimization</li>
-              <li>Learning rate dynamics</li>
-              <li>Implementation from scratch</li>
-            </ul>
-            <p className="text-muted-foreground">
-              Next up: <strong>Module 1.2 — From Linear to Neural</strong>.
-              We&apos;ll see why linear models aren&apos;t enough and introduce
-              nonlinearity.
-            </p>
-          </div>
+          <ModuleCompleteBlock
+            module="1.1"
+            title="The Learning Problem"
+            achievements={[
+              'ML as function approximation',
+              'Generalization vs memorization',
+              'Linear models and parameters',
+              'Loss functions (MSE)',
+              'Gradient descent optimization',
+              'Learning rate dynamics',
+              'Implementation from scratch',
+            ]}
+            nextModule="1.2"
+            nextTitle="From Linear to Neural"
+          />
         </Row.Content>
       </Row>
 

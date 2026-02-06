@@ -12,10 +12,19 @@ export type CurriculumNode = {
   icon?: string
   /** Child nodes - if present, this is a group. If absent, this is a leaf. */
   children?: CurriculumNode[]
-  /** Only for leaf nodes: the lesson component to render */
-  lessonComponent?: string
   /** Optional description shown on hover or in expanded view */
   description?: string
+  /** Lesson metadata (leaf nodes only) */
+  duration?: string
+  category?: string
+  objectives?: string[]
+  prerequisites?: string[]
+  skills?: string[]
+  exercise?: {
+    constraints: string[]
+    steps: string[]
+    recommendedWhen?: string
+  }
 }
 
 /**

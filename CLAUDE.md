@@ -72,6 +72,7 @@ pnpm cli             # CLI tool (commands TBD)
 ### Key Routes
 
 - `/app` — Today view (recommended lesson)
+- `/app/lesson/{slug}` — File-system routed lesson pages
 - `/app/skills` — Skill map
 - `/app/journal` — Session log
 
@@ -120,7 +121,18 @@ Claude Code runs alongside the app as a mentor with full repo access:
 - Modifying existing lesson content
 - Discussing lesson structure or pedagogy
 
-The skill contains critical implementation patterns, ADHD-friendly design principles, and lessons learned from previous work. Skipping it leads to inconsistent lessons that don't match the established patterns.
+The skill contains:
+- **Strategic context loading** — What to load and when (preserves context window)
+- **Implementation patterns** — Lessons learned from previous work
+- **Component usage** — Block components, widgets, layout patterns
+- **ADHD-friendly design** — Scope boundaries, chunking, low activation energy
+
+**Context loading is strategic:**
+- Always load: Component catalog + curriculum types (~260 lines)
+- On-demand: Curriculum data, widget skill, ONE reference lesson
+- Never: All lessons at once
+
+Skipping this leads to inconsistent lessons that don't match established patterns.
 
 ## Open Questions (Resolve Through Use)
 
@@ -136,6 +148,16 @@ The skill contains critical implementation patterns, ADHD-friendly design princi
 - No `any` in TypeScript
 - No `else if` / `else` — use early return pattern
 - Use pnpm, not npm
+
+### Git: NEVER Commit or Push Without Permission
+
+**CRITICAL: Do NOT commit or push without explicit user permission.**
+
+- Make changes to files as requested
+- When changes are complete, tell the user what was changed
+- Wait for the user to explicitly ask for a commit (e.g., "commit this", "/commit")
+- Never auto-commit after making changes
+- Never push unless explicitly asked
 
 ### Lesson Layout: Always Use Row
 

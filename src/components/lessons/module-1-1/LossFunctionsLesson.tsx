@@ -13,7 +13,6 @@ import {
   SummaryBlock,
   NextStepBlock,
 } from '@/components/lessons'
-import { Exercise } from '@/lib/exercises'
 import { LinearFitExplorer } from '@/components/widgets/LinearFitExplorer'
 import { LossSurfaceExplorer } from '@/components/widgets/LossSurfaceExplorer'
 import { ExercisePanel } from '@/components/widgets/ExercisePanel'
@@ -30,28 +29,6 @@ import { InlineMath, BlockMath } from 'react-katex'
  * - Loss landscape visualization
  */
 
-export const lossFunctionsExercise: Exercise = {
-  slug: 'loss-functions',
-  title: 'Loss Functions: Measuring "Wrongness"',
-  description:
-    'Learn how we quantify how wrong our model is using loss functions.',
-  category: 'Fundamentals',
-  duration: '20 min',
-  constraints: [
-    'Understand the intuition first',
-    'Then the math',
-    'Play with both visualizations',
-  ],
-  steps: [
-    'Understand residuals (prediction errors)',
-    'Learn why we square the errors (MSE)',
-    'See the loss as a landscape',
-    'Understand why we need to minimize loss',
-  ],
-  skills: ['loss-functions', 'mse'],
-  prerequisites: ['linear-regression'],
-}
-
 export function LossFunctionsLesson() {
   return (
     <LessonLayout>
@@ -59,9 +36,9 @@ export function LossFunctionsLesson() {
       <Row>
         <Row.Content>
           <LessonHeader
-            title={lossFunctionsExercise.title}
-            description={lossFunctionsExercise.description}
-            category={lossFunctionsExercise.category}
+            title={'Loss Functions: Measuring "Wrongness"'}
+            description="Learn how we quantify how wrong our model is using loss functions."
+            category="Fundamentals"
           />
         </Row.Content>
       </Row>

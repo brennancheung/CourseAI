@@ -5,6 +5,39 @@ description: Create effective, ADHD-friendly lesson plans for AI/ML learning. Us
 
 # Lesson Planning
 
+## ⚡ Context Loading (Strategic)
+
+Load context strategically to preserve context window. **Don't load everything upfront.**
+
+### Always Load (Small Files)
+```
+READ IMMEDIATELY:
+1. .claude/skills/interactive-widgets/references/component-catalog.md (~200 lines)
+2. src/data/curriculum/types.ts (~90 lines) — check CurriculumNode shape
+```
+
+### Load On-Demand (When Needed)
+
+| When... | Load... |
+|---------|---------|
+| Planning which lesson to build | `docs/curriculum.md` — find the specific section |
+| Need widget patterns | `.claude/skills/interactive-widgets/SKILL.md` |
+| Need lesson structure reference | ONE recent lesson (e.g., `src/components/lessons/module-1-1/GradientDescentLesson.tsx`) |
+| Building a widget | Relevant widget file from `src/components/widgets/` |
+
+### Never Load All At Once
+- ❌ Don't glob all lessons — just read ONE as a reference
+- ❌ Don't load full curriculum if you already know what lesson to build
+- ❌ Don't load widget skill if lesson has no interactivity
+
+### Quick Reference (No Need to Load)
+These are in this skill file already:
+- Block components → see "Block Components for Content Types" section below
+- Lesson structure → see "Lesson Row Layout" section below
+- Text patterns → see "Text Styling Patterns" section below
+
+---
+
 ## Implementation Patterns (Lessons Learned)
 
 These patterns apply to building effective lessons for any subject. Follow these when creating new lesson components.
@@ -28,6 +61,37 @@ Should be split into focused lessons:
 3. `transformer-architecture` — How the pieces fit together
 
 **Rule of thumb:** If a lesson has more than 3-4 major sections, consider splitting it.
+
+### Multimodal Learning (Critical)
+
+**The Problem:** Lessons that only use text and math formulas fail to engage multiple learning pathways. This leads to shallow understanding that doesn't stick.
+
+**The Principle:** Every core concept should be presented through 2-3 different modalities:
+
+| Modality | Examples | Engages |
+|----------|----------|---------|
+| **Verbal** | Text explanations, analogies | Language processing, narrative memory |
+| **Symbolic** | Math formulas, code | Abstract reasoning, precision |
+| **Visual** | Diagrams, animations, graphs | Spatial reasoning, pattern recognition |
+| **Kinesthetic** | Sliders, draggable points, manipulation | Motor memory, active learning |
+
+**The Check:** For each major concept in a lesson, ask:
+- Is there text explaining it? (verbal)
+- Is there a formula or code? (symbolic)
+- Is there a diagram or visualization? (visual)
+- Can the learner manipulate something? (kinesthetic)
+
+**Example - Teaching "What is a Neuron":**
+- ❌ **Weak:** Only shows formula `y = w₁x₁ + w₂x₂ + b` with text explanation
+- ✅ **Strong:**
+  - Text explaining weighted sum + bias (verbal)
+  - Formula `y = w₁x₁ + w₂x₂ + b` (symbolic)
+  - Diagram showing inputs → neuron → output (visual)
+  - Sliders to adjust weights/inputs and watch output change (kinesthetic)
+
+**Why it matters:** Different people learn through different channels. More importantly, concepts encoded through multiple modalities are more durable and transferable. When a learner can see it, manipulate it, AND read the formula, the understanding is deeper.
+
+**Rule of thumb:** If a section only has text and math, it needs a visual or interactive element. Math alone is not enough.
 
 ### Interactive Widgets
 
@@ -157,6 +221,140 @@ import { ClipboardCopy } from '@/components/common/ClipboardCopy'
 
 Uses `useTimeout` hook for the 2-second "copied" state reset.
 
+### Math Rendering with KaTeX
+
+For lessons with formulas, use KaTeX:
+
+```tsx
+import 'katex/dist/katex.min.css'
+import { InlineMath, BlockMath } from 'react-katex'
+
+// Inline math in paragraph
+<p>The loss is <InlineMath math="\hat{y} = wx + b" /> where...</p>
+
+// Block math (centered, standalone)
+<BlockMath math="L = \frac{1}{n}\sum_{i=1}^{n}(y_i - \hat{y}_i)^2" />
+
+// Emphasized formula box
+<div className="py-4 px-6 bg-muted/50 rounded-lg">
+  <BlockMath math="\theta_{new} = \theta_{old} - \alpha \nabla L" />
+</div>
+```
+
+**Pattern for explaining formulas:**
+```tsx
+<div className="py-4">
+  <BlockMath math="L = \frac{1}{n}\sum_{i=1}^{n}(y_i - \hat{y}_i)^2" />
+</div>
+<p className="text-muted-foreground">Let's break this down:</p>
+<ul className="list-disc list-inside text-muted-foreground space-y-2 ml-4">
+  <li><InlineMath math="y_i - \hat{y}_i" /> — the residual for point i</li>
+  <li><InlineMath math="(\cdot)^2" /> — square it (makes positive)</li>
+  <li><InlineMath math="\sum" /> — sum over all points</li>
+  <li><InlineMath math="\frac{1}{n}" /> — divide by count</li>
+</ul>
+```
+
+### Lesson Metadata
+
+Lesson metadata lives in the curriculum tree (`src/data/curriculum/`). Each leaf node includes exercise data inline:
+
+```typescript
+// In src/data/curriculum/foundations.ts (or similar)
+{
+  slug: 'my-lesson',                      // URL slug — also the route
+  title: 'Lesson Title',
+  description: 'One-line description.',
+  duration: '20 min',
+  category: 'Fundamentals',               // Module name
+  objectives: [                           // Learning objectives
+    'Understand concept A',
+    'See why B matters',
+  ],
+  skills: ['skill-tag-1'],
+  prerequisites: ['previous-lesson-slug'],
+  exercise: {
+    constraints: [                        // ADHD scope boundaries
+      'Focus on intuition first',
+      'No code yet — just concepts',
+    ],
+    steps: [
+      'Understand concept A',
+      'See why B matters',
+    ],
+  },
+}
+```
+
+Then create the lesson page at `src/app/app/lesson/{slug}/page.tsx`:
+
+```tsx
+import { MyLesson } from '@/components/lessons/module-X-Y'
+
+export default function Page() {
+  return <MyLesson />
+}
+```
+
+### ExercisePanel for Widgets
+
+Wrap interactive widgets in `ExercisePanel` for consistent styling + fullscreen:
+
+```tsx
+import { ExercisePanel } from '@/components/widgets/ExercisePanel'
+
+<Row>
+  <Row.Content>
+    <ExercisePanel title="Try Fitting a Line">
+      <LinearFitExplorer
+        initialSlope={0.3}
+        initialIntercept={-0.5}
+        showResiduals={true}
+      />
+    </ExercisePanel>
+  </Row.Content>
+  <Row.Aside>
+    <TryThisBlock title="Experiment">
+      <ul className="space-y-2 text-sm">
+        <li>• Drag the intercept point up and down</li>
+        <li>• Try to minimize the MSE</li>
+      </ul>
+    </TryThisBlock>
+  </Row.Aside>
+</Row>
+```
+
+### Module Completion Block
+
+At the end of a module's final lesson, celebrate completion with `ModuleCompleteBlock`:
+
+```tsx
+import { ModuleCompleteBlock } from '@/components/lessons'
+
+<Row>
+  <Row.Content>
+    <ModuleCompleteBlock
+      module="1.1"
+      title="The Learning Problem"
+      achievements={[
+        'ML as function approximation',
+        'Generalization vs memorization',
+        'Loss functions (MSE)',
+      ]}
+      nextModule="1.2"
+      nextTitle="From Linear to Neural"
+    />
+  </Row.Content>
+</Row>
+```
+
+**Props:**
+- `module` — Module number (e.g., "1.1")
+- `title` — Module title (e.g., "The Learning Problem")
+- `achievements` — Array of concepts/skills learned
+- `nextModule` — Next module number
+- `nextTitle` — Next module title
+
 ### Google Colab Notebooks
 
 For hands-on exercises, link to Colab notebooks stored in the `/notebooks/` directory.
@@ -165,18 +363,129 @@ For hands-on exercises, link to Colab notebooks stored in the `/notebooks/` dire
 
 **Colab link format:**
 ```tsx
-<a
-  href="https://colab.research.google.com/github/brennancheung/CourseAI/blob/main/notebooks/1-1-6-linear-regression.ipynb"
-  target="_blank"
-  rel="noopener noreferrer"
-  className="inline-flex items-center gap-2 px-4 py-2 rounded-md bg-primary text-primary-foreground font-medium text-sm hover:bg-primary/90 transition-colors"
->
-  <ExternalLink className="w-4 h-4" />
-  Open in Google Colab
-</a>
+import { ExternalLink } from 'lucide-react'
+
+<div className="rounded-lg border-2 border-primary/50 bg-primary/5 p-6">
+  <div className="space-y-4">
+    <p className="text-muted-foreground">
+      Now write the code yourself in a Jupyter notebook.
+    </p>
+    <a
+      href="https://colab.research.google.com/github/brennancheung/CourseAI/blob/main/notebooks/1-1-6-linear-regression.ipynb"
+      target="_blank"
+      rel="noopener noreferrer"
+      className="inline-flex items-center gap-2 px-4 py-2 rounded-md bg-primary text-primary-foreground font-medium text-sm hover:bg-primary/90 transition-colors"
+    >
+      <ExternalLink className="w-4 h-4" />
+      Open in Google Colab
+    </a>
+    <p className="text-xs text-muted-foreground">
+      The notebook includes exercises: try different learning rates, add more noise...
+    </p>
+  </div>
+</div>
 ```
 
 **Best practice:** Use the in-app interactive widgets (like `TrainingLoopExplorer`) for visualization, and link to Colab for the "implement it yourself" exercises. The widget shows what happens; the notebook lets them write the code.
+
+**Colab workflow:**
+1. Create `.ipynb` file in `/notebooks/` directory
+2. Commit to main branch on GitHub
+3. Link opens directly in Colab from GitHub
+4. User clicks "Copy to Drive" to save their own version
+
+### Text Styling Patterns
+
+Standard text patterns used in lessons:
+
+```tsx
+// Paragraph text
+<p className="text-muted-foreground">
+  Regular explanation text goes here.
+</p>
+
+// Text with emphasis
+<p className="text-muted-foreground">
+  We need a way to <strong>measure</strong> how good a fit is — a
+  single number that tells us how wrong our predictions are.
+</p>
+
+// Bulleted list
+<ul className="list-disc list-inside text-muted-foreground space-y-1 ml-4">
+  <li>First point</li>
+  <li>Second point with <strong>emphasis</strong></li>
+</ul>
+
+// Numbered list
+<ol className="list-decimal list-inside text-muted-foreground space-y-1 ml-4">
+  <li>First step</li>
+  <li>Second step</li>
+</ol>
+
+// Spaced content sections
+<div className="space-y-4">
+  <p className="text-muted-foreground">First paragraph...</p>
+  <p className="text-muted-foreground">Second paragraph...</p>
+</div>
+
+// Side-by-side concepts
+<div className="grid gap-4 md:grid-cols-2">
+  <ConceptBlock title="Option A">...</ConceptBlock>
+  <ConceptBlock title="Option B">...</ConceptBlock>
+</div>
+```
+
+### Lesson Section Pattern
+
+Standard section structure with header + content + aside:
+
+```tsx
+<Row>
+  <Row.Content>
+    <SectionHeader
+      title="The Core Insight"
+      subtitle="What does a machine actually 'learn'?"
+    />
+    <div className="space-y-4">
+      <p className="text-muted-foreground">
+        First paragraph of explanation...
+      </p>
+      <p className="text-muted-foreground">
+        More precisely: <strong>key concept here</strong>.
+      </p>
+    </div>
+  </Row.Content>
+  <Row.Aside>
+    <InsightBlock title="Key Point">
+      The "aha moment" for this section goes in the aside.
+    </InsightBlock>
+  </Row.Aside>
+</Row>
+```
+
+**Section with comparison:**
+```tsx
+<Row>
+  <Row.Content>
+    <SectionHeader title="Two Approaches" subtitle="..." />
+    <ComparisonRow
+      left={{
+        title: 'Approach A',
+        color: 'amber',
+        items: ['Point 1', 'Point 2'],
+      }}
+      right={{
+        title: 'Approach B',
+        color: 'emerald',
+        items: ['Point 1', 'Point 2'],
+      }}
+    />
+  </Row.Content>
+  <Row.Aside>
+    <TipBlock>When to use which...</TipBlock>
+  </Row.Aside>
+</Row>
+```
 
 ### Expandable Card Pattern
 

@@ -15,7 +15,6 @@ import {
   SummaryBlock,
   NextStepBlock,
 } from '@/components/lessons'
-import { Exercise } from '@/lib/exercises'
 import { LearningRateExplorer } from '@/components/widgets/LearningRateExplorer'
 import { ExercisePanel } from '@/components/widgets/ExercisePanel'
 import 'katex/dist/katex.min.css'
@@ -31,28 +30,6 @@ import { InlineMath, BlockMath } from 'react-katex'
  * - Learning rate schedules (preview)
  */
 
-export const learningRateExercise: Exercise = {
-  slug: 'learning-rate',
-  title: 'Learning Rate Deep Dive',
-  description:
-    'Understand the most important hyperparameter in gradient descent — the learning rate.',
-  category: 'Fundamentals',
-  duration: '15 min',
-  constraints: [
-    'Focus on developing intuition',
-    'Experiment with different values',
-    'Watch the behaviors carefully',
-  ],
-  steps: [
-    'See what happens with learning rate too small',
-    'See what happens with learning rate too large',
-    'Understand overshooting and divergence',
-    'Preview learning rate schedules',
-  ],
-  skills: ['learning-rate', 'hyperparameters'],
-  prerequisites: ['gradient-descent'],
-}
-
 export function LearningRateLesson() {
   return (
     <LessonLayout>
@@ -60,9 +37,9 @@ export function LearningRateLesson() {
       <Row>
         <Row.Content>
           <LessonHeader
-            title={learningRateExercise.title}
-            description={learningRateExercise.description}
-            category={learningRateExercise.category}
+            title="Learning Rate Deep Dive"
+            description="Understand the most important hyperparameter in gradient descent — the learning rate."
+            category="Fundamentals"
           />
         </Row.Content>
       </Row>

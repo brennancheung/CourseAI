@@ -14,7 +14,6 @@ import {
   SummaryBlock,
   NextStepBlock,
 } from '@/components/lessons'
-import { Exercise } from '@/lib/exercises'
 import { GradientDescentExplorer } from '@/components/widgets/GradientDescentExplorer'
 import { ExercisePanel } from '@/components/widgets/ExercisePanel'
 import 'katex/dist/katex.min.css'
@@ -30,28 +29,6 @@ import { InlineMath, BlockMath } from 'react-katex'
  * - Learning rate controls step size
  */
 
-export const gradientDescentExercise: Exercise = {
-  slug: 'gradient-descent',
-  title: 'Gradient Descent: Following the Slope',
-  description:
-    'Learn the fundamental algorithm for finding minimum loss — following the gradient downhill.',
-  category: 'Fundamentals',
-  duration: '20 min',
-  constraints: [
-    'Focus on intuition first',
-    'Math is secondary',
-    'Watch the animation many times',
-  ],
-  steps: [
-    'Understand the ball-rolling-downhill analogy',
-    'Learn what the gradient tells us',
-    'See the update rule in action',
-    'Experiment with different learning rates',
-  ],
-  skills: ['gradient-descent', 'optimization'],
-  prerequisites: ['loss-functions'],
-}
-
 export function GradientDescentLesson() {
   return (
     <LessonLayout>
@@ -59,9 +36,9 @@ export function GradientDescentLesson() {
       <Row>
         <Row.Content>
           <LessonHeader
-            title={gradientDescentExercise.title}
-            description={gradientDescentExercise.description}
-            category={gradientDescentExercise.category}
+            title="Gradient Descent: Following the Slope"
+            description="Learn the fundamental algorithm for finding minimum loss — following the gradient downhill."
+            category="Fundamentals"
           />
         </Row.Content>
       </Row>

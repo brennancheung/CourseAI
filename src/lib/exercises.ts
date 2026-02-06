@@ -1,63 +1,44 @@
-export type ExerciseScore = {
-  /** ABC notation string */
-  abc: string
-  /** Title for the score */
-  title?: string
-  /** Default tempo for playback */
-  tempo?: number
-}
+import { curriculum, getAllLessons, type CurriculumNode } from '@/data/curriculum'
 
 export type Exercise = {
   slug: string
   title: string
   description: string
   category: string
-  duration: string // e.g., "20 min"
+  duration: string
   constraints: string[]
   steps: string[]
-  // Why this exercise might be recommended
   recommendedWhen?: string
-  // Skills this exercise builds
   skills?: string[]
-  // Prerequisites (other exercise slugs)
   prerequisites?: string[]
-  // Optional score notation for the exercise
-  score?: ExerciseScore
-  // Optional long-form content (markdown)
-  content?: string
 }
 
-// Import exercises from lesson modules
-import {
-  whatIsLearningExercise,
-  linearRegressionExercise,
-  lossFunctionsExercise,
-  gradientDescentExercise,
-  learningRateExercise,
-  implementingLinearRegressionExercise,
-} from '@/components/lessons/module-1-1'
-
-// Register all exercises
-export const exercises: Record<string, Exercise> = {
-  // Module 1.1: The Learning Problem
-  [whatIsLearningExercise.slug]: whatIsLearningExercise,
-  [linearRegressionExercise.slug]: linearRegressionExercise,
-  [lossFunctionsExercise.slug]: lossFunctionsExercise,
-  [gradientDescentExercise.slug]: gradientDescentExercise,
-  [learningRateExercise.slug]: learningRateExercise,
-  [implementingLinearRegressionExercise.slug]: implementingLinearRegressionExercise,
+function nodeToExercise(node: CurriculumNode): Exercise | undefined {
+  if (!node.exercise || !node.category || !node.duration) return undefined
+  return {
+    slug: node.slug,
+    title: node.title,
+    description: node.description ?? '',
+    category: node.category,
+    duration: node.duration,
+    constraints: node.exercise.constraints,
+    steps: node.exercise.steps,
+    recommendedWhen: node.exercise.recommendedWhen,
+    skills: node.skills,
+    prerequisites: node.prerequisites,
+  }
 }
 
-// Get all exercises as array
-export const getAllExercises = (): Exercise[] => Object.values(exercises)
+export const getAllExercises = (): Exercise[] =>
+  getAllLessons(curriculum)
+    .map(nodeToExercise)
+    .filter((e): e is Exercise => e !== undefined)
 
-// Get exercise by slug
-export const getExercise = (slug: string): Exercise | undefined => exercises[slug]
+export const getExercise = (slug: string): Exercise | undefined =>
+  getAllExercises().find((e) => e.slug === slug)
 
-// Get exercises by category
 export const getExercisesByCategory = (category: string): Exercise[] =>
   getAllExercises().filter((e) => e.category === category)
 
-// Get all unique categories
 export const getCategories = (): string[] =>
   [...new Set(getAllExercises().map((e) => e.category))]
