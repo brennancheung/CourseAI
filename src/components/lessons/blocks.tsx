@@ -575,3 +575,48 @@ export function PhaseCard({
   )
 }
 
+// =============================================================================
+// MODULE COMPLETE BLOCK
+// Celebration block for end of module
+// =============================================================================
+
+interface ModuleCompleteBlockProps {
+  /** Module number (e.g., "1.1") */
+  module: string
+  /** Module title (e.g., "The Learning Problem") */
+  title: string
+  /** List of achievements/concepts learned */
+  achievements: string[]
+  /** Next module number (e.g., "1.2") */
+  nextModule: string
+  /** Next module title */
+  nextTitle: string
+}
+
+export function ModuleCompleteBlock({
+  module,
+  title,
+  achievements,
+  nextModule,
+  nextTitle,
+}: ModuleCompleteBlockProps) {
+  return (
+    <div className="rounded-lg bg-gradient-to-br from-emerald-500/10 via-emerald-500/5 to-transparent border border-emerald-500/20 p-6">
+      <h3 className="font-semibold text-lg text-emerald-400 mb-2">
+        🎉 Module {module} Complete!
+      </h3>
+      <p className="text-muted-foreground mb-4">
+        You&apos;ve learned the core concepts of {title.toLowerCase()}:
+      </p>
+      <ul className="list-disc list-inside text-muted-foreground space-y-1 ml-4 mb-4">
+        {achievements.map((achievement, i) => (
+          <li key={i}>{achievement}</li>
+        ))}
+      </ul>
+      <p className="text-muted-foreground">
+        Next up: <strong>Module {nextModule} — {nextTitle}</strong>
+      </p>
+    </div>
+  )
+}
+

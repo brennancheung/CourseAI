@@ -5,262 +5,7 @@ description: Create effective, ADHD-friendly lesson plans for AI/ML learning. Us
 
 # Lesson Planning
 
-This skill has two parts:
-1. **Lesson Design Process** — How to think about and plan a lesson (the pedagogy)
-2. **Component Reference** — How to build it with the available components (the implementation)
-
-Always work through the design process before writing code.
-
----
-
-# Part 1: Lesson Design Process
-
-Follow these steps in order. Each step produces an artifact (even if just a mental note) that feeds into the next. **Do not skip steps** — the most common failure mode is jumping straight to writing JSX without thinking through what the learner actually needs.
-
-## Step 1: Analyze the Learner
-
-Before planning content, understand who you're teaching and where they are right now.
-
-**Read these files:**
-- `src/data/learner-state.ts` — current skill levels, active struggles, patterns
-- Recent files in `src/data/sessions/` — what clicked, what was hard, what they're curious about
-
-**Answer these questions:**
-- What relevant skills do they already have? (don't re-teach what's solid)
-- What are they struggling with right now? (address or avoid triggering)
-- What are they curious about? (leverage natural motivation)
-- What prerequisite gaps might cause problems in this lesson?
-
-**The learning edge:** The lesson should target what they can *almost* do but not quite. Too easy = boring. Too hard = frustrating. The sweet spot is where they need to think hard but can succeed with the lesson's support.
-
-> **Future improvement:** Learner analysis will eventually include direct feedback, questions from the learner, and richer interaction history. For now, work with what's in learner-state and session files.
-
-### Domain-Specific Learner Context
-
-**Learner baseline:**
-- Software engineer with strong programming background
-- Comfortable with Python, can read academic papers
-- Has used AI tools but wants deeper understanding
-- ADHD: needs low activation energy, clear scope, no decision paralysis
-
----
-
-## Step 2: Identify the Concept
-
-Narrow to ONE core concept for this lesson.
-
-**Write one sentence:** "This lesson teaches the learner to ___."
-
-That sentence must be:
-- **Specific** — not "understand transformers" but "understand how self-attention computes relevance between tokens"
-- **Observable** — after the lesson, you could ask them to demonstrate it
-- **Atomic** — one concept, not three stapled together
-
-**The split test:** If your sentence has "and" in it, you probably need two lessons.
-
-**Rule of thumb:** If a lesson has more than 3-4 major sections, it's trying to cover too much. Split it.
-
----
-
-## Step 3: Anticipate Misconceptions
-
-This is the step most lesson designers skip, and it's the most valuable.
-
-For the concept you identified, think through:
-
-**What do learners commonly get wrong?**
-Every concept has 2-3 predictable misconceptions. These aren't random — they follow from incomplete mental models or misleading analogies. Identify them before writing content so you can address them proactively rather than letting the learner build a wrong model and having to tear it down later.
-
-**What prerequisite confusions might surface?**
-If this lesson builds on concept X, and the learner's understanding of X is shaky, where will that show up? You may need a brief recap or a different framing that doesn't depend on the wobbly prerequisite.
-
-**What analogies are misleading?**
-Analogies are powerful but dangerous. They always break down somewhere. Identify where the analogy you plan to use stops working, and flag it explicitly. "This is like X, *except* Y — don't carry the analogy too far."
-
-**Format your misconceptions as a list:**
-```
-Misconception 1: [What they'll think] → [Why it's wrong] → [How to address it]
-Misconception 2: ...
-Misconception 3: ...
-```
-
-**Use these in the lesson:**
-- `WarningBlock` in the aside when the misconception is likely to occur
-- Explicitly address the wrong model before presenting the right one
-- "You might think X. That's a reasonable guess, but here's what actually happens..."
-
----
-
-## Step 4: Design the Mental Model
-
-The goal of every lesson is to give the learner a **compressed internal representation** they can carry forward. Not facts to memorize — a way of thinking.
-
-**Answer these questions:**
-
-**What should they "see in their head" after this lesson?**
-A good mental model is a simplified-but-correct picture that helps them reason about new situations. Examples:
-- "A neuron is a weighted vote" (not "a neuron is a mathematical function")
-- "Gradient descent is a ball rolling downhill" (with caveats about where the analogy breaks)
-- "Attention is a soft lookup table"
-
-**What's the one-sentence takeaway?**
-If they remember nothing else, what's the sentence? This becomes the `InsightBlock` in the aside and should echo through the entire lesson.
-
-**What should they be able to *do* with this model?**
-A mental model is only good if it transfers. Can they use it to predict what happens in a new situation? To explain the concept to someone else? To debug a problem?
-
-**Design the representation across modalities:**
-
-| Modality | What it looks like |
-|----------|-------------------|
-| **Verbal** | The analogy or explanation in words |
-| **Visual** | The diagram, animation, or visualization |
-| **Symbolic** | The formula, code, or notation |
-| **Kinesthetic** | What they can manipulate to test the model |
-
-Every core concept should be presented through at least 2-3 of these. If a section only has text and math, it needs a visual or interactive element.
-
----
-
-## Step 5: Plan the Hook
-
-The hook comes early in the lesson (right after context/constraints). Its job: make them *want* to learn this before you start teaching.
-
-**Types of hooks:**
-
-| Hook Type | Example | Best For |
-|-----------|---------|----------|
-| **Demo** | Interactive visualization showing the concept in action | Visual/kinesthetic learners, "wow" concepts |
-| **Before/After** | "Here's what happens with vs without this technique" | Practical concepts, optimization |
-| **Puzzle** | "Why does X behave differently than Y?" | Curious learners, counterintuitive concepts |
-| **Challenge preview** | "By the end, you'll build this from scratch" | Implementation-focused lessons |
-| **Real-world impact** | "This technique is why ChatGPT can..." | Motivation-driven learners |
-| **Misconception reveal** | "Most people think X. They're wrong. Here's why..." | Concepts with strong prior beliefs |
-
-**Hook principles:**
-- Short — 30 seconds to 2 minutes max
-- No prerequisites — should work even if they don't understand the concept yet
-- Creates a question in their mind — "I want to understand that"
-- Directly relevant — connects to what you're about to teach
-
----
-
-## Step 6: Plan Assessment Moments
-
-How will the learner know they understood? Don't leave this to chance.
-
-**Embed checks throughout the lesson, not just at the end.**
-
-**Types of assessment moments:**
-
-| Type | How it works | When to use |
-|------|-------------|-------------|
-| **Predict and verify** | "What do you think happens if we change X?" → interactive widget shows the answer | After explaining a concept, before elaborating |
-| **Explain it back** | "In your own words, why does X happen?" (in a `TryThisBlock`) | After the core explanation |
-| **Spot the difference** | "Which of these two approaches is better and why?" (`ComparisonRow`) | When teaching tradeoffs |
-| **Transfer question** | "How would this apply to [new situation]?" | Near the end, tests deep understanding |
-| **Debug prompt** | "This code has a bug related to what we just learned. What is it?" | Implementation lessons |
-
-**The key insight:** Assessment isn't a test — it's a learning activity. Retrieval practice (trying to recall or apply something) strengthens understanding more than re-reading.
-
-**Place in the lesson:**
-- After each major concept: one quick check (predict-and-verify or explain-it-back)
-- After the exploration section: a transfer question
-- At the end: a synthesis challenge
-
----
-
-## Step 7: Choose the Scaffolding Level
-
-Not every lesson needs the same amount of hand-holding. Match the scaffolding to the learner's familiarity.
-
-**Three levels:**
-
-| Level | When | What it looks like |
-|-------|------|-------------------|
-| **Guided** | New concept, no prior exposure | Step-by-step walkthrough, worked examples shown before asking them to try, all decisions made for them |
-| **Supported** | Building on something familiar | Constraints given, but less hand-holding. "Here's what to focus on, now explore." Key hints in asides. |
-| **Independent** | Reinforcing or extending known material | Just the challenge and constraints. They figure out the approach. Hints available but not prominent. |
-
-**How to decide:** Check learner-state for the relevant skill. `unexplored` → Guided. `learning` → Supported. `practicing`/`comfortable` → Independent.
-
-**Scaffolding within a single lesson:**
-Lessons often start Guided (new concept explanation) and progress to Supported (exploration) or Independent (final challenge) within the same lesson. This progression is natural — don't keep hand-holding once they've got the basics.
-
----
-
-## Step 8: Set Scope Boundaries
-
-Explicitly state what this lesson is NOT about. This is critical for focus (especially with ADHD).
-
-```
-NOT optimizing for speed
-NOT worrying about edge cases
-NOT covering all variations
-Just focusing on: [the one thing from Step 2]
-```
-
-Every "not" removes a decision. Constraints liberate. Use `ConstraintBlock` to make these visible in the lesson.
-
----
-
-## Step 9: Outline the Lesson Flow
-
-Now map your design decisions onto the lesson structure:
-
-1. **Context + Constraints** — What is this lesson about? What are we NOT doing? (`LessonHeader` + `ObjectiveBlock` + `ConstraintBlock`)
-2. **Hook** — Motivate immediately (from Step 5)
-3. **Explain** — Core concept with multimodal representation (from Step 4)
-4. **Check** — First assessment moment (from Step 6)
-5. **Explore** — Interactive widget or hands-on activity. Let them manipulate the concept.
-6. **Elaborate** — Deeper nuance, address misconceptions (from Step 3)
-7. **Check** — Transfer question
-8. **Practice** — Concrete exercise with appropriate scaffolding (from Step 7)
-9. **Summarize** — Key takeaways (`SummaryBlock`). Echo the mental model from Step 4.
-10. **Next step** — What comes after (`NextStepBlock`)
-
-Not every lesson needs all 10 sections. Short concept lessons might skip Practice. Implementation lessons might expand Explore into multiple sections. But the order matters — motivation before explanation, explanation before practice.
-
----
-
-## Pre-Build Checklists
-
-### ADHD-Friendly Checklist
-
-Before building, verify:
-
-- [ ] **Single focus** — One concept, one outcome
-- [ ] **Low activation energy** — Can start immediately, no setup
-- [ ] **No decisions required** — Clear path forward
-- [ ] **Concrete deliverable** — "Build X" or "Understand why Y" not "Study Z"
-- [ ] **Scope boundaries explicit** — What you're NOT doing is stated
-- [ ] **No guilt hooks** — No streaks, no "you should have..."
-- [ ] **Working memory friendly** — All info visible in the lesson, nothing to remember from elsewhere
-
-### Deliberate Practice Checklist
-
-- [ ] **Specific goal** — Not vague improvement
-- [ ] **At the learning edge** — Hard enough to require focus, not so hard it's frustrating
-- [ ] **Feedback available** — Can verify if they're right (interactive widget, self-check, etc.)
-- [ ] **Repeatable with variation** — Can try again with different parameters
-- [ ] **Builds mental model** — Develops the internal representation from Step 4
-
-### Multimodal Checklist
-
-For each core concept in the lesson:
-
-- [ ] **Verbal** — Text explanation with analogy
-- [ ] **Visual** — Diagram, animation, or visualization
-- [ ] At least one of: **Symbolic** (formula/code) or **Kinesthetic** (interactive manipulation)
-- [ ] If only text + math exist → add a visual or interactive element
-
----
-
-# Part 2: Component Reference
-
-Once you've worked through the design process, use these patterns to build the lesson.
-
-## Context Loading (Strategic)
+## ⚡ Context Loading (Strategic)
 
 Load context strategically to preserve context window. **Don't load everything upfront.**
 
@@ -268,7 +13,7 @@ Load context strategically to preserve context window. **Don't load everything u
 ```
 READ IMMEDIATELY:
 1. .claude/skills/interactive-widgets/references/component-catalog.md (~200 lines)
-2. src/data/curriculum/types.ts (~90 lines) — check CurriculumNode shape
+2. src/lib/exercises.ts (~60 lines) — check existing slugs
 ```
 
 ### Load On-Demand (When Needed)
@@ -510,46 +255,33 @@ import { InlineMath, BlockMath } from 'react-katex'
 </ul>
 ```
 
-### Lesson Metadata
+### Exercise Metadata
 
-Lesson metadata lives in the curriculum tree (`src/data/curriculum/`). Each leaf node includes exercise data inline:
+Every lesson exports an `Exercise` object for the lesson registry:
 
-```typescript
-// In src/data/curriculum/foundations.ts (or similar)
-{
-  slug: 'my-lesson',                      // URL slug — also the route
+```tsx
+import { Exercise } from '@/lib/exercises'
+
+export const myLessonExercise: Exercise = {
+  slug: 'my-lesson',                    // URL slug
   title: 'Lesson Title',
   description: 'One-line description.',
+  category: 'Fundamentals',             // Module name
   duration: '20 min',
-  category: 'Fundamentals',               // Module name
-  objectives: [                           // Learning objectives
+  constraints: [                        // ADHD scope boundaries
+    'Focus on intuition first',
+    'No code yet — just concepts',
+  ],
+  steps: [                              // Learning objectives
     'Understand concept A',
     'See why B matters',
   ],
   skills: ['skill-tag-1'],
   prerequisites: ['previous-lesson-slug'],
-  exercise: {
-    constraints: [                        // ADHD scope boundaries
-      'Focus on intuition first',
-      'No code yet — just concepts',
-    ],
-    steps: [
-      'Understand concept A',
-      'See why B matters',
-    ],
-  },
 }
 ```
 
-Then create the lesson page at `src/app/app/lesson/{slug}/page.tsx`:
-
-```tsx
-import { MyLesson } from '@/components/lessons/module-X-Y'
-
-export default function Page() {
-  return <MyLesson />
-}
-```
+Register in `src/lib/exercises.ts` by importing and adding to `exercises` record.
 
 ### ExercisePanel for Widgets
 
@@ -778,3 +510,110 @@ function ConceptRow({ concept, isExpanded, onToggle }) {
 - Aside appears alongside expanded card with contextual tips
 - Only one card expanded at a time (controlled by parent)
 
+---
+
+## Core Framework
+
+### 1. Know the Learner
+
+Before creating a lesson, understand current state:
+
+**Learner baseline:**
+- Software engineer with strong programming background
+- Comfortable with Python, can read academic papers
+- Has used AI tools but wants deeper understanding
+- ADHD: needs low activation energy, clear scope, no decision paralysis
+
+**Identify the learning edge:**
+- What can they almost do but not quite?
+- What's the next logical step from recent lessons?
+- What mental model would unlock new capability?
+
+### 2. Define the Learning Objective
+
+Every lesson needs ONE clear outcome:
+
+**Good objectives:**
+- "Implement attention from scratch in PyTorch"
+- "Understand why layer normalization matters for transformer training"
+- "Build intuition for how diffusion models denoise"
+
+**Bad objectives:**
+- "Get better at deep learning" (too vague)
+- "Understand transformers" (too big)
+- "Learn attention and normalization and training" (too many things)
+
+**The test:** Can you say "After this lesson, I can ___" with a specific, observable skill?
+
+### 3. Set Scope Boundaries (What You're NOT Doing)
+
+This is critical for ADHD. Explicitly close doors:
+
+```
+NOT optimizing for speed
+NOT worrying about deployment
+NOT covering all variations
+Just focusing on: [the one thing]
+```
+
+Constraints liberate. Every "not" removes a decision.
+
+---
+
+## Lesson Structure & Flow
+
+The order of content in a lesson matters. Motivation drives learning.
+
+### The Pedagogical Flow
+
+1. **Context** — What is this lesson about? Set constraints.
+2. **Hook** — Motivate the learner immediately (see below)
+3. **Explain** — Teach the concept now that they're interested
+4. **Explore** — Let them interact and try things
+5. **Elaborate** — Deeper concepts after basics are understood
+6. **Practice** — Concrete steps to apply what they learned
+7. **Challenge** — Final exercise to synthesize learning
+8. **Reflect** — Capture what worked and what was hard
+
+### The Hook
+
+**The hook is critical.** It comes right after context and before explanation. Its job is to increase motivation before teaching begins.
+
+**Types of hooks:**
+| Hook Type | Example |
+|-----------|---------|
+| Demo | Interactive visualization showing the concept in action |
+| Before/After | "Here's what GPT-2 outputs vs GPT-4 — what changed?" |
+| Question | "Why can transformers understand context that RNNs can't?" |
+| Challenge preview | "By the end, you'll implement this from scratch" |
+| Real-world impact | "This technique enabled ChatGPT to exist" |
+
+**Hook principles:**
+- Short — 30 seconds to 2 minutes max
+- Emotionally engaging — should create "I want to understand that" feeling
+- Directly relevant — must connect to what you're about to teach
+- No prerequisites — should work even if they don't understand the concept yet
+
+---
+
+## ADHD-Friendly Checklist
+
+Before finalizing any lesson, verify:
+
+- [ ] **Single focus** — One skill, one outcome
+- [ ] **Low activation energy** — Can start immediately
+- [ ] **No decisions required** — Clear path forward
+- [ ] **Concrete deliverable** — "Build X" not "Study Y"
+- [ ] **Scope boundaries explicit** — What you're NOT doing is stated
+- [ ] **No guilt hooks** — No streaks, no "you should have..."
+- [ ] **Working memory friendly** — All info in the lesson, nothing to remember
+
+---
+
+## Deliberate Practice Checklist
+
+- [ ] **Specific goal** — Not vague improvement
+- [ ] **At the edge** — Requires focus, not too easy, not frustrating
+- [ ] **Feedback available** — Can test/verify if it's working
+- [ ] **Repeatable** — Can do it again with variation
+- [ ] **Builds mental model** — Develops internal representation

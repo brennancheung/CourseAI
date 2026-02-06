@@ -18,4 +18,6 @@ export {
   GradientCard,
   ComparisonRow,
   PhaseCard,
+  // Module completion
+  ModuleCompleteBlock,
 } from './blocks'

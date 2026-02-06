@@ -1,4 +1,5 @@
 ---
+name: interactive-widgets
 description: Make lessons engaging with interactive widgets. Use when creating lessons that teach concepts which could benefit from visualization, manipulation, or exploration. Helps identify opportunities for interactivity and provides patterns for building custom React components. Trigger phrases include "make this interactive", "add a visualization", "this needs a widget", or when discussing how to better illustrate a concept.
 ---
 
@@ -177,8 +178,7 @@ For lessons with multiple items to explore (techniques, instruments, patterns).
 'use client'
 
 import { useState } from 'react'
-import { TipBlock, WarningBlock } from '@/components/lessons'
-import { Row } from '@/components/layout/Row'
+import { LessonRow, TipBlock, WarningBlock } from '@/components/lessons'
 
 type Item = {
   id: string
@@ -197,21 +197,21 @@ export function ItemExplorer({ items }: { items: Item[] }) {
       {items.map((item) => {
         const isExpanded = expandedId === item.id
         return (
-          <Row key={item.id}>
-            <Row.Content>
-              <ItemCard
-                item={item}
-                isExpanded={isExpanded}
-                onToggle={() => setExpandedId(isExpanded ? null : item.id)}
-              />
-            </Row.Content>
-            {isExpanded && (
-              <Row.Aside>
+          <LessonRow
+            key={item.id}
+            aside={isExpanded ? (
+              <div className="space-y-4">
                 {item.tips && <TipBlock title="Tips">{item.tips.join(' ')}</TipBlock>}
                 {item.warnings && <WarningBlock title="Avoid">{item.warnings.join(' ')}</WarningBlock>}
-              </Row.Aside>
-            )}
-          </Row>
+              </div>
+            ) : undefined}
+          >
+            <ItemCard
+              item={item}
+              isExpanded={isExpanded}
+              onToggle={() => setExpandedId(isExpanded ? null : item.id)}
+            />
+          </LessonRow>
         )
       })}
     </div>
@@ -222,7 +222,7 @@ export function ItemExplorer({ items }: { items: Item[] }) {
 **Key points:**
 - Only one item expanded at a time
 - Aside appears alongside expanded card
-- Use `Row` for consistent layout (auto-injects empty aside placeholder)
+- Use `LessonRow` for consistent layout (900px main + 256px aside)
 
 ### Pattern 2: Selector + Visualization
 
@@ -357,22 +357,18 @@ export function WidgetName({ className }: WidgetProps) {
 ```tsx
 // src/components/exercises/[Lesson]Lesson.tsx
 import { WidgetName } from './WidgetName'
-import { TipBlock } from '@/components/lessons'
-import { Row } from '@/components/layout/Row'
+import { LessonRow, TipBlock } from '@/components/lessons'
 
 // In the lesson component:
-<Row>
-  <Row.Content>
-    <section className="space-y-4">
-      <h2 className="text-lg font-bold">Section Title</h2>
-      <p className="text-sm text-muted-foreground">Description...</p>
-      <WidgetName />
-    </section>
-  </Row.Content>
-  <Row.Aside>
-    <TipBlock title="How to Use">...</TipBlock>
-  </Row.Aside>
-</Row>
+<LessonRow
+  aside={<TipBlock title="How to Use">...</TipBlock>}
+>
+  <section className="space-y-4">
+    <h2 className="text-lg font-bold">Section Title</h2>
+    <p className="text-sm text-muted-foreground">Description...</p>
+    <WidgetName />
+  </section>
+</LessonRow>
 ```
 
 ---
