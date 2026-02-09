@@ -1,7 +1,7 @@
 # Module 3.3: Seeing What CNNs See — Record
 
 **Goal:** The student can visualize and interpret what a trained CNN has learned — from raw filter weights to activation maps to class-specific Grad-CAM heatmaps — and use these tools to debug, explain, and validate model behavior on a real fine-tuning project.
-**Status:** In progress (1 of 2 lessons built)
+**Status:** Complete (2 of 2 lessons built)
 
 ## Concept Index
 
@@ -14,6 +14,12 @@
 | Shortcut learning (correct prediction from wrong reasoning) | INTRODUCED | visualizing-features | Husky/wolf example: model classifies based on background (snow vs forest), not the animal. 90% accuracy is real but reasoning is broken. Framed as the most practically important insight: "correct prediction does not mean correct reasoning." Motivates visualization as a debugging tool, not just a pretty picture. |
 | Grad-CAM limitations (resolution, positive-only, not causal) | INTRODUCED | visualizing-features | Resolution limited by last conv layer spatial size (7x7 for ResNet-18 = each cell covers 32x32 input patch). ReLU keeps only positive evidence (regions supporting prediction, not regions arguing against). Correlation not causation — does not prove the model "understands" the object. |
 | Class-specific spatial attention (same image, different heatmaps for different classes) | DEVELOPED | visualizing-features | Core property of Grad-CAM. Same image of dog on bench: "golden retriever" highlights dog, "park bench" highlights bench. Different class scores produce different gradients produce different channel weights produce different spatial focus. Taught via inline SVG diagram, explanation, and comprehension check. |
+| Transfer learning practitioner workflow (train, evaluate, visualize, diagnose) | APPLIED | transfer-learning-project | Full end-to-end workflow on Oxford Flowers (8 species, ~50-80 images each). Student made real decisions: freeze backbone, train head, run Grad-CAM to validate reasoning, optionally fine-tune and compare. Upgraded from DEVELOPED (practiced in isolation in 3.2.3 and 3.3.1) to APPLIED (combined into coherent workflow on new dataset). |
+| Grad-CAM as model debugging/validation tool | APPLIED | transfer-learning-project | Student used Grad-CAM on their own fine-tuned model to check whether it focused on flowers or shortcuts (background, pots, borders). Upgraded from DEVELOPED (implemented from scratch in 3.3.1 on frozen pretrained model) to APPLIED (used as a validation tool on student's own trained model). Good signs / warning signs / ambiguous cases interpretation framework provided. |
+| Fine-tuning with differential learning rates (parameter groups) | DEVELOPED | transfer-learning-project | Student wrote optimizer with two parameter groups: layer4 at 1e-4, fc at 1e-3. Upgraded from INTRODUCED (seen the pattern in 3.2.3) to DEVELOPED (wrote independently in capstone TODO). Compared fine-tuning results to feature extraction baseline. |
+| Shortcut learning detection in practice | DEVELOPED | transfer-learning-project | Student checked their own model's Grad-CAM heatmaps for shortcut patterns. Interpretation guide: good signs (flower focus), warning signs (background/border focus), ambiguous (flower + context). Upgraded from INTRODUCED (husky/wolf example in 3.3.1) to DEVELOPED (applied to own model with structured interpretation framework). |
+| Feature extraction vs fine-tuning comparison on real data | APPLIED | transfer-learning-project | Side-by-side accuracy table + Grad-CAM heatmaps for both approaches on same test images. Student observed whether fine-tuning changed spatial focus and whether accuracy improvement justified added complexity. Makes the "start simple" heuristic concrete through lived experience. |
+| Conv1 filter confirmation on frozen model | DEVELOPED | transfer-learning-project | Optional section: student displayed conv1 filters from feature extraction model, confirmed they match ImageNet pretrained filters exactly (because backbone was frozen). Concrete payoff for "frozen means frozen" understanding. Reinforces "three questions, three tools" framework. |
 
 ## Per-Lesson Summaries
 
@@ -97,13 +103,59 @@
 4. "You need to modify the model architecture to visualize intermediate layers" — InsightBlock in hooks section. Hooks let you inspect any layer of any model without touching its code.
 5. "If Grad-CAM highlights the right region, the model is correct/trustworthy" — Shortcut learning section. Husky/wolf example: high accuracy, broken reasoning. Grad-CAM is correlation, not causation.
 
+### transfer-learning-project
+**Status:** Built
+**Cognitive load type:** CONSOLIDATE
+**Widget:** None (web lesson project brief + Colab notebook)
+
+**What was taught:**
+- No new concepts. This is a CONSOLIDATE capstone that integrates transfer learning (3.2.3) and Grad-CAM (3.3.1) into a real practitioner workflow.
+- The full practitioner workflow: train (feature extraction), evaluate (accuracy), visualize (Grad-CAM), diagnose (shortcut detection), optionally fine-tune and compare.
+- Depth upgrades through practice: transfer learning workflow DEVELOPED->APPLIED, Grad-CAM as debugging tool DEVELOPED->APPLIED, fine-tuning with differential LR INTRODUCED->DEVELOPED, shortcut learning detection INTRODUCED->DEVELOPED.
+
+**How concepts were taught:**
+- **Hook ("You have all the pieces"):** Recaps Series 3 journey from "what is a convolution?" through architectures, transfer learning, and visualization. Frames the project as the first time all pieces come together. Central question: "is the model right for the right reasons?"
+- **Project brief (web lesson):** Lightweight guidance, not teaching. Describes the dataset (Oxford Flowers, 8 species, ~50-80 images each), the task (flower classification), and the decision framework (small dataset + moderate domain similarity = start with feature extraction). Five PhaseCards walk through the workflow: explore data, feature extraction, Grad-CAM validation, fine-tuning (optional extension), final comparison.
+- **Grad-CAM interpretation guide:** Three GradientCards (good signs, warning signs, ambiguous cases) give the student a framework for reading their own heatmaps. Litmus test: "If I showed this to someone who does not know ML, would they agree the model is focusing on the right thing?"
+- **Notebook (Colab, scaffolded with genuine TODOs):** Student fills in: freeze backbone (1-2 lines), replace classification head (1-2 lines), unfreeze layer4 for fine-tuning (1-2 lines), create optimizer with differential learning rates (1-4 lines). Provided: dataset loading/filtering, transforms, training loop, Grad-CAM utility, display functions. Assertions verify correctness of TODO implementations.
+- **Optional filter viz section:** Conv1 filters from feature extraction model displayed to confirm they match ImageNet pretrained exactly (backbone was frozen). Layer4 activation maps on a flower sample. Reinforces "three questions, three tools" from visualizing-features.
+- **Reflection prompts (post-notebook):** Six prompts covering accuracy assessment, fine-tuning value, Grad-CAM surprises, shortcut detection, scaling considerations, and visualization tool comparison. Not graded — for consolidation.
+- **Series 3 completion celebration:** GradientCard summarizing the journey. Frames the practical superpower as understanding and trusting model reasoning, not just achieving accuracy. Tees up Series 4 (LLMs) with "different architecture, same practitioner mindset."
+
+**Mental models reinforced:**
+- "Correct prediction does not mean correct reasoning" — the central theme, now experienced firsthand on student's own model
+- "Start with the simplest strategy, add complexity only if needed" — lived through feature extraction first, fine-tuning second comparison
+- "Visualization is a debugging tool, not just a pretty picture" — Grad-CAM used for model validation, not curiosity
+- "Three questions, three tools" — optional section reinforces the full framework; Grad-CAM is the primary tool for the project's core question
+- "Hire experienced, train specific" — the analogy becomes a lived experience as student literally loads pretrained ResNet and trains a new head
+
+**Analogies used:**
+- No new analogies. This is a CONSOLIDATE lesson that reinforces existing mental models through practice.
+
+**What was NOT covered (scope boundaries):**
+- No new concepts taught (CONSOLIDATE)
+- Advanced fine-tuning techniques (LR scheduling, warmup, cosine annealing)
+- Hyperparameter search or architecture selection
+- Multi-GPU training or deployment
+- Object detection, segmentation, or tasks beyond classification
+- Building a custom dataset from scratch (dataset provided via torchvision)
+- Advanced interpretability beyond Grad-CAM
+- Fix-iterate loop (project ends with diagnosis, not debugging)
+- Early stopping or validation-based stopping criteria
+
+**Misconceptions addressed:**
+1. "If validation accuracy is high, the model is good enough" — The entire project structure refutes this. Grad-CAM validation is positioned as the most important step, after accuracy is achieved.
+2. "Fine-tuning always beats feature extraction" — The comparison structure lets the student see their own results. On a small dataset, the difference may be minimal or fine-tuning may even hurt. Framed as realistic outcome, not failure.
+3. "Grad-CAM on correctly classified images always highlights the object" — The interpretation guide explicitly asks students to look for unexpected focus patterns and provides warning signs for shortcut learning.
+4. "The dataset is too small for this to work" — Feature extraction with a frozen ImageNet backbone achieves strong accuracy on 50-80 images per class. The entire point of transfer learning is that pretrained features do the heavy lifting.
+
 ## Key Mental Models and Analogies
 
 | Model/Analogy | Established In | Used Again In |
 |---------------|---------------|---------------|
-| "Three questions, three tools" (filter viz / activation maps / Grad-CAM) | visualizing-features | |
-| "Visualization is a debugging tool, not just a pretty picture" | visualizing-features | |
-| "Correct prediction does not mean correct reasoning" | visualizing-features | |
-| "The feature hierarchy is real — you saw it" (evidence vs faith) | visualizing-features | |
-| "Placing a sensor on a layer" (hooks) | visualizing-features | |
-| "Asking the network to retrace its reasoning" (Grad-CAM) | visualizing-features | |
+| "Three questions, three tools" (filter viz / activation maps / Grad-CAM) | visualizing-features | transfer-learning-project (optional section reinforces full framework) |
+| "Visualization is a debugging tool, not just a pretty picture" | visualizing-features | transfer-learning-project (Grad-CAM used for model validation on student's own model) |
+| "Correct prediction does not mean correct reasoning" | visualizing-features | transfer-learning-project (central theme — student checks own model for shortcuts) |
+| "The feature hierarchy is real — you saw it" (evidence vs faith) | visualizing-features | transfer-learning-project (conv1 filter confirmation in optional section) |
+| "Placing a sensor on a layer" (hooks) | visualizing-features | transfer-learning-project (hooks used in Grad-CAM utility and optional activation map capture) |
+| "Asking the network to retrace its reasoning" (Grad-CAM) | visualizing-features | transfer-learning-project (student runs Grad-CAM on own fine-tuned model) |

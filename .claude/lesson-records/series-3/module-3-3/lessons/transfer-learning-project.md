@@ -255,3 +255,193 @@ You have all the pieces. Over the last ten lessons, you learned what convolution
 - [x] Cognitive load = 0 new concepts (CONSOLIDATE)
 - [x] Every concept connected to at least one existing concept
 - [x] Scope boundaries explicitly stated
+
+---
+
+## Review — 2026-02-09 (Iteration 1/3)
+
+### Summary
+- Critical: 1
+- Improvement: 4
+- Polish: 3
+
+### Verdict: NEEDS REVISION
+
+No critical findings that would leave the student lost, but one critical issue in the notebook and several improvement-level findings that would significantly strengthen both artifacts. The web lesson is well-structured as a lightweight project brief. The notebook is thorough and well-scaffolded. The main issues are: a notebook bug that would break execution, the notebook providing too many answers for a capstone, missing explicit connection to filter visualization/activation maps (only Grad-CAM is used), and the web lesson's fine-tuning phase being presented as mandatory when the plan called it "optional extension."
+
+### Findings
+
+### [CRITICAL] — Notebook variable `in_features` used before assignment in global scope
+
+**Location:** Notebook cell-12, final print statement
+**Issue:** The variable `in_features` is assigned inside the `create_feature_extraction_model` function as a local variable (`in_features = model.fc.in_features`). The print statement at the bottom of the cell references `in_features` in the global scope: `print(f'Only training the classification head ({in_features} -> {NUM_CLASSES})')`. This will raise a `NameError` because `in_features` is local to the function, not available in the cell's global scope.
+**Student impact:** The student runs the cell and gets a traceback instead of the verification message. Confusing for a capstone where the student expects the scaffolding to work. They would need to debug the notebook itself rather than focus on the project.
+**Suggested fix:** Either (a) capture the return value from the function and use it, e.g., change the function to return both model and in_features, or (b) compute `in_features` outside the function by reading it from `fe_model.fc.in_features` after creation: `in_features = fe_model.fc.in_features` before the print statement.
+
+### [IMPROVEMENT] — Notebook TODOs are pre-filled, reducing student decision-making
+
+**Location:** Notebook cells 12, 19, 22, 23, 30
+**Issue:** The planning document frames this as a capstone where "the student owns decisions (freeze/unfreeze, LR choices), interpretation (Grad-CAM analysis), reflection." However, the notebook has every TODO section already filled in with the correct code. Cell 12 has the freeze loop and head replacement already written. Cell 22 has layer4 unfreezing already done. Cell 23 has the differential learning rate optimizer already configured. The student's job reduces to pressing Shift+Enter through the cells and interpreting the outputs. The only cells that require any student action are the interpretation markdown cells.
+**Student impact:** The student does not practice making the decisions themselves. The depth upgrade from INTRODUCED to DEVELOPED for fine-tuning with differential LR is not fully earned because the student never had to write the parameter group pattern independently. The capstone becomes a guided demo rather than a project.
+**Suggested fix:** Leave the TODO sections as actual TODOs with hints (the hints are already there in comments). Remove the filled-in code so the student must write: (1) the freeze loop in cell 12, (2) the head replacement in cell 12, (3) the layer4 unfreezing in cell 22, (4) the parameter groups optimizer in cell 23. The Grad-CAM visualization code in cells 19 and 30 can remain provided since the goal is interpretation, not reimplementation. This is the capstone---the student should demonstrate they can do the mechanical parts independently.
+
+### [IMPROVEMENT] — Web lesson presents fine-tuning as a required phase, not optional extension
+
+**Location:** Web lesson, PhaseCard 4 (Fine-Tuning)
+**Issue:** The planning document's outline section (item 6) describes fine-tuning as "optional extension": "Fine-tuning (optional extension) --- unfreeze layer4 with a low LR, retrain, compare accuracy AND Grad-CAM focus." However, the built web lesson presents all 5 phases as a mandatory linear sequence with no indication that Phase 4 is optional. The notebook also presents it as a required step (no "optional" or "bonus" framing). This is a deviation from the plan.
+**Student impact:** Minor for this student (they will likely do it anyway), but it changes the character of the project from "make a decision about whether to fine-tune" to "do both approaches." The "start simple, add complexity only if needed" mental model is weakened because the lesson removes the decision---the student fine-tunes regardless of whether feature extraction was sufficient.
+**Suggested fix:** Either (a) add language to PhaseCard 4 marking it as an optional extension the student should attempt if feature extraction accuracy leaves room for improvement, or (b) update the planning document to reflect the deliberate decision to make fine-tuning mandatory (which is defensible for a capstone that wants to upgrade differential LR from INTRODUCED to DEVELOPED). Option (b) is probably better---the comparison is valuable pedagogically, and making it optional risks students skipping the most instructive part.
+
+### [IMPROVEMENT] — Only Grad-CAM is used; filter visualization and activation maps are absent
+
+**Location:** Notebook, entire workflow
+**Issue:** The module 3.3 module record establishes "Three questions, three tools" as a key mental model. The planning document's connections table references this. However, neither the web lesson nor the notebook asks the student to use filter visualization or activation maps on their fine-tuned model. Only Grad-CAM is used. This is a missed opportunity to reinforce the "three tools" framework and to let the student see whether fine-tuning changed the conv1 filters (it should not have---they were frozen).
+**Student impact:** The student exits the capstone having only applied one of three visualization tools. The "three questions, three tools" mental model is not reinforced through practice. The student does not get the satisfying confirmation that conv1 filters remain identical after fine-tuning (because they were frozen), which would be a concrete payoff for the transferability spectrum concept.
+**Suggested fix:** Add one optional section to the notebook (between Phase 3 and Phase 4, or at the end) that has the student: (1) display conv1 filters from the feature extraction model (should match ImageNet pretrained exactly), (2) optionally compare layer4 activations before/after fine-tuning. This does not need to be long---3-4 cells. The web lesson could add one sentence in the "Reflect on Your Results" section: "Which of the three visualization tools was most useful for understanding your model?" (This prompt actually already exists as reflection prompt #6, which is good, but it is orphaned without the notebook actually using all three tools.)
+
+### [IMPROVEMENT] — Reflection prompt #6 references techniques the student did not use in this project
+
+**Location:** Web lesson, Reflection Prompts section, item 6
+**Issue:** Prompt 6 asks: "Which visualization technique (filter viz, activation maps, Grad-CAM) was most useful for understanding your model's behavior?" However, the notebook only uses Grad-CAM. The student did not use filter visualization or activation maps on their project model. This prompt asks the student to compare tools they did not actually use in this context.
+**Student impact:** Confusion or a vague answer. The student might reference their 3.3.1 experience rather than this project, which defeats the purpose of project-specific reflection. Alternatively, the student may feel they missed something.
+**Suggested fix:** Either (a) update the notebook to include filter viz and activation maps as described in the previous finding, making the prompt valid, or (b) rewrite prompt 6 to ask something the student actually did in this project, e.g., "How did Grad-CAM change your understanding of your model's accuracy? Was there a moment where the heatmap surprised you?" or "Would filter visualization or activation maps have added useful information here? Why or why not?"
+
+### [POLISH] — Web lesson Hook section says "ten lessons" but actual count may differ
+
+**Location:** Web lesson, Hook section paragraph 1: "Over the last ten lessons"
+**Issue:** The exact count of lessons in Series 3 prior to this one depends on the curriculum. If the count is not exactly ten, this creates a minor credibility issue. The planning document does not specify the exact count.
+**Student impact:** Trivial---the student is unlikely to count, and "ten" is close enough to be fine. But if the student does count and gets a different number, it introduces a tiny moment of doubt.
+**Suggested fix:** Either verify the exact count and use it, or replace with "Throughout this series" or "Over the last several lessons" to avoid committing to a specific number.
+
+### [POLISH] — Notebook cell-22 has same `in_features` scoping issue as cell-12
+
+**Location:** Notebook cell-22, `create_finetuning_model` function
+**Issue:** Same pattern as the CRITICAL finding in cell-12: `in_features` is assigned inside the function but the cell does not reference it outside (the print statement in cell 22 uses `ft_model.layer4.parameters()` and `ft_model.fc.parameters()` directly). So this cell actually works fine---no bug here. However, the variable name reuse could be confusing if the student is debugging cell 12. No action needed on this specific cell.
+**Student impact:** None (this cell works correctly).
+**Suggested fix:** No change needed for cell 22 specifically; fixing cell 12 is sufficient.
+
+### [POLISH] — Notebook class names are approximate and could confuse a student who Googles them
+
+**Location:** Notebook cell-5, CLASS_NAMES list
+**Issue:** The comment says "Label names are approximate (the dataset doesn't include official names in torchvision, but these correspond to visually distinct flower types)." The chosen names (e.g., "Pink Primrose" for class 1, "Globe Thistle" for class 10) may not exactly match the Flowers102 label mapping from the original paper. If a student looks up the official label file, they might find different names and wonder if the wrong classes were selected.
+**Student impact:** Minor confusion if the student cross-references. Does not affect the learning objectives at all.
+**Suggested fix:** Add a brief note in the markdown cell above or in the code comment: "These names are chosen for display purposes and may not match the original dataset's label file exactly. The important thing is visual distinctness."
+
+### Review Notes
+
+**What works well:**
+- The web lesson is genuinely lightweight and appropriate for a CONSOLIDATE capstone. It does not over-explain concepts the student already knows. The "project brief + guidance + reflection" framing is exactly right.
+- The narrative arc is compelling. The "You Have All the Pieces" hook works because it is true---the student really does have all the pieces. The journey recap is well-paced and motivating.
+- The Grad-CAM interpretation guide (Good Signs / Warning Signs / Ambiguous Cases) is excellent pedagogical scaffolding. It gives the student a framework for interpreting their own results without telling them what to expect.
+- The notebook structure mirrors the practitioner workflow cleanly. The five phases are well-sequenced.
+- The Series 3 completion celebration is satisfying and well-earned. The framing of "the practical superpower" (understanding, not just accuracy) ties back to the course's core value proposition.
+- Misconceptions from the plan are addressed at the right locations: "accuracy is not enough" is the central theme, "fine-tuning always beats feature extraction" is addressed by the comparison structure, and "the dataset is too small" is addressed by the hook.
+- The scope boundaries are respected---the lesson does not drift into teaching new concepts.
+
+**Patterns to note:**
+- The notebook being pre-filled is a common builder tendency ("make sure it works") but is at odds with the capstone framing. The tension between "scaffolded" and "the student should do it" is the main quality issue.
+- The decision to focus exclusively on Grad-CAM (not filter viz / activation maps) is defensible for time reasons but means reflection prompt #6 is orphaned. Either expand the notebook or fix the prompt---do not leave them misaligned.
+- The CRITICAL finding (NameError in cell 12) is a genuine runtime bug that must be fixed before the student sees the notebook.
+
+---
+
+## Review — 2026-02-09 (Iteration 2/3)
+
+### Summary
+- Critical: 1
+- Improvement: 1
+- Polish: 1
+
+### Verdict: NEEDS REVISION
+
+All iteration 1 findings were addressed. The web lesson is clean and effective. The notebook now has genuine TODOs for the capstone skills (freeze, head replacement, layer4 unfreezing, differential LR optimizer). However, a new CRITICAL runtime bug was introduced in the optional filter viz section (cell 22), and one improvement-level finding remains about the fine-tuning phase framing.
+
+### Findings
+
+### [CRITICAL] — Notebook cell 22 references `comparison_images` before it is defined
+
+**Location:** Notebook cell 22, line: `sample_img = list(comparison_images.values())[0] if comparison_images else list(correct_samples.values())[0][0][0]`
+**Issue:** The variable `comparison_images` is first defined in cell 32 (the Phase 5 side-by-side Grad-CAM comparison cell). Cell 22 is the optional filter viz / activation maps cell that comes after Phase 3 (Grad-CAM validation). If the student runs cells top-to-bottom (the expected and natural order), cell 22 executes before cell 32, and `comparison_images` does not exist in the namespace. Python will raise a `NameError: name 'comparison_images' is not defined`. The `if comparison_images` guard only protects against an empty dict, not a nonexistent variable.
+**Student impact:** The student runs the optional cell and gets a traceback. This is particularly frustrating because the cell is labeled as "optional but reinforcing" --- a runtime error in an optional section signals to the student that the notebook is broken and undermines trust in the scaffolding. The fix from iteration 1 (adding this section) introduced the bug.
+**Suggested fix:** Remove the `comparison_images` reference entirely. Use only `correct_samples` which is guaranteed to exist at this point (defined in cell 19, which runs before cell 22): `sample_img = list(correct_samples.values())[0][0][0]`. Alternatively, collect a sample image directly from the test dataset within the cell itself.
+
+### [IMPROVEMENT] — Fine-tuning phase is labeled "Optional Extension" in both web and notebook, but notebook execution requires it
+
+**Location:** Web lesson PhaseCard 4 ("Optional Extension"), Notebook cell 23 markdown ("Optional Extension"), Notebook cells 24-27 (fine-tuning implementation and training)
+**Issue:** The web lesson correctly labels Phase 4 as "Optional Extension" per the iteration 1 fix. The notebook markdown in cell 23 also says "Optional Extension." However, the notebook's cell 30 (accuracy comparison table) unconditionally references `ft_history`, and cell 32 (side-by-side Grad-CAM) unconditionally uses `ft_model`. If the student skips the fine-tuning cells (24-27) as the "optional" framing invites, cells 30-32 will crash with `NameError`. The notebook is structurally mandatory while being labeled as optional.
+**Student impact:** Two failure modes: (1) The student skips the "optional" section and hits errors in Phase 5, or (2) the student does the section because the notebook forces it, but the "optional" framing creates a confusing mixed signal. Neither is ideal.
+**Suggested fix:** Either (a) make the notebook truly optional by wrapping cells 30-32 in `try/except` or gating on `'ft_history' in dir()`, with a message like "Fine-tuning was skipped --- showing feature extraction results only," or (b) remove the "Optional Extension" framing from the notebook cell 23 markdown (keeping it only in the web lesson, where it serves as guidance rather than instruction). Option (b) is simpler and preserves the pedagogically valuable comparison. The web lesson can frame it as "optional if you want to stop after feature extraction" while the notebook guides the student through the full comparison.
+
+### [POLISH] — Extra space before `what` in the "Real Skill" aside
+
+**Location:** Web lesson, InsightBlock "The Real Skill" (line ~655): `seeing<em> what</em> it learned`
+**Issue:** There is a leading space inside the `<em>` tag: `<em> what</em>` renders as " what" with a space before "what." The intended rendering is "seeing *what* it learned" but the actual rendering will have a double space: "seeing  what it learned."
+**Student impact:** Trivial visual issue. The student may not even notice. It is a minor typographic imperfection.
+**Suggested fix:** Change `<em> what</em>` to `<em>what</em>` (remove the leading space inside the tag).
+
+### Review Notes
+
+**What was fixed well from iteration 1:**
+- The `in_features` NameError in cell 12 is fixed cleanly --- `fc_in = fe_model.fc.in_features` reads the value from the model after creation, sidestepping the scoping issue entirely.
+- TODOs are now genuine scaffolding with hints and assertions. Cells 12, 24, and 25 require the student to write freeze loops, head replacement, layer4 unfreezing, and differential LR parameter groups. This is a real capstone now.
+- The optional filter viz section (cells 21-22) is a well-framed addition. The "three questions, three tools" callback in the markdown is pedagogically sound. The conv1 filter visualization is a satisfying concrete confirmation of "frozen means frozen."
+- Reflection prompt 6 is well-updated with conditional phrasing that works whether or not the student ran the optional section.
+- "Throughout this series" replaces the specific count. Class names note added to cell 5 comments.
+- Fine-tuning PhaseCard correctly labeled "Optional Extension."
+
+**Patterns to note:**
+- The CRITICAL finding is a straightforward variable ordering bug --- the kind of issue that emerges when new cells reference variables from cells that were originally in a different position. Easy to fix.
+- The "optional but required" tension in the fine-tuning phase is a design decision more than a bug. The recommendation is to simplify: keep the web lesson's "optional" framing for the student who wants to stop early, but let the notebook guide the full comparison naturally. The comparison is the most instructive part of the capstone.
+
+---
+
+## Review — 2026-02-09 (Iteration 3/3 FINAL)
+
+### Summary
+- Critical: 0
+- Improvement: 0
+- Polish: 0
+
+### Verdict: PASS
+
+All iteration 2 findings have been resolved. The lesson is ready to ship.
+
+**Iteration 2 fixes verified:**
+1. **CRITICAL (comparison_images NameError in cell 22):** Fixed. Cell 22 now uses `correct_samples` (defined in cell 19) to source its sample image: `sample_img = list(correct_samples.values())[0][0][0]`. No reference to `comparison_images` remains in cell 22. Variable ordering is correct for top-to-bottom execution.
+2. **IMPROVEMENT (fine-tuning optional/required tension):** Fixed. Notebook cell 23 markdown presents Phase 4 as "Fine-Tuning" without "Optional Extension" labeling, guiding the student through the full comparison naturally. Web lesson PhaseCard 4 retains "Optional Extension" subtitle as guidance for students who want to stop after feature extraction. Cells 30-32 work correctly because the notebook flow makes Phase 4 a natural continuation.
+3. **POLISH (extra space in `<em>` tag):** Fixed. Line 655 reads `<em>what</em>` with no leading space.
+
+### Findings
+
+None. No critical, improvement, or polish findings on this iteration.
+
+### Review Notes
+
+**Web lesson quality:**
+- Lightweight and appropriate for a CONSOLIDATE capstone. Does not over-explain concepts the student already knows.
+- The "You Have All the Pieces" hook is compelling and true. The narrative arc works.
+- The Grad-CAM Interpretation Guide (Good Signs / Warning Signs / Ambiguous Cases) is excellent scaffolding.
+- The Series 3 completion celebration is satisfying. The "practical superpower" framing ties the entire series together.
+- All em dashes use `&mdash;` with no spaces. Writing style is clean.
+- TypeScript compiles cleanly. No lint errors. Route and module index are correctly wired.
+
+**Notebook quality:**
+- Genuine TODOs in cells 12, 24, and 25 require the student to write freeze loops, head replacement, layer4 unfreezing, and differential LR parameter groups. This is a real capstone.
+- Variable ordering is correct for top-to-bottom execution. No cross-cell dependency bugs.
+- Optional filter viz section (cells 21-22) is well-framed with "three questions, three tools" callback.
+- Training utilities, Grad-CAM utility, and display functions are provided as scaffolding.
+- Assertions provide immediate feedback if TODO implementations are incorrect.
+- The notebook summary and Series 3 completion message mirror the web lesson.
+
+**What the lesson does well:**
+- The practitioner workflow (train, evaluate, visualize, diagnose) is the central organizing principle and is executed faithfully across both artifacts.
+- The "is the model right for the right reasons?" question drives genuine engagement.
+- The comparison structure (FE first, FT second, side-by-side Grad-CAM) makes the value of visualization concrete.
+- Reflection prompts close the loop without being prescriptive.
+- Scope boundaries are strictly respected --- zero new concepts taught, which is correct for a CONSOLIDATE capstone.
+
+**Depth upgrades earned:**
+- Transfer learning workflow: DEVELOPED -> APPLIED (student executes full workflow on new dataset)
+- Grad-CAM as debugging tool: DEVELOPED -> APPLIED (student validates their own fine-tuned model)
+- Fine-tuning with differential LR: INTRODUCED -> DEVELOPED (student writes parameter groups independently)
+- Shortcut learning detection: INTRODUCED -> DEVELOPED (student checks their own model for shortcuts)

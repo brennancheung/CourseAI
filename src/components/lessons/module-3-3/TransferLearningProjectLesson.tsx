@@ -113,7 +113,7 @@ export function TransferLearningProjectLesson() {
           />
           <div className="space-y-4">
             <p className="text-muted-foreground">
-              Over the last ten lessons, you built a complete mental model of
+              Throughout this series, you built a complete mental model of
               convolutional neural networks. You learned what convolutions
               compute, how architectures evolved from LeNet to ResNet, how to
               reuse pretrained models for new tasks, and how to see what your
@@ -296,22 +296,24 @@ export function TransferLearningProjectLesson() {
 
             <PhaseCard
               number={4}
-              title="Fine-Tuning"
-              subtitle="Unfreeze layer4 with a low learning rate"
+              title="Fine-Tuning (Optional Extension)"
+              subtitle="Now that you have a baseline, decide if it is worth adapting the backbone"
               color="orange"
             >
               <div className="text-sm space-y-2">
                 <p>
-                  Unfreeze the last residual stage (layer4) and retrain with
-                  differential learning rates: a low rate for the unfrozen
-                  backbone layers, a higher rate for the classification head.
-                  Compare accuracy to the feature extraction baseline.
+                  You have feature extraction results and Grad-CAM heatmaps.
+                  Now try fine-tuning to see if it helps: unfreeze layer4 and
+                  retrain with differential learning rates (low for backbone,
+                  higher for head). Compare accuracy <em>and</em> Grad-CAM
+                  focus to the feature extraction baseline.
                 </p>
                 <p className="text-muted-foreground">
                   <strong>Look for:</strong> Does fine-tuning improve accuracy?
                   On a small dataset, the improvement may be modest or even
-                  negative. This is normal&mdash;it does not mean you did
-                  something wrong.
+                  negative. This is a realistic outcome, not a
+                  failure&mdash;it means feature extraction was already
+                  sufficient.
                 </p>
               </div>
             </PhaseCard>
@@ -543,9 +545,10 @@ export function TransferLearningProjectLesson() {
                   Would you still start with feature extraction?
                 </li>
                 <li>
-                  Which visualization technique (filter viz, activation maps,
-                  Grad-CAM) was most useful for understanding your
-                  model&apos;s behavior?
+                  If you ran the optional filter viz and activation maps
+                  section, how did those compare to Grad-CAM for
+                  understanding your model? If you skipped it, would those
+                  tools have added useful information here? Why or why not?
                 </li>
               </ol>
             </GradientCard>
@@ -649,7 +652,7 @@ export function TransferLearningProjectLesson() {
           <InsightBlock title="The Real Skill">
             Any tutorial can get you to 90% accuracy with copy-paste code. The
             skill you built is knowing <em>why</em> the model works, seeing
-            <em> what</em> it learned, and recognizing <em>when</em> it is
+            <em>what</em> it learned, and recognizing <em>when</em> it is
             fooling you.
           </InsightBlock>
         </Row.Aside>

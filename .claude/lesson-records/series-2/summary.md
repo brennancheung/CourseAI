@@ -1,6 +1,6 @@
 # Series 2: PyTorch — Summary
 
-**Status:** In Progress (Module 2.1: complete, Module 2.2: complete, Module 2.3: planned)
+**Status:** In Progress (Module 2.1: complete, Module 2.2: complete, Module 2.3: in progress — 1 of 3)
 
 ## Series Goal
 

@@ -299,3 +299,46 @@ No critical issues. The lesson is well-structured, follows its planning document
 
 **Systemic observation:**
 The lesson leans heavily on code blocks as its primary modality (which the plan acknowledges -- "code IS the concept"). This is appropriate for a BUILD lesson about API patterns. The one risk is that students who learn better from visual/spatial modalities have fewer entry points. The chart partially addresses this, but the core save/load pattern is purely code + prose. This is not a finding (it matches the plan and the lesson type), but worth noting for the module record.
+
+---
+
+## Review — 2026-02-09 (Iteration 2/3)
+
+### Summary
+- Critical: 0
+- Improvement: 0
+- Polish: 2
+
+### Verdict: PASS
+
+All 7 findings from iteration 1 (4 improvement, 3 polish) have been addressed. The lesson now explicitly names the Keras misconception (#4), the chart has a ReferenceLine at the resume point, Adam's exp_avg/exp_avg_sq are explained in-line, model.eval() is reinforced with the batch norm/dropout connection, double-hyphens are replaced with em dashes, the verify_predictions code uses correct variable names (model vs loaded_model), and weights_only is specified on all torch.load calls with appropriate comments.
+
+No critical or improvement findings remain. Two minor polish items noted below.
+
+### Findings
+
+#### [POLISH] — Colab notebook does not exist yet
+
+**Location:** Practice section, line 897 (Colab link)
+**Issue:** The lesson links to `notebooks/2-3-1-saving-and-loading.ipynb` on GitHub, but this file does not exist in the repository. The link will 404 until the notebook is created.
+**Student impact:** A student clicking "Open in Google Colab" will get a GitHub 404 page. They would need to return to the lesson and complete the exercises without the scaffolded notebook environment.
+**Suggested fix:** Create the notebook before shipping the lesson, or add a note that the notebook is coming soon. The lesson text accurately describes all four exercises, so the notebook content is well-specified.
+
+#### [POLISH] — torch.save(model) negative example will trigger FutureWarning
+
+**Location:** save_whole_model.py code block (line 726)
+**Issue:** `torch.load('model_full.pth')` in the "don't do this" example does not specify `weights_only`. A student who types this code (even as a negative example) in PyTorch 2.6+ will see a FutureWarning about unsafe deserialization. Since this is explicitly a negative example meant to show why not to do this, the warning is arguably reinforcing, but it could confuse a student who does not yet understand pickle security.
+**Student impact:** Very minor. The student sees a verbose warning they were not prepared for. It does not break anything and actually supports the lesson's point.
+**Suggested fix:** Optionally add `weights_only=False` with a comment like `# (pickle-based, requires trust)` to suppress the warning and reinforce the pickle fragility point. Or leave as-is since the warning actually helps the lesson's argument.
+
+### Review Notes
+
+**All iteration 1 fixes landed cleanly.** Each of the 7 fixes was implemented as suggested or with equivalent quality. Specifically:
+
+- The Keras misconception (#4) is now explicitly named and reframed as a feature (lines 362-371). This is well-placed in the save/load section and does not interrupt the flow.
+- The ReferenceLine at x={5.5} with "Resume" label makes the chart's pedagogical point visually immediate. The before/after contrast is now unmistakable.
+- The exp_avg/exp_avg_sq parenthetical (lines 516-523) is thorough without being a re-teach. It gives just enough to ground the code output in meaning.
+- The model.eval() reinforcement (lines 342-351) explicitly calls back to the MNIST project and names both batch norm and dropout. The "noisy and non-reproducible" consequence is concrete.
+- Variable naming, em dashes, and weights_only were all addressed at every affected location.
+
+**Overall assessment:** This is a well-crafted BUILD lesson. It follows the planning document faithfully, addresses all four misconceptions, uses five modalities, maintains appropriate cognitive load (2 new concepts), and connects every new idea to prior knowledge. The narrative arc from "durability problem" through "full checkpoint in a training loop" is logical and well-paced. The two remaining polish items are genuine minor issues, not blocking. The lesson is ready to ship (pending notebook creation).

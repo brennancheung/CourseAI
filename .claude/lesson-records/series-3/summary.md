@@ -1,6 +1,6 @@
 # Series 3: CNNs — Summary
 
-**Status:** In progress (Modules 3.1-3.2: complete, Module 3.3: planned)
+**Status:** Complete (Modules 3.1-3.3: complete)
 
 ## Series Goal
 
@@ -12,7 +12,7 @@ Understand convolutional networks — how architecture encodes spatial assumptio
 |--------|-------|---------|--------|
 | 3.1 | Convolutions | 3 | Complete |
 | 3.2 | Modern Architectures | 3 | Complete |
-| 3.3 | Seeing What CNNs See | 2 | Planned |
+| 3.3 | Seeing What CNNs See | 2 | Complete |
 
 ## Rolled-Up Concept List
 
@@ -66,6 +66,17 @@ Understand convolutional networks — how architecture encodes spatial assumptio
 | Cross-entropy loss for multi-class classification (nn.CrossEntropyLoss) | INTRODUCED | 3.2 | transfer-learning |
 | Feature transferability spectrum (early layers universal, later task-specific) | DEVELOPED | 3.2 | transfer-learning |
 | Transfer learning decision framework (dataset size x domain similarity) | INTRODUCED | 3.2 | transfer-learning |
+| Filter visualization (displaying conv1 learned weights as images) | DEVELOPED | 3.3 | visualizing-features |
+| Activation map capture and interpretation at multiple depths | DEVELOPED | 3.3 | visualizing-features |
+| Grad-CAM (gradient-weighted class activation mapping) | DEVELOPED | 3.3 | visualizing-features |
+| PyTorch hooks (register_forward_hook, register_full_backward_hook) | INTRODUCED | 3.3 | visualizing-features |
+| Shortcut learning (correct prediction from wrong reasoning) | DEVELOPED | 3.3 | visualizing-features -> transfer-learning-project (INTRODUCED -> DEVELOPED) |
+| Grad-CAM limitations (resolution, positive-only, not causal) | INTRODUCED | 3.3 | visualizing-features |
+| Class-specific spatial attention (same image, different heatmaps for different classes) | DEVELOPED | 3.3 | visualizing-features |
+| Transfer learning practitioner workflow (train, evaluate, visualize, diagnose) | APPLIED | 3.3 | transfer-learning-project |
+| Grad-CAM as model debugging/validation tool | APPLIED | 3.3 | transfer-learning-project |
+| Fine-tuning with differential learning rates (parameter groups) | DEVELOPED | 3.3 | transfer-learning-project (upgraded from INTRODUCED in 3.2) |
+| Feature extraction vs fine-tuning comparison on real data | APPLIED | 3.3 | transfer-learning-project |
 
 ## Key Mental Models Carried Forward
 
@@ -89,6 +100,12 @@ Understand convolutional networks — how architecture encodes spatial assumptio
 | "Hire experienced, train specific" (transfer learning) | transfer-learning (3.2) |
 | Feature extraction vs fine-tuning as a spectrum | transfer-learning (3.2) |
 | Transfer learning is the default, not a workaround | transfer-learning (3.2) |
+| "Three questions, three tools" (filter viz / activation maps / Grad-CAM) | visualizing-features (3.3) |
+| "Visualization is a debugging tool, not just a pretty picture" | visualizing-features (3.3) |
+| "Correct prediction does not mean correct reasoning" | visualizing-features (3.3) |
+| "The feature hierarchy is real — you saw it" (evidence vs faith) | visualizing-features (3.3) |
+| "Placing a sensor on a layer" (hooks) | visualizing-features (3.3) |
+| The practitioner workflow: train, evaluate, visualize, diagnose | transfer-learning-project (3.3) |
 
 ## What This Series Does NOT Cover
 

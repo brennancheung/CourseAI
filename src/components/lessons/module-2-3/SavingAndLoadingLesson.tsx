@@ -163,7 +163,7 @@ export function SavingAndLoadingLesson() {
         <Row.Content>
           <LessonHeader
             title="Saving, Loading, and Checkpoints"
-            description="Make your trained models durable -- save state, resume interrupted training, and never lose progress."
+            description="Make your trained models durable\u2014save state, resume interrupted training, and never lose progress."
             category="Practical Patterns"
           />
         </Row.Content>
@@ -199,7 +199,7 @@ export function SavingAndLoadingLesson() {
               'No distributed checkpointing or multi-GPU saving',
               'No experiment management tools (MLflow, Weights & Biases)',
               'No model versioning or production deployment',
-              'GPU-specific loading covered briefly (map_location) -- full GPU training is next lesson',
+              'GPU-specific loading covered briefly (map_location)\u2014full GPU training is next lesson',
             ]}
           />
         </Row.Content>
@@ -256,7 +256,7 @@ export function SavingAndLoadingLesson() {
         <Row.Content>
           <SectionHeader
             title="What Is a state_dict?"
-            subtitle="Just a dictionary of tensors -- nothing hidden"
+            subtitle="Just a dictionary of tensors\u2014nothing hidden"
           />
           <div className="space-y-4">
             <p className="text-muted-foreground">
@@ -331,10 +331,11 @@ torch.save(model.state_dict(), 'mnist_model.pth')`}
               language="python"
               filename="load_state_dict.py"
               code={`# LOAD: create a fresh model, load state_dict into it
-model = MNISTClassifier()                       # 1. Create model (random weights)
-state_dict = torch.load('mnist_model.pth')      # 2. Load state_dict from disk
-model.load_state_dict(state_dict)               # 3. Copy saved weights into model
-model.eval()                                    # 4. Set to eval mode for inference`}
+loaded_model = MNISTClassifier()                       # 1. Create model (random weights)
+state_dict = torch.load('mnist_model.pth',             # 2. Load state_dict from disk
+                        weights_only=True)
+loaded_model.load_state_dict(state_dict)               # 3. Copy saved weights into model
+loaded_model.eval()                                    # 4. Set to eval mode for inference`}
             />
 
             <p className="text-muted-foreground">
@@ -380,8 +381,8 @@ model.eval()                                    # 4. Set to eval mode for infere
               code={`# Verify: predictions match
 test_input = torch.randn(1, 1, 28, 28)
 
-original_output = original_model(test_input)
-loaded_output = model(test_input)
+original_output = model(test_input)          # the trained model from above
+loaded_output = loaded_model(test_input)     # the freshly loaded model
 
 print(torch.allclose(original_output, loaded_output))  # True`}
             />
@@ -402,6 +403,18 @@ print(torch.allclose(original_output, loaded_output))  # True`}
             <code className="text-xs bg-muted px-1 py-0.5 rounded">.pt</code>{' '}
             extensions. This is just a convention&mdash;the file is a
             serialized Python dictionary. Use whichever you prefer.
+          </TipBlock>
+          <TipBlock title="weights_only=True">
+            Since PyTorch 2.6,{' '}
+            <code className="text-xs bg-muted px-1 py-0.5 rounded">torch.load()</code>{' '}
+            warns if you do not specify{' '}
+            <code className="text-xs bg-muted px-1 py-0.5 rounded">weights_only</code>.
+            Use{' '}
+            <code className="text-xs bg-muted px-1 py-0.5 rounded">weights_only=True</code>{' '}
+            for state_dicts (tensors only). Checkpoints with metadata like
+            epoch or loss need{' '}
+            <code className="text-xs bg-muted px-1 py-0.5 rounded">weights_only=False</code>&mdash;only
+            load files you trust.
           </TipBlock>
         </Row.Aside>
       </Row>
@@ -570,7 +583,9 @@ torch.save(checkpoint, 'checkpoint.pth')`}
               language="python"
               filename="load_checkpoint.py"
               code={`# Resume from a checkpoint
-checkpoint = torch.load('checkpoint.pth')
+# weights_only=False because the checkpoint dict contains non-tensor
+# metadata (epoch, loss). Only use this with files you trust.
+checkpoint = torch.load('checkpoint.pth', weights_only=False)
 
 model = MNISTClassifier()
 optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
@@ -804,16 +819,19 @@ model = torch.load('model_full.pth')
               language="python"
               filename="map_location.py"
               code={`# Saved on GPU, loading on CPU
-state_dict = torch.load('model.pth', map_location='cpu')
+state_dict = torch.load('model.pth', map_location='cpu',
+                        weights_only=True)
 model.load_state_dict(state_dict)
 
 # Saved on CPU, loading on a specific GPU
-state_dict = torch.load('model.pth', map_location='cuda:0')
+state_dict = torch.load('model.pth', map_location='cuda:0',
+                        weights_only=True)
 model.load_state_dict(state_dict)
 
 # Portable pattern: load to whatever device is available
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-state_dict = torch.load('model.pth', map_location=device)
+state_dict = torch.load('model.pth', map_location=device,
+                        weights_only=True)
 model.load_state_dict(state_dict)
 model.to(device)`}
             />
@@ -911,7 +929,7 @@ model.to(device)`}
                 headline:
                   'state_dict = a snapshot of all the knobs',
                 description:
-                  'model.state_dict() returns a dictionary mapping layer names to tensors. Nothing opaque, nothing hidden -- just the learned parameter values.',
+                  'model.state_dict() returns a dictionary mapping layer names to tensors. Nothing opaque, nothing hidden\u2014just the learned parameter values.',
               },
               {
                 headline: 'Always save state_dict, not the model object',
@@ -926,7 +944,7 @@ model.to(device)`}
               },
               {
                 headline:
-                  'Optimizer state matters -- without it, Adam forgets',
+                  'Optimizer state matters\u2014without it, Adam forgets',
                 description:
                   "Restoring model weights alone causes a loss spike on resume. Adam's momentum buffers and adaptive rates need saving too.",
               },

@@ -296,6 +296,37 @@ const practicalPatterns: CurriculumNode = {
         ],
       },
     },
+    {
+      slug: 'gpu-training',
+      title: 'GPU Training',
+      description: 'Move your training loop to GPU and squeeze more speed with mixed precision -- without changing the heartbeat',
+      duration: '25 min',
+      category: 'Practical Patterns',
+      objectives: [
+        'Write device-aware training code that runs identically on CPU and GPU',
+        'Handle device mismatch errors in a real training loop',
+        'Know when GPU training helps and when it does not',
+        'Use torch.amp.autocast and GradScaler for mixed precision',
+        'Save and load device-aware checkpoints with map_location',
+      ],
+      skills: ['pytorch', 'gpu', 'cuda', 'mixed-precision', 'device-management'],
+      prerequisites: ['saving-and-loading'],
+      exercise: {
+        constraints: [
+          'Single-GPU training only -- no multi-GPU or distributed training',
+          'No CUDA programming, kernels, or streams',
+          'No memory management or OOM debugging',
+          'No torch.compile or custom CUDA extensions',
+          'Mixed precision basics only -- no bfloat16 deep dive',
+        ],
+        steps: [
+          'Move the MNIST model and training loop to GPU, time it, compare to CPU',
+          'Add device-aware checkpointing -- save during GPU training, load on CPU with map_location',
+          'Add mixed precision (autocast + GradScaler) to the GPU training loop, compare speed',
+          'Write a complete portable training script: device detection, GPU, mixed precision, device-aware checkpoints',
+        ],
+      },
+    },
   ],
 }
 
