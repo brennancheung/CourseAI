@@ -3,6 +3,7 @@
 import { useState, useMemo, useCallback, useEffect } from 'react'
 import { Line, Circle, Text, Arrow, Rect } from 'react-konva'
 import { ZoomableCanvas } from '@/components/canvas/ZoomableCanvas'
+import { useContainerWidth } from '@/hooks/useContainerWidth'
 
 /**
  * XORClassifierExplorer - Interactive widget demonstrating the XOR problem
@@ -81,9 +82,11 @@ function getBestAccuracy(slope: number, intercept: number): { accuracy: number; 
 }
 
 export function XORClassifierExplorer({
-  width = 500,
+  width: widthOverride,
   height = 400,
 }: XORClassifierExplorerProps) {
+  const { containerRef, width: measuredWidth } = useContainerWidth(500)
+  const width = widthOverride ?? measuredWidth
   const [slope, setSlope] = useState(0)
   const [intercept, setIntercept] = useState(0.5)
   const [attempts, setAttempts] = useState(0)
@@ -158,7 +161,7 @@ export function XORClassifierExplorer({
   }
 
   return (
-    <div className="space-y-4">
+    <div ref={containerRef} className="space-y-4">
       {/* Graph */}
       <div className="rounded-lg border bg-card overflow-hidden">
         <ZoomableCanvas width={width} height={height} backgroundColor="#1a1a2e">

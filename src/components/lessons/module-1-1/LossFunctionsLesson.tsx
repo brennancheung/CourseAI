@@ -47,8 +47,8 @@ export function LossFunctionsLesson() {
       <Row>
         <Row.Content>
           <ObjectiveBlock>
-            Understand how we measure model quality with a single number — the loss —
-            and why Mean Squared Error is the go-to choice.
+            Understand how we measure model quality with a single number—the loss—and
+            why Mean Squared Error is the go-to choice.
           </ObjectiveBlock>
         </Row.Content>
         <Row.Aside>
@@ -57,6 +57,21 @@ export function LossFunctionsLesson() {
             loss and your model learns the wrong thing.
           </TipBlock>
         </Row.Aside>
+      </Row>
+
+      {/* Motivation: Callback to previous lesson */}
+      <Row>
+        <Row.Content>
+          <div className="space-y-4">
+            <p className="text-muted-foreground">
+              In the last lesson, you dragged a line around and tried to make it
+              &quot;fit&quot; the data. But how do you actually know when one fit is
+              better than another? Right now, you&apos;re eyeballing it. To train a
+              model, we need a <strong>number</strong>—a single score that tells us
+              how wrong the model is. Let&apos;s build that score step by step.
+            </p>
+          </div>
+        </Row.Content>
       </Row>
 
       {/* Section 1: Residuals */}
@@ -74,8 +89,10 @@ export function LossFunctionsLesson() {
               <BlockMath math="\text{residual}_i = y_i - \hat{y}_i" />
             </div>
             <p className="text-muted-foreground">
-              This is called the <strong>residual</strong> (or error) for point <InlineMath math="i" />.
-              It&apos;s simply the actual value minus the predicted value.
+              This is called the <strong>residual</strong> for point <InlineMath math="i" />.
+              It&apos;s simply the actual value minus the predicted value. A positive
+              residual means we predicted too low, a negative one means too high, and
+              zero means a perfect prediction for that point.
             </p>
             <p className="text-muted-foreground">
               Try moving the line and watch the red residual lines change:
@@ -83,11 +100,12 @@ export function LossFunctionsLesson() {
           </div>
         </Row.Content>
         <Row.Aside>
-          <InsightBlock title="Residual = Error">
-            Positive residual: we predicted too low.
-            Negative residual: we predicted too high.
-            Zero: perfect prediction for that point.
-          </InsightBlock>
+          <TipBlock title='Why "Residual"?'>
+            It means &quot;what&apos;s left over.&quot; Your model explains the
+            pattern in the data. The residual is what remains—the part the model
+            couldn&apos;t capture. You&apos;ll also see it called &quot;error,&quot;
+            which is more intuitive but less precise.
+          </TipBlock>
         </Row.Aside>
       </Row>
 
@@ -106,9 +124,9 @@ export function LossFunctionsLesson() {
         <Row.Aside>
           <TryThisBlock title="Experiment">
             <ul className="space-y-2 text-sm">
-              <li>• Watch the red lines — those are residuals</li>
+              <li>• Watch the red lines—those are residuals</li>
               <li>• Try to make all red lines as short as possible</li>
-              <li>• Notice the MSE number changing</li>
+              <li>• Notice the MSE number—it measures overall wrongness (we&apos;ll break it down next)</li>
               <li>• Can you get the MSE below 0.5?</li>
             </ul>
           </TryThisBlock>
@@ -153,8 +171,9 @@ export function LossFunctionsLesson() {
         </Row.Content>
         <Row.Aside>
           <WarningBlock title="Large Errors Hurt">
-            Because of squaring, one very wrong prediction hurts more than two
-            slightly wrong predictions. This is usually what we want!
+            Two predictions each off by 3: 3² + 3² = 18. One prediction off by 6:
+            6² = 36. Same total absolute error, but MSE penalizes the concentrated
+            error twice as much.
           </WarningBlock>
         </Row.Aside>
       </Row>
@@ -178,16 +197,16 @@ export function LossFunctionsLesson() {
             </p>
             <ul className="list-disc list-inside text-muted-foreground space-y-2 ml-4">
               <li>
-                <InlineMath math="y_i - \hat{y}_i" /> — the residual for point <InlineMath math="i" />
+                <InlineMath math="y_i - \hat{y}_i" />—the residual for point <InlineMath math="i" />
               </li>
               <li>
-                <InlineMath math="(\cdot)^2" /> — square it (makes all values positive, penalizes large errors)
+                <InlineMath math="(\cdot)^2" />—square it (makes all values positive, penalizes large errors)
               </li>
               <li>
-                <InlineMath math="\sum" /> — sum over all points
+                <InlineMath math="\sum" />—sum over all points
               </li>
               <li>
-                <InlineMath math="\frac{1}{n}" /> — divide by count to get the mean
+                <InlineMath math="\frac{1}{n}" />—divide by count to get the mean
               </li>
             </ul>
             <p className="text-muted-foreground mt-4">
@@ -217,7 +236,7 @@ export function LossFunctionsLesson() {
               <em> every possible</em> combination of slope and intercept.
             </p>
             <p className="text-muted-foreground">
-              You get a <strong>loss surface</strong> — a landscape where:
+              You get a <strong>loss surface</strong>—a landscape where:
             </p>
             <ul className="list-disc list-inside text-muted-foreground space-y-1 ml-4">
               <li>X-axis: slope (<InlineMath math="w" />)</li>
@@ -225,8 +244,10 @@ export function LossFunctionsLesson() {
               <li>Height: loss (<InlineMath math="L" />)</li>
             </ul>
             <p className="text-muted-foreground mt-4">
-              Training is finding the lowest point on this landscape — the valley
-              where loss is minimized.
+              Training is finding the lowest point on this landscape—the valley
+              where loss is minimized. Below, you&apos;ll see a heatmap where
+              color represents loss—darker means lower. Drag anywhere to
+              explore, and watch how the fitted line changes.
             </p>
           </div>
         </Row.Content>

@@ -143,8 +143,8 @@ function SimulationPanel({
 
       <div className="rounded-lg border bg-card overflow-hidden">
         <Mafs
-          height={180}
-          viewBox={{ x: [-5, 5], y: [-0.5, 12] }}
+          height={300}
+          viewBox={{ x: [-6, 6], y: [-1, 15] }}
           preserveAspectRatio={false}
         >
           <Coordinates.Cartesian
@@ -160,7 +160,7 @@ function SimulationPanel({
             <Point
               key={i}
               x={point.x}
-              y={Math.min(point.loss, 11)}
+              y={Math.min(point.loss, 14)}
               color={color}
               opacity={0.3 + (0.5 * i) / trajectory.length}
             />
@@ -170,7 +170,7 @@ function SimulationPanel({
           {!isDiverging && (
             <Point
               x={position}
-              y={Math.min(currentLoss, 11)}
+              y={Math.min(currentLoss, 14)}
               color={color}
             />
           )}
@@ -180,7 +180,7 @@ function SimulationPanel({
 
           {/* Divergence indicator */}
           {isDiverging && (
-            <Text x={0} y={6} size={16} color={Theme.red}>
+            <Text x={0} y={7} size={16} color={Theme.red}>
               DIVERGED!
             </Text>
           )}
@@ -238,7 +238,7 @@ function SimulationPanel({
                   onLearningRateChange?.(preset.value)
                   reset()
                 }}
-                className={`px-2 py-0.5 rounded border transition-colors ${
+                className={`px-2 py-0.5 rounded border transition-colors cursor-pointer ${
                   Math.abs(currentLR - preset.value) < 0.01
                     ? 'border-orange-500 bg-orange-500/20 text-orange-400'
                     : 'border-muted hover:border-muted-foreground hover:bg-muted'

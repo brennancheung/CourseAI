@@ -1,17 +1,14 @@
 'use client'
 
-import { useState, useMemo, useRef } from 'react'
-import { Canvas, useFrame } from '@react-three/fiber'
-import { OrbitControls, Text, Line } from '@react-three/drei'
-import * as THREE from 'three'
+import { useState, useMemo, useRef, useEffect, useCallback } from 'react'
 
 /**
- * LossSurfaceExplorer - 3D visualization of loss landscape
+ * LossSurfaceExplorer - 2D contour heatmap of loss landscape
  *
  * Shows how MSE varies as slope and intercept change.
  * Features:
- * - 3D surface plot of loss
- * - Draggable point on surface
+ * - 2D heatmap with contour lines
+ * - Click/drag to move position on surface
  * - Connected 2D line fitting view
  *
  * Used in:
@@ -37,20 +34,24 @@ const DATA_POINTS: DataPoint[] = [
   { x: 2, y: 2.3 },
 ]
 
-// Calculate MSE for given slope and intercept
+const SLOPE_RANGE: [number, number] = [-1, 2]
+const INTERCEPT_RANGE: [number, number] = [-1, 2]
+
 function calculateMSE(slope: number, intercept: number, points: DataPoint[]): number {
   let sum = 0
   for (const p of points) {
     const predicted = slope * p.x + intercept
-    sum += Math.pow(p.y - predicted, 2)
+    sum += (p.y - predicted) ** 2
   }
   return sum / points.length
 }
 
-// Find optimal parameters analytically (for showing the minimum)
 function findOptimalParams(points: DataPoint[]): { slope: number; intercept: number } {
   const n = points.length
-  let sumX = 0, sumY = 0, sumXY = 0, sumX2 = 0
+  let sumX = 0,
+    sumY = 0,
+    sumXY = 0,
+    sumX2 = 0
 
   for (const p of points) {
     sumX += p.x
@@ -65,217 +66,336 @@ function findOptimalParams(points: DataPoint[]): { slope: number; intercept: num
   return { slope, intercept }
 }
 
-// Generate surface mesh data
-function generateSurfaceData(
-  slopeRange: [number, number],
-  interceptRange: [number, number],
-  resolution: number
-): { positions: Float32Array; indices: Uint16Array; minLoss: number; maxLoss: number } {
-  const [slopeMin, slopeMax] = slopeRange
-  const [intMin, intMax] = interceptRange
+// Color palette: dark indigo (low) → teal → green → yellow (high)
+// Works well on dark backgrounds
+function lossToRGB(t: number): [number, number, number] {
+  // t is 0..1 (normalized loss, 0 = minimum, 1 = maximum)
+  // Apply sqrt for perceptual spread — gives more color range to lower loss values
+  const s = Math.sqrt(Math.max(0, Math.min(1, t)))
 
-  const positions: number[] = []
-  const indices: number[] = []
+  // 5-stop gradient
+  const stops: Array<{ pos: number; r: number; g: number; b: number }> = [
+    { pos: 0.0, r: 15, g: 20, b: 80 },    // deep indigo (minimum)
+    { pos: 0.25, r: 20, g: 70, b: 140 },   // blue
+    { pos: 0.5, r: 15, g: 130, b: 130 },   // teal
+    { pos: 0.75, r: 50, g: 170, b: 80 },   // green
+    { pos: 1.0, r: 220, g: 200, b: 50 },   // yellow (maximum)
+  ]
+
+  let lower = stops[0]
+  let upper = stops[stops.length - 1]
+  for (let i = 0; i < stops.length - 1; i++) {
+    if (s >= stops[i].pos && s <= stops[i + 1].pos) {
+      lower = stops[i]
+      upper = stops[i + 1]
+      break
+    }
+  }
+
+  const range = upper.pos - lower.pos
+  const f = range === 0 ? 0 : (s - lower.pos) / range
+
+  return [
+    Math.round(lower.r + (upper.r - lower.r) * f),
+    Math.round(lower.g + (upper.g - lower.g) * f),
+    Math.round(lower.b + (upper.b - lower.b) * f),
+  ]
+}
+
+// Precompute loss grid for heatmap and contour detection
+function computeLossGrid(resolution: number): {
+  grid: Float64Array
+  minLoss: number
+  maxLoss: number
+} {
+  const grid = new Float64Array(resolution * resolution)
   let minLoss = Infinity
   let maxLoss = -Infinity
 
-  // Generate vertices
-  for (let i = 0; i <= resolution; i++) {
-    for (let j = 0; j <= resolution; j++) {
-      const slope = slopeMin + (slopeMax - slopeMin) * (i / resolution)
-      const intercept = intMin + (intMax - intMin) * (j / resolution)
+  for (let iy = 0; iy < resolution; iy++) {
+    for (let ix = 0; ix < resolution; ix++) {
+      const slope = SLOPE_RANGE[0] + (SLOPE_RANGE[1] - SLOPE_RANGE[0]) * (ix / (resolution - 1))
+      const intercept = INTERCEPT_RANGE[1] - (INTERCEPT_RANGE[1] - INTERCEPT_RANGE[0]) * (iy / (resolution - 1))
       const loss = calculateMSE(slope, intercept, DATA_POINTS)
-
+      grid[iy * resolution + ix] = loss
       minLoss = Math.min(minLoss, loss)
       maxLoss = Math.max(maxLoss, loss)
-
-      // Position: x=slope, z=intercept, y=loss (clamped for visualization)
-      positions.push(slope, Math.min(loss, 5), intercept)
     }
   }
 
-  // Generate indices for triangles
-  for (let i = 0; i < resolution; i++) {
-    for (let j = 0; j < resolution; j++) {
-      const a = i * (resolution + 1) + j
-      const b = a + 1
-      const c = a + resolution + 1
-      const d = c + 1
-
-      indices.push(a, b, c)
-      indices.push(b, d, c)
-    }
-  }
-
-  return {
-    positions: new Float32Array(positions),
-    indices: new Uint16Array(indices),
-    minLoss,
-    maxLoss,
-  }
+  return { grid, minLoss, maxLoss }
 }
 
-// The 3D surface mesh
-function LossSurface() {
-  const { positions, indices } = useMemo(
-    () => generateSurfaceData([-1, 2], [-1, 2], 30),
+function LossHeatmap({
+  slope,
+  intercept,
+  onPositionChange,
+  optimal,
+}: {
+  slope: number
+  intercept: number
+  onPositionChange: (s: number, i: number) => void
+  optimal: { slope: number; intercept: number }
+}) {
+  const canvasRef = useRef<HTMLCanvasElement>(null)
+  const containerRef = useRef<HTMLDivElement>(null)
+  const isDragging = useRef(false)
+  const resolution = 200
+
+  const { grid, minLoss, maxLoss } = useMemo(() => computeLossGrid(resolution), [resolution])
+
+  // Contour levels — evenly spaced in sqrt-space for better visual distribution
+  const contourLevels = useMemo(() => {
+    const levels: number[] = []
+    const numContours = 12
+    for (let i = 1; i < numContours; i++) {
+      const t = i / numContours
+      // Invert the sqrt mapping: if sqrt(normalized) = t, then loss = minLoss + t^2 * range
+      const loss = minLoss + t * t * (maxLoss - minLoss)
+      levels.push(loss)
+    }
+    return levels
+  }, [minLoss, maxLoss])
+
+  // Render heatmap
+  useEffect(() => {
+    const canvas = canvasRef.current
+    if (!canvas) return
+
+    const ctx = canvas.getContext('2d')
+    if (!ctx) return
+
+    canvas.width = resolution
+    canvas.height = resolution
+
+    const imageData = ctx.createImageData(resolution, resolution)
+    const range = maxLoss - minLoss
+
+    for (let iy = 0; iy < resolution; iy++) {
+      for (let ix = 0; ix < resolution; ix++) {
+        const loss = grid[iy * resolution + ix]
+        const t = range === 0 ? 0 : (loss - minLoss) / range
+
+        // Check if this pixel is near a contour line
+        let isContour = false
+        for (const level of contourLevels) {
+          // Check adjacent pixels
+          const checkNeighbor = (dx: number, dy: number): boolean => {
+            const nx = ix + dx
+            const ny = iy + dy
+            if (nx < 0 || nx >= resolution || ny < 0 || ny >= resolution) return false
+            const neighborLoss = grid[ny * resolution + nx]
+            return (loss - level) * (neighborLoss - level) < 0
+          }
+
+          if (checkNeighbor(1, 0) || checkNeighbor(0, 1)) {
+            isContour = true
+            break
+          }
+        }
+
+        const [r, g, b] = lossToRGB(t)
+        const idx = (iy * resolution + ix) * 4
+
+        if (isContour) {
+          // Contour lines: semi-transparent white
+          imageData.data[idx] = Math.min(255, r + 60)
+          imageData.data[idx + 1] = Math.min(255, g + 60)
+          imageData.data[idx + 2] = Math.min(255, b + 60)
+          imageData.data[idx + 3] = 255
+        } else {
+          imageData.data[idx] = r
+          imageData.data[idx + 1] = g
+          imageData.data[idx + 2] = b
+          imageData.data[idx + 3] = 255
+        }
+      }
+    }
+
+    ctx.putImageData(imageData, 0, 0)
+  }, [grid, minLoss, maxLoss, contourLevels, resolution])
+
+  // Convert pixel coordinates to parameter space
+  const pixelToParams = useCallback(
+    (clientX: number, clientY: number): { slope: number; intercept: number } | null => {
+      const container = containerRef.current
+      if (!container) return null
+      const rect = container.getBoundingClientRect()
+      const px = (clientX - rect.left) / rect.width
+      const py = (clientY - rect.top) / rect.height
+
+      const s = SLOPE_RANGE[0] + (SLOPE_RANGE[1] - SLOPE_RANGE[0]) * Math.max(0, Math.min(1, px))
+      const i = INTERCEPT_RANGE[1] - (INTERCEPT_RANGE[1] - INTERCEPT_RANGE[0]) * Math.max(0, Math.min(1, py))
+      return { slope: s, intercept: i }
+    },
     []
   )
 
-  const geometry = useMemo(() => {
-    const geo = new THREE.BufferGeometry()
-    geo.setAttribute('position', new THREE.BufferAttribute(positions, 3))
-    geo.setIndex(new THREE.BufferAttribute(indices, 1))
-    geo.computeVertexNormals()
-    return geo
-  }, [positions, indices])
-
-  return (
-    <mesh geometry={geometry}>
-      <meshStandardMaterial
-        color="#4f46e5"
-        transparent
-        opacity={0.7}
-        side={THREE.DoubleSide}
-        wireframe={false}
-      />
-    </mesh>
-  )
-}
-
-// Wireframe overlay for better depth perception
-function LossSurfaceWireframe() {
-  const { positions, indices } = useMemo(
-    () => generateSurfaceData([-1, 2], [-1, 2], 15),
-    []
+  const handlePointerDown = useCallback(
+    (e: React.PointerEvent) => {
+      isDragging.current = true
+      ;(e.target as HTMLElement).setPointerCapture(e.pointerId)
+      const params = pixelToParams(e.clientX, e.clientY)
+      if (params) {
+        onPositionChange(
+          Math.round(params.slope * 20) / 20,
+          Math.round(params.intercept * 20) / 20
+        )
+      }
+    },
+    [pixelToParams, onPositionChange]
   )
 
-  const geometry = useMemo(() => {
-    const geo = new THREE.BufferGeometry()
-    geo.setAttribute('position', new THREE.BufferAttribute(positions, 3))
-    geo.setIndex(new THREE.BufferAttribute(indices, 1))
-    return geo
-  }, [positions, indices])
-
-  return (
-    <lineSegments geometry={new THREE.WireframeGeometry(geometry)}>
-      <lineBasicMaterial color="#818cf8" transparent opacity={0.3} />
-    </lineSegments>
+  const handlePointerMove = useCallback(
+    (e: React.PointerEvent) => {
+      if (!isDragging.current) return
+      const params = pixelToParams(e.clientX, e.clientY)
+      if (params) {
+        onPositionChange(
+          Math.round(params.slope * 20) / 20,
+          Math.round(params.intercept * 20) / 20
+        )
+      }
+    },
+    [pixelToParams, onPositionChange]
   )
-}
 
-// Draggable marker on the surface
-interface MarkerProps {
-  position: [number, number, number]
-  onDrag: (slope: number, intercept: number) => void
-}
+  const handlePointerUp = useCallback(() => {
+    isDragging.current = false
+  }, [])
 
-function SurfaceMarker({ position }: MarkerProps) {
-  const meshRef = useRef<THREE.Mesh>(null)
+  // Convert parameter values to percentage position
+  const slopeToPercent = (s: number) =>
+    ((s - SLOPE_RANGE[0]) / (SLOPE_RANGE[1] - SLOPE_RANGE[0])) * 100
+  const interceptToPercent = (i: number) =>
+    ((INTERCEPT_RANGE[1] - i) / (INTERCEPT_RANGE[1] - INTERCEPT_RANGE[0])) * 100
 
-  // Animate the marker
-  useFrame((state) => {
-    if (meshRef.current) {
-      meshRef.current.scale.setScalar(1 + Math.sin(state.clock.elapsedTime * 3) * 0.1)
-    }
-  })
+  const currentX = slopeToPercent(slope)
+  const currentY = interceptToPercent(intercept)
+  const optimalX = slopeToPercent(optimal.slope)
+  const optimalY = interceptToPercent(optimal.intercept)
 
-  return (
-    <mesh ref={meshRef} position={position}>
-      <sphereGeometry args={[0.08, 16, 16]} />
-      <meshStandardMaterial color="#f97316" emissive="#f97316" emissiveIntensity={0.5} />
-    </mesh>
-  )
-}
-
-// Minimum point marker
-function MinimumMarker({ optimal }: { optimal: { slope: number; intercept: number } }) {
-  const loss = calculateMSE(optimal.slope, optimal.intercept, DATA_POINTS)
+  // Tick values for axis labels
+  const slopeTicks = [-1, -0.5, 0, 0.5, 1, 1.5, 2]
+  const interceptTicks = [-1, -0.5, 0, 0.5, 1, 1.5, 2]
 
   return (
-    <group position={[optimal.slope, loss, optimal.intercept]}>
-      <mesh>
-        <sphereGeometry args={[0.06, 16, 16]} />
-        <meshStandardMaterial color="#22c55e" emissive="#22c55e" emissiveIntensity={0.3} />
-      </mesh>
-      <Text
-        position={[0, 0.3, 0]}
-        fontSize={0.12}
-        color="#22c55e"
-        anchorX="center"
-        anchorY="bottom"
-      >
-        minimum
-      </Text>
-    </group>
-  )
-}
+    <div className="space-y-1">
+      {/* Y-axis label */}
+      <div className="flex items-center gap-2">
+        <span className="text-xs text-muted-foreground -rotate-90 w-4 flex-shrink-0 whitespace-nowrap">
+          intercept (b)
+        </span>
+        <div className="flex-1">
+          {/* Heatmap with markers */}
+          <div
+            ref={containerRef}
+            className="relative aspect-square w-full cursor-crosshair rounded-lg overflow-hidden border border-border/50"
+            onPointerDown={handlePointerDown}
+            onPointerMove={handlePointerMove}
+            onPointerUp={handlePointerUp}
+          >
+            <canvas
+              ref={canvasRef}
+              className="absolute inset-0 w-full h-full"
+              style={{ imageRendering: 'auto' }}
+            />
 
-// Axis labels
-function AxisLabels() {
-  return (
-    <>
-      <Text position={[2.3, 0, 0]} fontSize={0.15} color="#888">
-        slope
-      </Text>
-      <Text position={[0, 0, 2.3]} fontSize={0.15} color="#888">
-        intercept
-      </Text>
-      <Text position={[-0.3, 3, 0]} fontSize={0.15} color="#888" rotation={[0, Math.PI / 2, 0]}>
-        loss
-      </Text>
-    </>
-  )
-}
+            {/* SVG overlay for markers and labels */}
+            <svg className="absolute inset-0 w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
+              {/* Crosshair at current position */}
+              <line
+                x1={currentX}
+                y1="0"
+                x2={currentX}
+                y2="100"
+                stroke="white"
+                strokeWidth="0.3"
+                opacity="0.3"
+                vectorEffect="non-scaling-stroke"
+              />
+              <line
+                x1="0"
+                y1={currentY}
+                x2="100"
+                y2={currentY}
+                stroke="white"
+                strokeWidth="0.3"
+                opacity="0.3"
+                vectorEffect="non-scaling-stroke"
+              />
+            </svg>
 
-// Grid lines on the base
-function BaseGrid() {
-  const lines: [THREE.Vector3, THREE.Vector3][] = []
+            {/* Optimal point (green) — positioned with CSS % */}
+            <div
+              className="absolute w-3 h-3 rounded-full bg-emerald-400 border-2 border-white shadow-lg pointer-events-none"
+              style={{
+                left: `${optimalX}%`,
+                top: `${optimalY}%`,
+                transform: 'translate(-50%, -50%)',
+              }}
+            />
+            <div
+              className="absolute text-[10px] text-emerald-400 font-medium pointer-events-none whitespace-nowrap"
+              style={{
+                left: `${optimalX}%`,
+                top: `${optimalY}%`,
+                transform: 'translate(-50%, -150%)',
+              }}
+            >
+              minimum
+            </div>
 
-  for (let i = -1; i <= 2; i += 0.5) {
-    lines.push([new THREE.Vector3(i, 0, -1), new THREE.Vector3(i, 0, 2)])
-    lines.push([new THREE.Vector3(-1, 0, i), new THREE.Vector3(2, 0, i)])
-  }
+            {/* Current point (orange) */}
+            <div
+              className="absolute w-4 h-4 rounded-full bg-orange-500 border-2 border-white shadow-lg shadow-orange-500/30 pointer-events-none"
+              style={{
+                left: `${currentX}%`,
+                top: `${currentY}%`,
+                transform: 'translate(-50%, -50%)',
+              }}
+            />
 
-  return (
-    <>
-      {lines.map((points, i) => (
-        <Line key={i} points={points} color="#333" lineWidth={1} />
-      ))}
-    </>
-  )
-}
+            {/* Y-axis tick labels (intercept) */}
+            {interceptTicks
+              .filter((v) => v > INTERCEPT_RANGE[0] && v < INTERCEPT_RANGE[1])
+              .map((v) => (
+                <div
+                  key={`y${v}`}
+                  className="absolute left-1 text-[9px] text-white/50 pointer-events-none"
+                  style={{
+                    top: `${interceptToPercent(v)}%`,
+                    transform: 'translateY(-50%)',
+                  }}
+                >
+                  {v}
+                </div>
+              ))}
 
-// Main 3D scene
-function Scene({ currentSlope, currentIntercept }: { currentSlope: number; currentIntercept: number }) {
-  const optimal = useMemo(() => findOptimalParams(DATA_POINTS), [])
-  const currentLoss = calculateMSE(currentSlope, currentIntercept, DATA_POINTS)
+            {/* X-axis tick labels (slope) */}
+            {slopeTicks
+              .filter((v) => v > SLOPE_RANGE[0] && v < SLOPE_RANGE[1])
+              .map((v) => (
+                <div
+                  key={`x${v}`}
+                  className="absolute bottom-0.5 text-[9px] text-white/50 pointer-events-none"
+                  style={{
+                    left: `${slopeToPercent(v)}%`,
+                    transform: 'translateX(-50%)',
+                  }}
+                >
+                  {v}
+                </div>
+              ))}
+          </div>
+        </div>
+      </div>
 
-  return (
-    <>
-      <ambientLight intensity={0.5} />
-      <pointLight position={[5, 10, 5]} intensity={1} />
-      <pointLight position={[-5, 5, -5]} intensity={0.5} />
-
-      <LossSurface />
-      <LossSurfaceWireframe />
-      <BaseGrid />
-      <AxisLabels />
-
-      <SurfaceMarker
-        position={[currentSlope, Math.min(currentLoss, 5), currentIntercept]}
-        onDrag={() => {}}
-      />
-      <MinimumMarker optimal={optimal} />
-
-      <OrbitControls
-        enablePan={false}
-        minDistance={3}
-        maxDistance={10}
-        minPolarAngle={0.2}
-        maxPolarAngle={Math.PI / 2.2}
-      />
-    </>
+      {/* X-axis label */}
+      <div className="text-center">
+        <span className="text-xs text-muted-foreground">slope (w)</span>
+      </div>
+    </div>
   )
 }
 
@@ -292,7 +412,7 @@ function LinePreview({ slope, intercept }: { slope: number; intercept: number })
   const lineY2 = slope * 3 + intercept
 
   return (
-    <svg width={width} height={height} className="bg-muted/30 rounded-lg">
+    <svg viewBox={`0 0 ${width} ${height}`} className="w-full bg-muted/30 rounded-lg">
       {/* Grid lines */}
       {[-2, -1, 0, 1, 2].map((x) => (
         <line
@@ -331,13 +451,7 @@ function LinePreview({ slope, intercept }: { slope: number; intercept: number })
 
       {/* Data points */}
       {DATA_POINTS.map((p, i) => (
-        <circle
-          key={i}
-          cx={xScale(p.x)}
-          cy={yScale(p.y)}
-          r={4}
-          fill="#3b82f6"
-        />
+        <circle key={i} cx={xScale(p.x)} cy={yScale(p.y)} r={4} fill="#3b82f6" />
       ))}
 
       {/* Residual lines */}
@@ -368,21 +482,25 @@ export function LossSurfaceExplorer() {
   const optimal = useMemo(() => findOptimalParams(DATA_POINTS), [])
   const optimalMSE = calculateMSE(optimal.slope, optimal.intercept, DATA_POINTS)
 
+  const handlePositionChange = useCallback((s: number, i: number) => {
+    setSlope(s)
+    setIntercept(i)
+  }, [])
+
   return (
     <div className="space-y-4">
       <div className="grid gap-4 lg:grid-cols-2">
-        {/* 3D Surface */}
-        <div className="rounded-lg border bg-card overflow-hidden" style={{ height: 350 }}>
-          <Canvas camera={{ position: [4, 4, 4], fov: 50 }}>
-            <Scene currentSlope={slope} currentIntercept={intercept} />
-          </Canvas>
-        </div>
+        {/* 2D Contour Heatmap */}
+        <LossHeatmap
+          slope={slope}
+          intercept={intercept}
+          onPositionChange={handlePositionChange}
+          optimal={optimal}
+        />
 
-        {/* 2D Line Preview */}
+        {/* Line Preview + Sliders */}
         <div className="space-y-4">
-          <div className="flex justify-center">
-            <LinePreview slope={slope} intercept={intercept} />
-          </div>
+          <LinePreview slope={slope} intercept={intercept} />
 
           {/* Sliders */}
           <div className="space-y-3">
@@ -430,13 +548,15 @@ export function LossSurfaceExplorer() {
         <div className="px-3 py-2 rounded-md bg-emerald-500/10 text-emerald-400">
           <span>Optimal MSE: </span>
           <span className="font-mono">{optimalMSE.toFixed(3)}</span>
-          <span className="text-xs ml-2">(w={optimal.slope.toFixed(2)}, b={optimal.intercept.toFixed(2)})</span>
+          <span className="text-xs ml-2">
+            (w={optimal.slope.toFixed(2)}, b={optimal.intercept.toFixed(2)})
+          </span>
         </div>
       </div>
 
       <p className="text-xs text-muted-foreground text-center">
-        Use the sliders to explore the loss surface. The orange point shows your current position.
-        The green point marks the optimal (minimum loss) parameters. Drag to rotate the 3D view.
+        Click or drag on the heatmap to explore the loss surface. Darker regions = lower loss.
+        The orange point is your current position. The green point marks the minimum.
       </p>
     </div>
   )

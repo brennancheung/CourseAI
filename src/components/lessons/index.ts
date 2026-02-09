@@ -1,4 +1,4 @@
-export { LessonLayout, LessonRow, ExpandableRow } from './LessonLayout'
+export { LessonLayout } from './LessonLayout'
 export {
   ObjectiveBlock,
   ConstraintBlock,

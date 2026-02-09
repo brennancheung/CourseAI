@@ -1,8 +1,9 @@
 'use client'
 
-import { useState, useRef, useEffect } from 'react'
+import { useState } from 'react'
 import { Circle, Line, Text, Arrow, Rect } from 'react-konva'
 import { ZoomableCanvas } from '@/components/canvas/ZoomableCanvas'
+import { useContainerWidth } from '@/hooks/useContainerWidth'
 
 /**
  * SingleNeuronExplorer - Interactive widget showing what a single neuron computes
@@ -40,24 +41,7 @@ export function SingleNeuronExplorer({
   const [bias, setBias] = useState(0.1)
 
   // Measure container
-  const containerRef = useRef<HTMLDivElement>(null)
-  const [measuredWidth, setMeasuredWidth] = useState(500)
-
-  useEffect(() => {
-    const container = containerRef.current
-    if (!container) return
-
-    const updateWidth = () => {
-      const rect = container.getBoundingClientRect()
-      setMeasuredWidth(rect.width)
-    }
-
-    updateWidth()
-    const observer = new ResizeObserver(updateWidth)
-    observer.observe(container)
-    return () => observer.disconnect()
-  }, [])
-
+  const { containerRef, width: measuredWidth } = useContainerWidth(500)
   const width = widthOverride ?? measuredWidth
   const height = heightOverride ?? 280
 

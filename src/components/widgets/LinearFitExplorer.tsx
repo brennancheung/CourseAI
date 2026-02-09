@@ -3,13 +3,14 @@
 import { useState, useMemo, useCallback, useRef } from 'react'
 import { Line, Circle, Text, Arrow } from 'react-konva'
 import { ZoomableCanvas } from '@/components/canvas/ZoomableCanvas'
+import { useContainerWidth } from '@/hooks/useContainerWidth'
 
 /**
  * LinearFitExplorer - Interactive widget for exploring line fitting
  *
  * Built with react-konva for reliable canvas rendering.
  * Features:
- * - Draggable numbers in the equation to control slope and intercept
+ * - Draggable numbers in the equation to control weight and bias
  * - Data points scattered around a "true" line
  * - Always shows MSE with color feedback
  * - Optional: Show residuals
@@ -156,9 +157,13 @@ export function LinearFitExplorer({
   initialSlope = 0.3,
   initialIntercept = 0,
   dataPoints: providedPoints,
-  width = 600,
+  width: propWidth = 600,
   height = 350,
 }: LinearFitExplorerProps) {
+
+  const { containerRef, width: measuredWidth } = useContainerWidth(600)
+  // Use prop width if explicitly provided and larger (e.g. fullscreen), otherwise measured
+  const width = propWidth > measuredWidth ? propWidth : measuredWidth
 
   const [slope, setSlope] = useState(initialSlope)
   const [intercept, setIntercept] = useState(initialIntercept)
@@ -201,7 +206,7 @@ export function LinearFitExplorer({
   const lineY2 = slope * VIEW.xMax + intercept
 
   return (
-    <div className="space-y-4">
+    <div ref={containerRef} className="space-y-4">
       {/* Graph */}
       <div className="rounded-lg border bg-card overflow-hidden">
         <ZoomableCanvas width={width} height={height} backgroundColor="#1a1a2e">
@@ -308,7 +313,7 @@ export function LinearFitExplorer({
       {/* Interactive Equation */}
       <div className="p-4 rounded-lg bg-muted/50 border">
         <div className="text-lg flex items-center gap-1 flex-wrap">
-          <span className="text-muted-foreground">y =</span>
+          <span className="text-muted-foreground">ŷ =</span>
           <DraggableNumber
             value={slope}
             onChange={setSlope}
@@ -316,7 +321,7 @@ export function LinearFitExplorer({
             max={2}
             step={0.01}
             color="#f97316"
-            label="slope"
+            label="weight"
           />
           <span className="text-muted-foreground">x</span>
           <span className="text-muted-foreground">{intercept >= 0 ? '+' : '−'}</span>
@@ -327,7 +332,7 @@ export function LinearFitExplorer({
             max={3}
             step={0.01}
             color="#8b5cf6"
-            label="intercept"
+            label="bias"
           />
         </div>
         <p className="text-xs text-muted-foreground mt-2">
@@ -340,7 +345,7 @@ export function LinearFitExplorer({
       <div className="grid gap-4 sm:grid-cols-2">
         <div className="space-y-2">
           <div className="flex justify-between text-sm">
-            <span className="text-muted-foreground">Slope (m)</span>
+            <span className="text-muted-foreground">Weight (w)</span>
             <span className="font-mono text-orange-400">{slope.toFixed(2)}</span>
           </div>
           <input
@@ -350,12 +355,12 @@ export function LinearFitExplorer({
             step="0.01"
             value={slope}
             onChange={(e) => setSlope(parseFloat(e.target.value))}
-            className="w-full accent-orange-500"
+            className="w-full accent-orange-500 cursor-pointer"
           />
         </div>
         <div className="space-y-2">
           <div className="flex justify-between text-sm">
-            <span className="text-muted-foreground">Intercept (b)</span>
+            <span className="text-muted-foreground">Bias (b)</span>
             <span className="font-mono text-violet-400">{intercept.toFixed(2)}</span>
           </div>
           <input
@@ -365,7 +370,7 @@ export function LinearFitExplorer({
             step="0.01"
             value={intercept}
             onChange={(e) => setIntercept(parseFloat(e.target.value))}
-            className="w-full accent-violet-500"
+            className="w-full accent-violet-500 cursor-pointer"
           />
         </div>
       </div>
@@ -382,7 +387,7 @@ export function LinearFitExplorer({
             <span className="text-muted-foreground">Best possible: </span>
             <span className="font-mono text-green-400">{optimalMSE.toFixed(3)}</span>
             <span className="text-muted-foreground ml-1">
-              (m={optimal.slope.toFixed(2)}, b={optimal.intercept.toFixed(2)})
+              (w={optimal.slope.toFixed(2)}, b={optimal.intercept.toFixed(2)})
             </span>
           </div>
         </div>

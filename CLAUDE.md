@@ -187,4 +187,3 @@ Skipping this leads to inconsistent lessons that don't match established pattern
 </Row>
 ```
 
-**Do not use `LessonRow`** — it's deprecated. Use `Row` instead.

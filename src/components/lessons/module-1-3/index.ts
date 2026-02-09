@@ -1,1 +1,7 @@
 export { BackpropagationLesson } from './BackpropagationLesson'
+export { BackpropWorkedExampleLesson } from './BackpropWorkedExampleLesson'
+export { BatchingAndSgdLesson } from './BatchingAndSgdLesson'
+export { ComputationalGraphsLesson } from './ComputationalGraphsLesson'
+export { OptimizersLesson } from './OptimizersLesson'
+export { OverfittingAndRegularizationLesson } from './OverfittingAndRegularizationLesson'
+export { TrainingDynamicsLesson } from './TrainingDynamicsLesson'

@@ -1,7 +1,5 @@
 import { ReactNode } from 'react'
 import { Clock } from 'lucide-react'
-import { ASIDE_WIDTH, GAP } from '@/components/layout/Row'
-
 interface LessonLayoutProps {
   children: ReactNode
 }
@@ -13,76 +11,6 @@ interface LessonLayoutProps {
  */
 export function LessonLayout({ children }: LessonLayoutProps) {
   return <div className="space-y-8">{children}</div>
-}
-
-interface LessonRowProps {
-  children: ReactNode
-  aside?: ReactNode
-}
-
-/**
- * @deprecated Use `Row` from `@/components/layout/Row` instead.
- * LessonRow doesn't auto-inject empty asides, causing layout breaks.
- *
- * Migration:
- * ```tsx
- * // Old
- * <LessonRow aside={<Tip />}>content</LessonRow>
- *
- * // New
- * <Row>
- *   <Row.Content>content</Row.Content>
- *   <Row.Aside><Tip /></Row.Aside>
- * </Row>
- * ```
- */
-export function LessonRow({ children, aside }: LessonRowProps) {
-  if (process.env.NODE_ENV === 'development') {
-    console.warn(
-      'LessonRow is deprecated. Use Row from @/components/layout/Row instead.'
-    )
-  }
-  return (
-    <div className={`flex flex-col lg:flex-row ${GAP} items-start`}>
-      <div className="flex-1 min-w-0 space-y-6">{children}</div>
-      <aside className={`hidden lg:block ${ASIDE_WIDTH} flex-shrink-0 space-y-4`}>
-        {aside}
-      </aside>
-    </div>
-  )
-}
-
-interface ExpandableRowProps {
-  children: ReactNode
-  aside?: ReactNode
-  isExpanded: boolean
-}
-
-/**
- * @deprecated Use `Row` from `@/components/layout/Row` instead.
- *
- * Migration:
- * ```tsx
- * <Row>
- *   <Row.Content>content</Row.Content>
- *   {isExpanded && <Row.Aside>tips</Row.Aside>}
- * </Row>
- * ```
- */
-export function ExpandableRow({ children, aside, isExpanded }: ExpandableRowProps) {
-  if (process.env.NODE_ENV === 'development') {
-    console.warn(
-      'ExpandableRow is deprecated. Use Row from @/components/layout/Row instead.'
-    )
-  }
-  return (
-    <div className={`flex flex-col lg:flex-row ${GAP} items-start`}>
-      <div className="flex-1 min-w-0 space-y-4">{children}</div>
-      <aside className={`hidden lg:block ${ASIDE_WIDTH} flex-shrink-0 space-y-4`}>
-        {isExpanded && aside}
-      </aside>
-    </div>
-  )
 }
 
 interface LessonHeaderProps {

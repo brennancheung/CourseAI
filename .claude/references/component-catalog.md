@@ -156,8 +156,6 @@ import { Row } from '@/components/layout/Row'
 - Aside: `lg:w-64` (always present, even if empty)
 - Gap: `gap-8`
 
-**Note:** `LessonRow` is deprecated. Use `Row` instead.
-
 ---
 
 ## Data File Patterns
@@ -177,6 +175,43 @@ export type Concept = {
   pitfalls?: string[]
 }
 ```
+
+---
+
+## CodeBlock
+
+Syntax-highlighted code snippets with copy button.
+
+**Path:** `src/components/common/CodeBlock.tsx`
+
+```tsx
+import { CodeBlock } from '@/components/common/CodeBlock'
+
+<CodeBlock
+  code={`def forward(self, x):
+    return self.linear(x)`}
+  language="python"
+  filename="model.py"
+/>
+```
+
+**Props:** `code` (string), `language` (string), `filename` (optional string)
+
+## ClipboardCopy
+
+Copy-to-clipboard button component.
+
+**Path:** `src/components/common/ClipboardCopy.tsx`
+
+```tsx
+import { ClipboardCopy } from '@/components/common/ClipboardCopy'
+
+<ClipboardCopy text="content to copy" />
+<ClipboardCopy text={code} className="h-7 w-7" />
+<ClipboardCopy text={url} label="Copy URL" />
+```
+
+**Props:** `text` (string), `label` (optional string), `className` (optional string)
 
 ---
 
@@ -208,6 +243,60 @@ import { InlineMath, BlockMath } from 'react-katex'
 - Wrap important formulas in `bg-muted/50 rounded-lg` for emphasis
 - Use `InlineMath` in list items to explain each variable
 - Combine with `ConceptBlock` for formula explanations
+
+---
+
+## Mermaid Diagrams
+
+Render static flowcharts, architecture diagrams, and process flows as inline SVG.
+
+**Path:** `src/components/widgets/MermaidDiagram.tsx`
+
+```tsx
+import { MermaidDiagram } from '@/components/widgets/MermaidDiagram'
+
+// Simple flowchart
+<MermaidDiagram chart={`
+  graph LR
+    A[Input Layer] --> B[Hidden Layer]
+    B --> C[Output Layer]
+`} />
+
+// Inside a lesson row
+<Row>
+  <Row.Content>
+    <SectionHeader title="Network Architecture" />
+    <MermaidDiagram chart={`
+      graph TD
+        X[Input x] --> N1[Neuron 1]
+        X --> N2[Neuron 2]
+        N1 --> O[Output]
+        N2 --> O
+    `} />
+  </Row.Content>
+  <Row.Aside>
+    <ConceptBlock title="Architecture">Each arrow is a weighted connection.</ConceptBlock>
+  </Row.Aside>
+</Row>
+```
+
+**Props:**
+| Prop | Type | Description |
+|------|------|-------------|
+| `chart` | `string` | Mermaid diagram definition (any valid mermaid syntax) |
+| `className` | `string?` | Optional CSS class for the container div |
+
+**Supported diagram types:** flowchart, sequence, class, state, ER, gantt, pie, mindmap, timeline, and more.
+
+**When to use vs react-konva:**
+- **MermaidDiagram:** Static flowcharts, architecture diagrams, process flows, dependency graphs
+- **react-konva:** Interactive visualizations where the user drags, clicks, or manipulates elements
+
+**Agent verification:** Render to PNG with CLI before shipping:
+```bash
+pnpm dlx @mermaid-js/mermaid-cli -i diagram.mmd -o diagram.png -b transparent
+```
+Then Read the PNG to visually verify. Delete temp files after.
 
 ---
 
@@ -287,9 +376,11 @@ Pre-built interactive widgets for machine learning concepts.
 | `GradientDescentExplorer` | Animated ball rolling on loss curve | `initialPosition`, `initialLearningRate`, `showLearningRateSlider`, `showGradientArrow` |
 | `LearningRateExplorer` | Compare different learning rates | `mode: 'comparison' | 'interactive'` |
 | `TrainingLoopExplorer` | Complete training visualization with loss curve | `numPoints`, `initialLearningRate`, `width`, `height` |
+| `MermaidDiagram` | Render Mermaid diagrams as inline SVG | `chart` (mermaid definition string) |
 
 **Widget conventions:**
-- Accept `width` and `height` props for ExercisePanel fullscreen
+- **Always use `useContainerWidth` hook** (`src/hooks/useContainerWidth.ts`) for responsive width. Pattern: `const { containerRef, width: measuredWidth } = useContainerWidth(fallback)` then `const width = widthOverride ?? measuredWidth` and attach `ref={containerRef}` to the outer div
+- Accept `width` and `height` props for ExercisePanel fullscreen override
 - Use `ZoomableCanvas` as base
 - Show controls below canvas (buttons, sliders)
 - Display live stats in colored badges

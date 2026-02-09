@@ -7,6 +7,9 @@ This folder contains Codex-oriented copies of existing Claude guidance/skills.
 - Global Claude skills copied into Codex skill folders where practical
 - Claude command playbooks (`commit`, `docsync`) converted into Codex skills
 - Repo `AGENTS.md` created to expose guidance and skill triggers
+- `AGENT.md` shim added to point agents to `AGENTS.md`
+- Claude playbook bridge skill added: `codex/skills/add-markdown-playbook/SKILL.md`
+- Interactive widget skill/catalog synced from `.claude/skills/interactive-widgets/*`
 
 ## Non-destructive guarantee
 No Claude files were modified or removed.

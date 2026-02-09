@@ -25,6 +25,7 @@ A skill is a local instruction set in `SKILL.md`. Use these when explicitly name
 - lesson-planning — ADHD-friendly AI/ML lesson planning and implementation patterns. Use for lesson design, pedagogy, and lesson structure decisions. (file: `codex/skills/lesson-planning/SKILL.md`)
 - interactive-widgets — Add interactive visual learning components and identify “aha” opportunities. (file: `codex/skills/interactive-widgets/SKILL.md`)
 - session-review — Conduct post-session learning debriefs and save structured session notes. (file: `codex/skills/session-review/SKILL.md`)
+- add-markdown-playbook — Install markdown rendering support by reusing the existing Claude playbook script. (file: `codex/skills/add-markdown-playbook/SKILL.md`)
 - css-expert — Systematic CSS/layout debugging via parent-child constraint tracing. (file: `codex/skills/css-expert/SKILL.md`)
 - problem-solver-debugger — Hypothesis-first debugging and uncertainty-aware root-cause analysis. (file: `codex/skills/problem-solver-debugger/SKILL.md`)
 - infographic-designer — Data-first infographic design with explicit encoding and comparison logic. (file: `codex/skills/infographic-designer/SKILL.md`)
@@ -40,3 +41,4 @@ A skill is a local instruction set in `SKILL.md`. Use these when explicitly name
 ## Notes
 - This file is Codex guidance and does not replace Claude files.
 - Claude files under `.claude/` and `CLAUDE.md` remain untouched.
+- Prefer reusing `.claude/playbooks/*` installers/workflows when they match the request instead of reimplementing from scratch.

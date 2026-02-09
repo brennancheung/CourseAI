@@ -8,7 +8,6 @@ import {
   SectionHeader,
   InsightBlock,
   TipBlock,
-  WarningBlock,
   TryThisBlock,
   ConceptBlock,
   SummaryBlock,
@@ -41,7 +40,7 @@ export function LimitsOfLinearityLesson() {
         <Row.Content>
           <LessonHeader
             title="The Limits of Linearity"
-            description="See why the neural network structure alone isn’t enough — linear networks fail on simple problems like XOR."
+            description="See why the neural network structure alone isn't enough—linear networks fail on simple problems like XOR."
             category="From Linear to Neural"
           />
         </Row.Content>
@@ -51,7 +50,7 @@ export function LimitsOfLinearityLesson() {
       <Row>
         <Row.Content>
           <ObjectiveBlock>
-            See exactly where linear neural networks break down — and understand
+            See exactly where linear neural networks break down—and understand
             why the structure we just learned isn&apos;t enough on its own.
           </ObjectiveBlock>
         </Row.Content>
@@ -142,7 +141,7 @@ export function LimitsOfLinearityLesson() {
                 <strong>Y-axis:</strong> Input B (0 or 1)
               </li>
               <li>
-                <strong>Color:</strong> The output — <span className="text-blue-400 font-medium">blue for 0</span>,{' '}
+                <strong>Color:</strong> The output—<span className="text-blue-400 font-medium">blue for 0</span>,{' '}
                 <span className="text-orange-400 font-medium">orange for 1</span>
               </li>
             </ul>
@@ -193,12 +192,6 @@ export function LimitsOfLinearityLesson() {
             <XORClassifierExplorer />
           </ExercisePanel>
         </Row.Content>
-        <Row.Aside>
-          <WarningBlock title="Spoiler Alert">
-            You can&apos;t do it. No matter how you position the line, at least
-            one point will always be on the wrong side.
-          </WarningBlock>
-        </Row.Aside>
       </Row>
 
       {/* Why It's Impossible */}
@@ -214,10 +207,10 @@ export function LimitsOfLinearityLesson() {
             </p>
             <ul className="list-disc list-inside text-muted-foreground space-y-2 ml-4">
               <li>
-                <span className="text-blue-400 font-medium">Blue (output 0)</span>: corners (0,0) and (1,1) — <strong>diagonal</strong>
+                <span className="text-blue-400 font-medium">Blue (output 0)</span>: corners (0,0) and (1,1)—<strong>diagonal</strong>
               </li>
               <li>
-                <span className="text-orange-400 font-medium">Orange (output 1)</span>: corners (0,1) and (1,0) — <strong>opposite diagonal</strong>
+                <span className="text-orange-400 font-medium">Orange (output 1)</span>: corners (0,1) and (1,0)—<strong>opposite diagonal</strong>
               </li>
             </ul>
             <p className="text-muted-foreground">
@@ -230,7 +223,7 @@ export function LimitsOfLinearityLesson() {
         <Row.Aside>
           <InsightBlock title="The Core Issue">
             XOR is <strong>not linearly separable</strong>. This isn&apos;t about
-            finding better parameters — no linear model can learn XOR. We need
+            finding better parameters—no linear model can learn XOR. We need
             something fundamentally different.
           </InsightBlock>
         </Row.Aside>
@@ -249,23 +242,29 @@ export function LimitsOfLinearityLesson() {
               (in 2D) or a flat plane (in higher dimensions). Everything on one
               side gets one label; everything on the other side gets the other.
             </p>
+            <p className="text-muted-foreground">
+              Consider AND: (0,0)=0, (0,1)=0, (1,0)=0, (1,1)=1. The single
+              output-1 point sits in one corner, all the output-0 points in the
+              other three. A line easily separates them. Now compare that to
+              XOR, where the same-class points sit on <em>opposite</em> diagonals.
+            </p>
             <ComparisonRow
               left={{
                 title: 'Linearly Separable',
                 color: 'emerald',
                 items: [
-                  'One class clusters on one side',
+                  'Same-class points cluster together',
                   'A single line can separate them',
-                  'Example: AND, OR gates',
+                  'AND: one corner vs three corners',
                 ],
               }}
               right={{
                 title: 'Not Linearly Separable',
                 color: 'rose',
                 items: [
-                  'Classes are interleaved',
+                  'Same-class points on opposite diagonals',
                   'No single line works',
-                  'Example: XOR',
+                  'XOR: two corners vs two corners',
                 ],
               }}
             />
@@ -274,7 +273,7 @@ export function LimitsOfLinearityLesson() {
         <Row.Aside>
           <ConceptBlock title="Higher Dimensions">
             In 3D, a linear boundary is a plane. In higher dimensions, it&apos;s
-            called a hyperplane. But the limitation is the same — it can only
+            called a hyperplane. But the limitation is the same—it can only
             make one straight cut.
           </ConceptBlock>
         </Row.Aside>
@@ -315,7 +314,7 @@ export function LimitsOfLinearityLesson() {
           <InsightBlock title="The Motivation">
             This is exactly why neural networks were invented. By combining
             linear operations with nonlinear <em>activation functions</em>, we
-            can learn any decision boundary — including the one that solves XOR.
+            can learn any decision boundary—including the one that solves XOR.
           </InsightBlock>
         </Row.Aside>
       </Row>
@@ -325,7 +324,7 @@ export function LimitsOfLinearityLesson() {
         <Row.Content>
           <SectionHeader
             title="The Missing Ingredient"
-            subtitle="We have the structure — we need one more thing"
+            subtitle="We have the structure—we need one more thing"
           />
           <div className="space-y-4">
             <p className="text-muted-foreground">
@@ -334,7 +333,7 @@ export function LimitsOfLinearityLesson() {
               layers is still linear.
             </p>
             <p className="text-muted-foreground">
-              The solution isn&apos;t more layers or bigger networks — it&apos;s
+              The solution isn&apos;t more layers or bigger networks—it&apos;s
               adding <strong>nonlinearity</strong> after each linear operation.
             </p>
             <p className="text-muted-foreground">
@@ -344,7 +343,7 @@ export function LimitsOfLinearityLesson() {
             <ul className="list-disc list-inside text-muted-foreground space-y-2 ml-4">
               <li>Each neuron creates one decision boundary</li>
               <li>Multiple neurons = multiple boundaries</li>
-              <li>Combined, they can carve out any region — including XOR</li>
+              <li>Combined, they can carve out any region—including XOR</li>
             </ul>
           </div>
         </Row.Content>
@@ -371,7 +370,7 @@ export function LimitsOfLinearityLesson() {
               {
                 headline: 'XOR is not linearly separable.',
                 description:
-                  'Same-class points are on opposite diagonals — no single line can separate them.',
+                  'Same-class points are on opposite diagonals—no single line can separate them.',
               },
               {
                 headline: 'This limitation is fundamental.',
@@ -394,7 +393,7 @@ export function LimitsOfLinearityLesson() {
           <NextStepBlock
             href="/app/lesson/activation-functions"
             title="Add the Missing Ingredient"
-            description="Next: activation functions — the simple nonlinearity that transforms our limited linear network into a universal function approximator."
+            description="Next: activation functions—the simple nonlinearity that transforms our limited linear network into a universal function approximator."
             buttonText="Continue to Activation Functions"
           />
         </Row.Content>

@@ -41,7 +41,7 @@ export function ActivationFunctionsDeepDiveLesson() {
         <Row.Content>
           <LessonHeader
             title="Activation Functions: Visual Reference"
-            description="A visual tour of activation functions — sigmoid, tanh, ReLU, GELU, and more. See their shapes and learn when to use each."
+            description="A visual tour of activation functions—sigmoid, tanh, ReLU, GELU, and more. See their shapes and learn when to use each."
             category="From Linear to Neural"
           />
         </Row.Content>
@@ -52,7 +52,7 @@ export function ActivationFunctionsDeepDiveLesson() {
         <Row.Content>
           <ObjectiveBlock>
             Build visual intuition for the major activation functions. This is
-            your reference guide — you&apos;ll come back to it later.
+            your reference guide—you&apos;ll come back to it later.
           </ObjectiveBlock>
         </Row.Content>
         <Row.Aside>
@@ -109,7 +109,7 @@ export function ActivationFunctionsDeepDiveLesson() {
         <Row.Content>
           <SectionHeader
             title="Tanh"
-            subtitle="Squashes to (-1, 1) — zero-centered"
+            subtitle="Squashes to (-1, 1)—zero-centered"
           />
           <div className="space-y-4">
             <div className="py-4 px-6 bg-muted/50 rounded-lg">
@@ -151,6 +151,7 @@ export function ActivationFunctionsDeepDiveLesson() {
             <ActivationFunctionExplorer
               defaultFunction="sigmoid"
               showDerivatives={false}
+              visibleFunctions={['sigmoid', 'tanh']}
             />
           </ExercisePanel>
         </Row.Content>
@@ -159,7 +160,7 @@ export function ActivationFunctionsDeepDiveLesson() {
             <ul className="space-y-2 text-sm">
               <li>• Both have the S-curve shape</li>
               <li>• Sigmoid outputs 0.5 at x=0; tanh outputs 0</li>
-              <li>• Move to extreme values — both saturate</li>
+              <li>• Move to extreme values—both saturate</li>
             </ul>
           </TryThisBlock>
         </Row.Aside>
@@ -191,7 +192,7 @@ export function ActivationFunctionsDeepDiveLesson() {
               </ConceptBlock>
             </div>
             <p className="text-muted-foreground">
-              <strong>Intuition:</strong> Dead simple — pass positive values
+              <strong>Intuition:</strong> Dead simple—pass positive values
               through, block negative ones. Despite its simplicity, ReLU works
               remarkably well and is computationally cheap.
             </p>
@@ -258,16 +259,20 @@ export function ActivationFunctionsDeepDiveLesson() {
             <ActivationFunctionExplorer
               defaultFunction="relu"
               showDerivatives={false}
+              visibleFunctions={['relu', 'leaky-relu']}
             />
           </ExercisePanel>
         </Row.Content>
         <Row.Aside>
           <TryThisBlock title="Observe">
             <ul className="space-y-2 text-sm">
-              <li>• Toggle &quot;Linear&quot; to see the baseline</li>
               <li>• ReLU is flat for x {'<'} 0</li>
               <li>• Leaky ReLU has a small slope for x {'<'} 0</li>
+              <li>• Drag the slider to negative values to see the difference</li>
             </ul>
+            <p className="text-xs text-muted-foreground mt-2">
+              The widget uses α=0.1 so the slope is visible. In practice, 0.01 is typical.
+            </p>
           </TryThisBlock>
         </Row.Aside>
       </Row>
@@ -311,10 +316,10 @@ export function ActivationFunctionsDeepDiveLesson() {
         </Row.Aside>
       </Row>
 
-      {/* Interactive: Modern activations */}
+      {/* Interactive: All activations—capstone comparison */}
       <Row>
         <Row.Content>
-          <ExercisePanel title="Compare Modern Activations">
+          <ExercisePanel title="All Activations—Compare Them All">
             <ActivationFunctionExplorer
               defaultFunction="relu"
               showDerivatives={false}
@@ -326,7 +331,7 @@ export function ActivationFunctionsDeepDiveLesson() {
             <ul className="space-y-2 text-sm">
               <li>• GELU and Swish look nearly identical</li>
               <li>• Both are smooth where ReLU has a corner</li>
-              <li>• All three are similar for positive inputs</li>
+              <li>• Toggle through all functions to review</li>
             </ul>
           </TryThisBlock>
         </Row.Aside>
@@ -411,7 +416,7 @@ export function ActivationFunctionsDeepDiveLesson() {
               {
                 headline: 'Why some work better than others?',
                 description:
-                  'That requires understanding backpropagation — coming in Module 1.3!',
+                  'That requires understanding backpropagation—coming in Module 1.3!',
               },
             ]}
           />

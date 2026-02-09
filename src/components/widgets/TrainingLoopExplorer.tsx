@@ -5,6 +5,7 @@ import { Line, Circle, Text, Arrow, Rect } from 'react-konva'
 import { ZoomableCanvas } from '@/components/canvas/ZoomableCanvas'
 import { Button } from '@/components/ui/button'
 import { Play, Pause, RotateCcw, StepForward } from 'lucide-react'
+import { useContainerWidth } from '@/hooks/useContainerWidth'
 
 /**
  * TrainingLoopExplorer - Interactive linear regression training visualization
@@ -84,9 +85,11 @@ const LOSS_VIEW = {
 export function TrainingLoopExplorer({
   numPoints = 30,
   initialLearningRate = 0.02,
-  width = 600,
+  width: widthOverride,
   height = 350,
 }: TrainingLoopExplorerProps) {
+  const { containerRef, width: measuredWidth } = useContainerWidth(600)
+  const width = widthOverride ?? measuredWidth
   // True parameters (what we're trying to learn)
   const trueW = 1.5
   const trueB = 2
@@ -163,7 +166,7 @@ export function TrainingLoopExplorer({
   // Show nothing until data is generated (avoids hydration mismatch)
   if (!data) {
     return (
-      <div className="flex items-center justify-center" style={{ width, height }}>
+      <div ref={containerRef} className="flex items-center justify-center" style={{ height }}>
         <div className="text-muted-foreground">Loading...</div>
       </div>
     )
@@ -231,7 +234,7 @@ export function TrainingLoopExplorer({
   const { dw, db } = computeGradients(data.X, data.y, w, b)
 
   return (
-    <div className="space-y-4">
+    <div ref={containerRef} className="space-y-4">
       <div className="rounded-lg border bg-card overflow-hidden">
         <ZoomableCanvas width={width} height={height} backgroundColor="#1a1a2e">
           {/* Data View Grid */}

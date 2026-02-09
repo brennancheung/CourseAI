@@ -74,8 +74,12 @@ export function NeuronBasicsLesson() {
           />
           <div className="space-y-4">
             <p className="text-muted-foreground">
-              A <strong>neuron</strong> (also called a <em>unit</em> or <em>node</em>)
-              takes some inputs, combines them, and produces an output:
+              Despite the name, artificial neurons have almost nothing in common with
+              biological brain cells. Forget everything you&apos;ve heard about
+              &quot;neural networks mimicking the brain.&quot; A{' '}
+              <strong>neuron</strong> (also called a <em>unit</em> or <em>node</em>)
+              is just a tiny math formula that takes some inputs, combines them, and
+              produces a single output:
             </p>
             <div className="py-4 px-6 bg-muted/50 rounded-lg">
               <BlockMath math="y = w_1 x_1 + w_2 x_2 + \ldots + w_n x_n + b" />
@@ -253,11 +257,12 @@ export function NeuronBasicsLesson() {
           </ExercisePanel>
         </Row.Content>
         <Row.Aside>
-          <TryThisBlock title="Observe">
+          <TryThisBlock title="Verify It">
             <ul className="space-y-2 text-sm">
-              <li>• Change the inputs and watch values propagate</li>
-              <li>• Each hidden neuron computes something different</li>
-              <li>• The outputs depend on ALL the hidden values</li>
+              <li>• Pick one hidden neuron</li>
+              <li>• Multiply each input by the orange weight on its connection, add them, then add the green bias</li>
+              <li>• Does your answer match the value shown?</li>
+              <li>• Change the inputs and watch ALL neurons update</li>
             </ul>
           </TryThisBlock>
         </Row.Aside>

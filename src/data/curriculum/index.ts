@@ -7,6 +7,8 @@
 
 import { CurriculumNode } from './types'
 import { foundations } from './foundations'
+import { pytorch } from './pytorch'
+import { cnns } from './cnns'
 
 // Re-export types and utilities
 export * from './types'
@@ -14,22 +16,11 @@ export * from './types'
 /**
  * The complete curriculum tree
  *
- * Add new top-level sections here as they're built:
- * - foundations (current)
- * - classicalML (future)
- * - neuralNetworks (future)
- * - etc.
+ * Add new series here as they're built.
+ * See course.md for the full planned series list.
  */
 export const curriculum: CurriculumNode[] = [
   foundations,
-  // Future sections:
-  // classicalML,
-  // neuralNetworks,
-  // trainingDeepNetworks,
-  // convolutionalNetworks,
-  // sequenceModels,
-  // generativeModels,
-  // reinforcementLearning,
-  // productionML,
-  // frontiers,
+  pytorch,
+  cnns,
 ]

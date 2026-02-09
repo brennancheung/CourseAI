@@ -1,8 +1,9 @@
 'use client'
 
-import { useState, useRef, useEffect } from 'react'
+import { useState } from 'react'
 import { Circle, Line, Text } from 'react-konva'
 import { ZoomableCanvas } from '@/components/canvas/ZoomableCanvas'
+import { useContainerWidth } from '@/hooks/useContainerWidth'
 
 /**
  * OverfittingWidget - Visualizes underfitting, good fit, and overfitting
@@ -15,22 +16,23 @@ import { ZoomableCanvas } from '@/components/canvas/ZoomableCanvas'
  * This helps build intuition for bias-variance tradeoff.
  */
 
-// Generate noisy data from a simple quadratic
-const TRUE_FUNCTION = (x: number) => 0.5 * (x - 0.5) ** 2 + 0.3
+// True underlying pattern: a quadratic with strong curvature for visual clarity
+const TRUE_FUNCTION = (x: number) => 3.0 * (x - 0.5) ** 2 + 0.1
 
-// Fixed data points (so visualization is consistent)
+// Data points generated from TRUE_FUNCTION + small noise
+// TRUE_FUNCTION values: 0.08→0.63, 0.25→0.29, 0.4→0.13, 0.55→0.11, 0.72→0.25, 0.9→0.58
 const DATA_POINTS = [
-  { x: 0.1, y: 0.42 },
-  { x: 0.25, y: 0.35 },
-  { x: 0.4, y: 0.31 },
-  { x: 0.55, y: 0.32 },
-  { x: 0.7, y: 0.36 },
-  { x: 0.85, y: 0.48 },
+  { x: 0.08, y: 0.65 },  // true 0.63, noise +0.02
+  { x: 0.25, y: 0.32 },  // true 0.29, noise +0.03
+  { x: 0.40, y: 0.11 },  // true 0.13, noise -0.02
+  { x: 0.55, y: 0.15 },  // true 0.11, noise +0.04
+  { x: 0.72, y: 0.28 },  // true 0.25, noise +0.03
+  { x: 0.90, y: 0.62 },  // true 0.58, noise +0.04
 ]
 
 // Model predictions for different complexity levels
-const UNDERFIT_LINE = (_x: number) => 0.38 // horizontal line (too simple)
-const GOOD_FIT = (x: number) => 0.5 * (x - 0.5) ** 2 + 0.32 // smooth curve
+const UNDERFIT_LINE = (x: number) => -0.025 * x + 0.37 // least-squares line—nearly flat, misses U-shape
+const GOOD_FIT = (x: number) => 3.0 * (x - 0.5) ** 2 + 0.12 // smooth curve close to true pattern
 const OVERFIT_CURVE = (x: number) => {
   // Lagrange interpolation - passes through every point exactly
   // This creates a wiggly curve that memorizes the data
@@ -54,42 +56,27 @@ const FIT_CONFIG: Record<FitType, { label: string; color: string; fn: (x: number
     label: 'Underfitting',
     color: '#f97316', // orange
     fn: UNDERFIT_LINE,
-    description: 'Too simple — misses the pattern',
+    description: 'Too simple—misses the pattern',
   },
   good: {
     label: 'Good Fit',
     color: '#22c55e', // green
     fn: GOOD_FIT,
-    description: 'Just right — captures the pattern',
+    description: 'Just right—captures the pattern',
   },
   overfit: {
     label: 'Overfitting',
     color: '#ef4444', // red
     fn: OVERFIT_CURVE,
-    description: 'Too complex — memorizes noise',
+    description: 'Too complex—memorizes noise',
   },
 }
 
 export function OverfittingWidget() {
-  const [selectedFit, setSelectedFit] = useState<FitType>('good')
-  const containerRef = useRef<HTMLDivElement>(null)
-  const [width, setWidth] = useState(500)
+  const [selectedFit, setSelectedFit] = useState<FitType>('underfit')
+  const { containerRef, width } = useContainerWidth(500)
 
-  useEffect(() => {
-    const container = containerRef.current
-    if (!container) return
-
-    const updateWidth = () => {
-      setWidth(container.getBoundingClientRect().width)
-    }
-
-    updateWidth()
-    const observer = new ResizeObserver(updateWidth)
-    observer.observe(container)
-    return () => observer.disconnect()
-  }, [])
-
-  const height = 280
+  const height = 450
   const margin = { left: 40, right: 20, top: 20, bottom: 40 }
   const plotWidth = width - margin.left - margin.right
   const plotHeight = height - margin.top - margin.bottom
@@ -119,7 +106,7 @@ export function OverfittingWidget() {
           <button
             key={fit}
             onClick={() => setSelectedFit(fit)}
-            className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+            className={`cursor-pointer px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
               selectedFit === fit
                 ? 'bg-primary text-primary-foreground'
                 : 'bg-muted hover:bg-muted/80 text-muted-foreground'

@@ -1,8 +1,9 @@
 'use client'
 
-import { useState, useMemo, useCallback, useRef, useEffect } from 'react'
+import { useState, useMemo, useCallback } from 'react'
 import { Line, Circle, Text, Arrow } from 'react-konva'
 import { ZoomableCanvas } from '@/components/canvas/ZoomableCanvas'
+import { useContainerWidth } from '@/hooks/useContainerWidth'
 
 /**
  * ActivationFunctionExplorer - Interactive widget for exploring activation functions
@@ -22,6 +23,8 @@ type ActivationFunctionExplorerProps = {
   height?: number
   /** Initial input value */
   initialX?: number
+  /** Limit which functions are available (defaults to all) */
+  visibleFunctions?: ActivationFunctionName[]
 }
 
 export type ActivationFunctionName =
@@ -85,7 +88,7 @@ const ACTIVATION_FUNCTIONS: Record<ActivationFunctionName, ActivationFunction> =
     color: '#06b6d4',
     fn: (x) => (x > 0 ? x : 0.1 * x),
     derivative: (x) => (x > 0 ? 1 : 0.1),
-    formula: 'LeakyReLU(x) = max(0.1x, x)',
+    formula: 'LeakyReLU(x) = max(αx, x), α=0.1',
   },
   gelu: {
     name: 'gelu',
@@ -141,33 +144,15 @@ export function ActivationFunctionExplorer({
   width: widthOverride,
   height: heightOverride,
   initialX = 0,
+  visibleFunctions,
 }: ActivationFunctionExplorerProps) {
+  const functionOrder = visibleFunctions ?? FUNCTION_ORDER
   const [selectedFunction, setSelectedFunction] = useState<ActivationFunctionName>(defaultFunction)
   const [inputX, setInputX] = useState(initialX)
   const [showDeriv, setShowDeriv] = useState(showDerivatives)
 
   // Measure container width
-  const containerRef = useRef<HTMLDivElement>(null)
-  const [measuredWidth, setMeasuredWidth] = useState(500)
-
-  useEffect(() => {
-    const container = containerRef.current
-    if (!container) return
-
-    const updateWidth = () => {
-      const rect = container.getBoundingClientRect()
-      setMeasuredWidth(rect.width)
-    }
-
-    updateWidth()
-
-    const observer = new ResizeObserver(updateWidth)
-    observer.observe(container)
-
-    return () => observer.disconnect()
-  }, [])
-
-  // Use override width if provided (fullscreen), otherwise measured width
+  const { containerRef, width: measuredWidth } = useContainerWidth(500)
   const width = widthOverride ?? measuredWidth
   const canvasHeight = heightOverride
     ? Math.max(200, heightOverride - CONTROLS_HEIGHT)
@@ -335,7 +320,7 @@ export function ActivationFunctionExplorer({
       <div className="pt-3 space-y-3 flex-shrink-0">
         {/* Function selector */}
         <div className="flex flex-wrap gap-1.5 justify-center">
-          {FUNCTION_ORDER.map((name) => {
+          {functionOrder.map((name) => {
             const fn = ACTIVATION_FUNCTIONS[name]
             const isSelected = selectedFunction === name
 

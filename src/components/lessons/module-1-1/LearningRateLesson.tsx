@@ -38,7 +38,7 @@ export function LearningRateLesson() {
         <Row.Content>
           <LessonHeader
             title="Learning Rate Deep Dive"
-            description="Understand the most important hyperparameter in gradient descent — the learning rate."
+            description="Understand the most important hyperparameter in gradient descent—the learning rate."
             category="Fundamentals"
           />
         </Row.Content>
@@ -48,13 +48,13 @@ export function LearningRateLesson() {
       <Row>
         <Row.Content>
           <ObjectiveBlock>
-            Develop intuition for how the learning rate affects training —
-            what happens when it&apos;s too big, too small, or just right.
+            Develop intuition for how the learning rate affects training—what
+            happens when it&apos;s too big, too small, or just right.
           </ObjectiveBlock>
         </Row.Content>
         <Row.Aside>
           <TipBlock title="Hyperparameter">
-            The learning rate is a <strong>hyperparameter</strong> — a value
+            The learning rate is a <strong>hyperparameter</strong>—a value
             YOU choose, not one the model learns. Choosing good hyperparameters
             is a major part of ML in practice.
           </TipBlock>
@@ -70,19 +70,31 @@ export function LearningRateLesson() {
           />
           <div className="space-y-4">
             <p className="text-muted-foreground">
+              In the last lesson, you saw that the learning rate slider changed
+              how gradient descent behaved. Some values worked great, others
+              made things go haywire. But why? And how would you choose a good
+              value for a new problem?
+            </p>
+            <p className="text-muted-foreground">
               The learning rate <InlineMath math="\alpha" /> controls how big a
               step we take each iteration:
             </p>
             <div className="py-4">
               <BlockMath math="\theta_{new} = \theta_{old} - \alpha \nabla L" />
             </div>
+            <p className="text-muted-foreground text-sm">
+              Quick reminder: <InlineMath math="\theta" /> is our parameter,{' '}
+              <InlineMath math="\nabla L" /> is the gradient (slope of the
+              loss), and <InlineMath math="\alpha" /> is the learning rate—the
+              part we&apos;re focusing on today.
+            </p>
             <p className="text-muted-foreground">
               If <InlineMath math="\alpha" /> is too small, we take tiny steps
               and converge very slowly.
             </p>
             <p className="text-muted-foreground">
               If <InlineMath math="\alpha" /> is too large, we take huge steps
-              and might overshoot the minimum — or even diverge!
+              and might overshoot the minimum—or even diverge!
             </p>
           </div>
         </Row.Content>
@@ -128,17 +140,17 @@ export function LearningRateLesson() {
               <li>Each step barely moves the parameters</li>
               <li>Convergence takes many, many iterations</li>
               <li>Training is slow and expensive</li>
-              <li>Might get &quot;stuck&quot; in shallow local minima</li>
+              <li>Might take so long you think the model isn&apos;t working</li>
             </ul>
             <p className="text-muted-foreground mt-4">
-              This isn&apos;t catastrophic — you&apos;ll eventually converge. But you&apos;ll
+              This isn&apos;t catastrophic—you&apos;ll eventually converge. But you&apos;ll
               waste time and compute.
             </p>
           </div>
         </Row.Content>
         <Row.Aside>
           <ConceptBlock title="When Small is OK">
-            Sometimes a small learning rate is intentional — especially for
+            Sometimes a small learning rate is intentional—especially for
             fine-tuning pretrained models where you don&apos;t want to disturb the
             learned weights too much.
           </ConceptBlock>
@@ -288,7 +300,7 @@ export function LearningRateLesson() {
           <NextStepBlock
             href="/app/lesson/implementing-linear-regression"
             title="Ready to code?"
-            description="Time to implement everything we've learned in Python — linear regression from scratch."
+            description="Time to implement everything we've learned in Python—linear regression from scratch."
             buttonText="Continue to Implementation"
           />
         </Row.Content>

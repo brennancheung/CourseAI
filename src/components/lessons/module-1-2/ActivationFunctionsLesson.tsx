@@ -45,7 +45,7 @@ export function ActivationFunctionsLesson() {
         <Row.Content>
           <LessonHeader
             title="Activation Functions: The Missing Ingredient"
-            description="Add the nonlinearity that transforms our limited linear network into something that can solve XOR — and much more."
+            description="Add the nonlinearity that transforms our limited linear network into something that can solve XOR—and much more."
             category="From Linear to Neural"
           />
         </Row.Content>
@@ -55,7 +55,7 @@ export function ActivationFunctionsLesson() {
       <Row>
         <Row.Content>
           <ObjectiveBlock>
-            Add the missing ingredient — the activation function — and finally
+            Add the missing ingredient—the activation function—and finally
             solve XOR. Then explore the different activation functions available.
           </ObjectiveBlock>
         </Row.Content>
@@ -78,7 +78,7 @@ export function ActivationFunctionsLesson() {
             <p className="text-muted-foreground">
               We have neurons that compute <InlineMath math="y = w \cdot x + b" />.
               We can stack them into layers and networks. But stacking linear
-              operations is still linear — that&apos;s why XOR was impossible.
+              operations is still linear—that&apos;s why XOR was impossible.
             </p>
             <p className="text-muted-foreground">
               The fix is simple: after each linear computation, apply a{' '}
@@ -109,7 +109,7 @@ export function ActivationFunctionsLesson() {
       <Row>
         <Row.Content>
           <SectionHeader
-            title="Wait — Why Not Just Use Two Lines?"
+            title="Wait—Why Not Just Use Two Lines?"
             subtitle="The crucial insight"
           />
           <div className="space-y-4">
@@ -125,7 +125,7 @@ export function ActivationFunctionsLesson() {
                 h₁ = A + B - 0.5 <span className="text-blue-400">(line 1)</span>
               </p>
               <p className="text-sm font-mono text-muted-foreground">
-                h₂ = -A - B + 1.5 <span className="text-blue-400">(line 2)</span>
+                h₂ = A + B - 1.5 <span className="text-blue-400">(line 2)</span>
               </p>
               <p className="text-sm font-mono text-muted-foreground">
                 output = w₁·h₁ + w₂·h₂ + b
@@ -136,7 +136,7 @@ export function ActivationFunctionsLesson() {
             </p>
             <div className="py-4 px-6 bg-rose-500/10 rounded-lg border border-rose-500/20">
               <p className="text-sm font-mono">
-                output = (w₁-w₂)A + (w₁-w₂)B + constant = <strong className="text-rose-400">ONE LINE!</strong>
+                output = (w₁+w₂)A + (w₁+w₂)B + constant = <strong className="text-rose-400">ONE LINE!</strong>
               </p>
             </div>
             <p className="text-muted-foreground">
@@ -170,100 +170,44 @@ export function ActivationFunctionsLesson() {
             <div className="py-4 px-6 bg-muted/50 rounded-lg space-y-2">
               <p className="text-sm font-mono text-muted-foreground">
                 h₁ = <span className="text-emerald-400">ReLU</span>(A + B - 0.5)
+                <span className="text-blue-400 ml-2">fires when at least one input ≈ 1</span>
               </p>
               <p className="text-sm font-mono text-muted-foreground">
-                h₂ = <span className="text-emerald-400">ReLU</span>(-A - B + 1.5)
+                h₂ = <span className="text-emerald-400">ReLU</span>(A + B - 1.5)
+                <span className="text-blue-400 ml-2">fires only when both inputs ≈ 1</span>
               </p>
             </div>
             <p className="text-muted-foreground">
               Now h₁ is <strong>zero</strong> when A+B {'<'} 0.5, and positive
-              otherwise. And h₂ is <strong>zero</strong> when A+B {'>'} 1.5.
+              otherwise. And h₂ is <strong>zero</strong> unless A+B {'>'} 1.5
+              (both inputs are 1).
             </p>
             <p className="text-muted-foreground">
-              The output neuron can now detect &quot;h₁ is positive AND h₂ is
-              positive&quot; — which only happens in the <strong>band</strong> between
-              the two lines!
+              The output neuron gives <strong>positive weight</strong> to h₁
+              and <strong>negative weight</strong> to h₂. Since h₂ only turns
+              on when both inputs are 1, the negative weight penalizes
+              exactly that case. The result: positive output only when at
+              least one input is 1 but not both. That&apos;s XOR!
             </p>
             <div className="py-4 px-6 bg-emerald-500/10 rounded-lg border border-emerald-500/20">
               <p className="text-sm">
                 <strong className="text-emerald-400">The key:</strong> Activation
                 functions create <em>thresholds</em> that can&apos;t be collapsed.
                 ReLU&apos;s &quot;zero below, linear above&quot; behavior is fundamentally
-                non-linear.
+                non-linear—h₂ is completely silent for three of the four
+                inputs, then &quot;turns on&quot; for (1,1). No linear function
+                can do that.
               </p>
             </div>
           </div>
         </Row.Content>
         <Row.Aside>
-          <InsightBlock title="AND Logic">
-            The output neuron is essentially computing &quot;above line 1 AND
-            below line 2&quot;. Without activation, this AND is impossible —
-            everything becomes weighted averaging.
+          <InsightBlock title="The Threshold Trick">
+            Without activation, h₂ is always a linear mix of A and B.
+            With ReLU, h₂ is <em>zero</em> for most inputs and only
+            &quot;turns on&quot; for (1,1). That selective silence is
+            something no linear function can replicate.
           </InsightBlock>
-        </Row.Aside>
-      </Row>
-
-      {/* Section: What Makes a Good Activation? */}
-      <Row>
-        <Row.Content>
-          <SectionHeader
-            title="What Makes a Good Activation Function?"
-            subtitle="Not just any nonlinearity will do"
-          />
-          <div className="space-y-4">
-            <p className="text-muted-foreground">
-              Activation functions need certain properties to work well:
-            </p>
-            <div className="grid gap-4 md:grid-cols-2">
-              <GradientCard title="Must Have" color="emerald">
-                <ul className="space-y-1 text-sm">
-                  <li>• <strong>Nonlinear</strong> — otherwise pointless</li>
-                  <li>• <strong>Differentiable</strong> — for gradient descent</li>
-                  <li>• <strong>Computationally cheap</strong> — applied billions of times</li>
-                </ul>
-              </GradientCard>
-              <GradientCard title="Nice to Have" color="blue">
-                <ul className="space-y-1 text-sm">
-                  <li>• <strong>Zero-centered</strong> — helps optimization</li>
-                  <li>• <strong>No vanishing gradients</strong> — for deep networks</li>
-                  <li>• <strong>Sparse activation</strong> — efficiency</li>
-                </ul>
-              </GradientCard>
-            </div>
-          </div>
-        </Row.Content>
-        <Row.Aside>
-          <WarningBlock title="Vanishing Gradients">
-            Some activation functions (like sigmoid) have gradients that approach
-            zero for large inputs. This causes problems in deep networks —
-            we&apos;ll explore this more later.
-          </WarningBlock>
-        </Row.Aside>
-      </Row>
-
-      {/* Interactive: Activation Function Explorer */}
-      <Row>
-        <Row.Content>
-          <SectionHeader
-            title="Explore Activation Functions"
-            subtitle="See how different functions transform inputs"
-          />
-          <ExercisePanel title="Activation Function Explorer">
-            <ActivationFunctionExplorer
-              defaultFunction="relu"
-              showDerivatives={false}
-            />
-          </ExercisePanel>
-        </Row.Content>
-        <Row.Aside>
-          <TryThisBlock title="Experiment">
-            <ul className="space-y-2 text-sm">
-              <li>• Toggle &quot;Linear&quot; to see the baseline</li>
-              <li>• Compare sigmoid and ReLU shapes</li>
-              <li>• Move the input slider to extreme values</li>
-              <li>• Enable derivatives to see gradients</li>
-            </ul>
-          </TryThisBlock>
         </Row.Aside>
       </Row>
 
@@ -288,7 +232,7 @@ export function ActivationFunctionsLesson() {
                 color: 'emerald',
                 items: [
                   'Smooth and differentiable',
-                  'Output interpretable as probability',
+                  'Output always between 0 and 1 (useful for yes/no decisions)',
                   'Historically important',
                 ],
               }}
@@ -311,7 +255,7 @@ export function ActivationFunctionsLesson() {
         </Row.Content>
         <Row.Aside>
           <InsightBlock title="Range (0, 1)">
-            No matter what you input — even ±1000 — sigmoid outputs a value
+            No matter what you input—even ±1000—sigmoid outputs a value
             between 0 and 1. Large positive inputs → ~1. Large negative → ~0.
           </InsightBlock>
         </Row.Aside>
@@ -367,6 +311,72 @@ export function ActivationFunctionsLesson() {
         </Row.Aside>
       </Row>
 
+      {/* Interactive: Activation Function Explorer */}
+      <Row>
+        <Row.Content>
+          <SectionHeader
+            title="Explore Activation Functions"
+            subtitle="See how different functions transform inputs"
+          />
+          <ExercisePanel title="Activation Function Explorer">
+            <ActivationFunctionExplorer
+              defaultFunction="relu"
+              showDerivatives={false}
+              visibleFunctions={['linear', 'sigmoid', 'relu']}
+            />
+          </ExercisePanel>
+        </Row.Content>
+        <Row.Aside>
+          <TryThisBlock title="Experiment">
+            <ul className="space-y-2 text-sm">
+              <li>• Select &quot;Linear&quot; to see the baseline</li>
+              <li>• Compare sigmoid&apos;s S-curve with ReLU&apos;s hinge</li>
+              <li>• Move the input slider to extreme values</li>
+              <li>• Enable derivatives to see gradients</li>
+            </ul>
+          </TryThisBlock>
+        </Row.Aside>
+      </Row>
+
+      {/* Section: What Makes a Good Activation? */}
+      <Row>
+        <Row.Content>
+          <SectionHeader
+            title="What Makes a Good Activation Function?"
+            subtitle="Now that you've seen two, what do they have in common?"
+          />
+          <div className="space-y-4">
+            <p className="text-muted-foreground">
+              Sigmoid and ReLU look very different, but they share key properties.
+              Here&apos;s what makes an activation function work:
+            </p>
+            <div className="grid gap-4 md:grid-cols-2">
+              <GradientCard title="Must Have" color="emerald">
+                <ul className="space-y-1 text-sm">
+                  <li>• <strong>Nonlinear</strong>—otherwise pointless</li>
+                  <li>• <strong>Differentiable</strong>—for gradient descent</li>
+                  <li>• <strong>Computationally cheap</strong>—applied billions of times</li>
+                </ul>
+              </GradientCard>
+              <GradientCard title="Nice to Have" color="blue">
+                <ul className="space-y-1 text-sm">
+                  <li>• <strong>Zero-centered</strong>—helps optimization</li>
+                  <li>• <strong>No vanishing gradients</strong>—for deep networks</li>
+                  <li>• <strong>Sparse activation</strong>—efficiency</li>
+                </ul>
+              </GradientCard>
+            </div>
+          </div>
+        </Row.Content>
+        <Row.Aside>
+          <WarningBlock title="Vanishing Gradients">
+            Notice how sigmoid&apos;s curve flattens at the extremes? That means
+            near-zero gradients for large inputs. This causes problems in deep
+            networks—we&apos;ll explore this more later.
+          </WarningBlock>
+        </Row.Aside>
+      </Row>
+
       {/* Section: XOR Solved */}
       <Row>
         <Row.Content>
@@ -400,8 +410,8 @@ export function ActivationFunctionsLesson() {
         <Row.Aside>
           <TryThisBlock title="What You&apos;re Seeing">
             <ul className="space-y-2 text-sm">
-              <li>• <strong>Left:</strong> Original XOR — no line works</li>
-              <li>• <strong>Right:</strong> After hidden layer — one line works!</li>
+              <li>• <strong>Left:</strong> Original XOR—no line works</li>
+              <li>• <strong>Right:</strong> After hidden layer—one line works!</li>
               <li>• The hidden layer <em>moved the points</em></li>
             </ul>
           </TryThisBlock>
@@ -417,7 +427,7 @@ export function ActivationFunctionsLesson() {
               {
                 headline: 'Two lines alone don\'t help.',
                 description:
-                  'Without activation, combining two linear neurons gives you one line — the "collapse" problem.',
+                  'Without activation, combining two linear neurons gives you one line—the "collapse" problem.',
               },
               {
                 headline: 'Activation functions create thresholds.',
@@ -425,14 +435,14 @@ export function ActivationFunctionsLesson() {
                   'ReLU outputs zero below a line, positive above. This threshold behavior can\'t be collapsed.',
               },
               {
-                headline: 'Thresholds enable "AND" logic.',
+                headline: 'Thresholds let the output neuron discriminate.',
                 description:
-                  'The output neuron can detect "above line 1 AND below line 2" — impossible with pure linearity.',
+                  'h₁ fires broadly, h₂ fires only for (1,1). The output neuron weights them to penalize the "both on" case—impossible with pure linearity.',
               },
               {
                 headline: 'That\'s how XOR is solved.',
                 description:
-                  'Two neurons with activation create two thresholds that combine into a band — exactly separating XOR.',
+                  'Positive weight on h₁ (at least one is 1), negative weight on h₂ (both are 1). The network uses selective silence—h₂ being zero—to separate the cases.',
               },
             ]}
           />

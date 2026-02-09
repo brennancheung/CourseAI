@@ -5,6 +5,7 @@ import { Line, Circle, Text, Arrow, Group } from 'react-konva'
 import { ZoomableCanvas } from '@/components/canvas/ZoomableCanvas'
 import { Button } from '@/components/ui/button'
 import { Play, Pause, RotateCcw } from 'lucide-react'
+import { useContainerWidth } from '@/hooks/useContainerWidth'
 
 /**
  * GradientDescentExplorer - Animated gradient descent on 1D loss curve
@@ -48,9 +49,11 @@ export function GradientDescentExplorer({
   initialLearningRate = 0.15,
   initialPosition = -2.5,
   showGradientArrow = true,
-  width = 600,
+  width: widthOverride,
   height = 350,
 }: GradientDescentExplorerProps) {
+  const { containerRef, width: measuredWidth } = useContainerWidth(600)
+  const width = widthOverride ?? measuredWidth
 
   const [position, setPosition] = useState(initialPosition)
   const [learningRate, setLearningRate] = useState(initialLearningRate)
@@ -145,7 +148,7 @@ export function GradientDescentExplorer({
   const ballY = toPixelY(currentLoss)
 
   return (
-    <div className="space-y-4">
+    <div ref={containerRef} className="space-y-4">
       <div className="rounded-lg border bg-card overflow-hidden">
         <ZoomableCanvas width={width} height={height} backgroundColor="#1a1a2e">
             {/* Grid */}
@@ -346,7 +349,7 @@ export function GradientDescentExplorer({
             <input
               type="range"
               min="0.01"
-              max="0.5"
+              max="1.0"
               step="0.01"
               value={learningRate}
               onChange={(e) => setLearningRate(parseFloat(e.target.value))}

@@ -37,7 +37,7 @@ export function GradientDescentLesson() {
         <Row.Content>
           <LessonHeader
             title="Gradient Descent: Following the Slope"
-            description="Learn the fundamental algorithm for finding minimum loss — following the gradient downhill."
+            description="Learn the fundamental algorithm for finding minimum loss—following the gradient downhill."
             category="Fundamentals"
           />
         </Row.Content>
@@ -47,7 +47,7 @@ export function GradientDescentLesson() {
       <Row>
         <Row.Content>
           <ObjectiveBlock>
-            Understand gradient descent — the algorithm that finds parameters
+            Understand gradient descent—the algorithm that finds parameters
             minimizing loss by iteratively moving downhill.
           </ObjectiveBlock>
         </Row.Content>
@@ -150,11 +150,20 @@ export function GradientDescentLesson() {
         <Row.Content>
           <SectionHeader
             title="The Update Rule"
-            subtitle="How we actually move"
+            subtitle="Translating slope into action"
           />
           <div className="space-y-4">
             <p className="text-muted-foreground">
-              The gradient descent update rule is beautifully simple:
+              We know the gradient tells us the slope. But knowing the slope
+              isn&apos;t enough—we need to actually change our parameter to a
+              new, better value. That&apos;s what an <strong>update</strong> is:
+              taking the current parameter value and computing the next one,
+              one small step closer to the minimum.
+            </p>
+            <p className="text-muted-foreground">
+              Each step of gradient descent is one update. You compute the
+              gradient, nudge the parameter downhill, and repeat. The whole
+              algorithm is just this single update applied over and over:
             </p>
             <div className="py-4 px-6 bg-muted/50 rounded-lg">
               <BlockMath math="\theta_{new} = \theta_{old} - \alpha \nabla L" />
@@ -195,7 +204,7 @@ export function GradientDescentLesson() {
           <ExercisePanel title="Watch Gradient Descent in Action">
             <GradientDescentExplorer
               initialPosition={-2}
-              initialLearningRate={0.3}
+              initialLearningRate={0.15}
               showLearningRateSlider={true}
               showGradientArrow={true}
             />
@@ -223,19 +232,19 @@ export function GradientDescentLesson() {
           <div className="space-y-4">
             <p className="text-muted-foreground">
               The learning rate <InlineMath math="\alpha" /> controls step size.
-              Try adjusting it in the visualization above:
+              Go back to the visualization above and try these extremes:
             </p>
             <div className="grid gap-4 md:grid-cols-2">
-              <ConceptBlock title="Too Big (α > 0.7)">
+              <ConceptBlock title="Too Big (try α = 0.8+)">
                 <p>
-                  Takes huge steps. Might overshoot the minimum and bounce around.
-                  Can even diverge (get worse!).
+                  Takes huge steps. Overshoots the minimum and bounces around.
+                  Crank the slider up and watch the ball fly past the valley.
                 </p>
               </ConceptBlock>
-              <ConceptBlock title="Too Small (α < 0.1)">
+              <ConceptBlock title="Too Small (try α = 0.02)">
                 <p>
-                  Takes tiny steps. Very slow to converge. Might get stuck or take
-                  forever to reach minimum.
+                  Takes tiny steps. Very slow to converge. Set α low and click
+                  &quot;Step&quot; repeatedly to feel how painfully slow it is.
                 </p>
               </ConceptBlock>
             </div>
@@ -248,7 +257,7 @@ export function GradientDescentLesson() {
         <Row.Aside>
           <WarningBlock title="Goldilocks Zone">
             The learning rate must be &quot;just right.&quot; Too big and you overshoot.
-            Too small and you take forever. There&apos;s no universal best value — it
+            Too small and you take forever. There&apos;s no universal best value—it
             depends on the problem.
           </WarningBlock>
         </Row.Aside>
@@ -267,8 +276,9 @@ export function GradientDescentLesson() {
             </p>
             <p className="text-muted-foreground">
               Near any point, the best linear approximation of a function is its
-              tangent line. The derivative tells us exactly which direction decreases
-              the function <em>fastest</em>.
+              tangent line. (That&apos;s the dashed red line in the visualization above.)
+              The derivative tells us exactly which direction decreases the function{' '}
+              <em>fastest</em>.
             </p>
             <p className="text-muted-foreground">
               By taking small steps in the negative gradient direction, we&apos;re
@@ -282,7 +292,7 @@ export function GradientDescentLesson() {
         </Row.Content>
         <Row.Aside>
           <InsightBlock title="Convexity Matters">
-            MSE for linear regression is <strong>convex</strong> — there&apos;s only
+            MSE for linear regression is <strong>convex</strong>—there&apos;s only
             one minimum. Neural networks are <em>not</em> convex, so there can be
             many local minima. Still, gradient descent works surprisingly well!
           </InsightBlock>

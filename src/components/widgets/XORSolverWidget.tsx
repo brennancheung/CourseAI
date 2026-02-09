@@ -1,8 +1,9 @@
 'use client'
 
-import { useMemo, useCallback, useRef, useEffect, useState } from 'react'
+import { useMemo, useCallback } from 'react'
 import { Circle, Line, Text, Shape } from 'react-konva'
 import { ZoomableCanvas } from '@/components/canvas/ZoomableCanvas'
+import { useContainerWidth } from '@/hooks/useContainerWidth'
 
 /**
  * XORSolverWidget - Shows how two decision boundaries solve XOR
@@ -50,26 +51,7 @@ export function XORSolverWidget({
   height: heightOverride,
 }: XORSolverWidgetProps) {
   // Measure container
-  const containerRef = useRef<HTMLDivElement>(null)
-  const [measuredWidth, setMeasuredWidth] = useState(400)
-
-  useEffect(() => {
-    const container = containerRef.current
-    if (!container) return
-
-    const updateWidth = () => {
-      const rect = container.getBoundingClientRect()
-      setMeasuredWidth(rect.width)
-    }
-
-    updateWidth()
-
-    const observer = new ResizeObserver(updateWidth)
-    observer.observe(container)
-
-    return () => observer.disconnect()
-  }, [])
-
+  const { containerRef, width: measuredWidth } = useContainerWidth(400)
   const width = widthOverride ?? measuredWidth
   const height = heightOverride ?? Math.min(400, width)
 

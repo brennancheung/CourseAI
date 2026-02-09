@@ -95,23 +95,21 @@ type ContentProps = {
 function Content({ children }: ContentProps) {
   const { isExpanded } = useExercisePanelContext()
   const containerRef = useRef<HTMLDivElement>(null)
-  const [dimensions, setDimensions] = useState<{ width: number; height: number } | undefined>(undefined)
+  const [measuredWidth, setMeasuredWidth] = useState<number | undefined>(undefined)
+  const [expandedHeight, setExpandedHeight] = useState<number | undefined>(undefined)
 
-  // Measure container when expanded
+  // Always measure container width; calculate height only when expanded
   useEffect(() => {
-    if (!isExpanded || !containerRef.current) {
-      setDimensions(undefined)
-      return
-    }
+    if (!containerRef.current) return
 
     const observer = new ResizeObserver((entries) => {
       const entry = entries[0]
-      if (entry) {
-        const width = entry.contentRect.width
-        // Calculate canvas height: use ~60% of viewport height for canvas
-        // This leaves room for controls, header, and padding
+      if (!entry) return
+      setMeasuredWidth(entry.contentRect.width)
+
+      if (isExpanded) {
         const canvasHeight = Math.max(window.innerHeight * 0.6, 400)
-        setDimensions({ width, height: canvasHeight })
+        setExpandedHeight(canvasHeight)
       }
     })
 
@@ -119,15 +117,28 @@ function Content({ children }: ContentProps) {
     return () => observer.disconnect()
   }, [isExpanded])
 
-  // Clone child with measured dimensions when in fullscreen
+  // Clear expanded height when collapsing
+  useEffect(() => {
+    if (!isExpanded) {
+      setExpandedHeight(undefined)
+    }
+  }, [isExpanded])
+
+  // Clone child with measured dimensions
   const renderChild = () => {
     if (!isValidElement(children)) return children
 
-    if (isExpanded && dimensions) {
-      return cloneElement(children, {
-        width: dimensions.width,
-        height: dimensions.height,
-      })
+    const props: { width?: number; height?: number } = {}
+
+    if (measuredWidth) {
+      props.width = measuredWidth
+    }
+    if (isExpanded && expandedHeight) {
+      props.height = expandedHeight
+    }
+
+    if (props.width || props.height) {
+      return cloneElement(children, props)
     }
 
     return children

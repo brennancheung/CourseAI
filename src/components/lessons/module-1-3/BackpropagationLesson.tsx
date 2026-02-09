@@ -84,11 +84,17 @@ export function BackpropagationLesson() {
             <p className="text-muted-foreground">
               We need a way to compute:{' '}
               <InlineMath math="\frac{\partial L}{\partial w}" /> for every
-              single weight <InlineMath math="w" /> in the network.
+              single weight <InlineMath math="w" /> in the network. The{' '}
+              <InlineMath math="\partial" /> symbol means &quot;partial
+              derivative&quot;—how does <InlineMath math="L" /> change when
+              we nudge just this one weight, holding everything else fixed?
             </p>
             <p className="text-muted-foreground">
               That&apos;s what <strong>backpropagation</strong> does — it computes
               all these gradients efficiently in one backward pass.
+              Backpropagation isn&apos;t a separate learning algorithm from
+              gradient descent. It&apos;s the computation step <em>inside</em>{' '}
+              gradient descent that figures out which direction to go.
             </p>
           </div>
         </Row.Content>
@@ -181,25 +187,6 @@ export function BackpropagationLesson() {
         </Row.Aside>
       </Row>
 
-      {/* Interactive: Backprop Flow Explorer */}
-      <Row>
-        <Row.Content>
-          <ExercisePanel title="See Gradients Flow">
-            <BackpropFlowExplorer />
-          </ExercisePanel>
-        </Row.Content>
-        <Row.Aside>
-          <TryThisBlock title="Experiment">
-            <ul className="space-y-2 text-sm">
-              <li>• Toggle between Forward and Backward views</li>
-              <li>• Set w₁ and x so that z₁ {'<'} 0 — watch the ReLU block gradients!</li>
-              <li>• Notice: <strong>local × incoming = outgoing</strong> at every step</li>
-              <li>• Compare ∂L/∂w₁ vs ∂L/∂w₂ — which is bigger?</li>
-            </ul>
-          </TryThisBlock>
-        </Row.Aside>
-      </Row>
-
       {/* Section 4: A Concrete Example */}
       <Row>
         <Row.Content>
@@ -238,8 +225,26 @@ export function BackpropagationLesson() {
               <p className="text-sm font-mono text-violet-300 ml-4">
                 ∂L/∂w = ∂L/∂a · ∂a/∂z · ∂z/∂w
               </p>
-              <p className="text-sm text-muted-foreground ml-4 mt-2">
-                = <InlineMath math="-2(y-a)" /> · <InlineMath math="\mathbf{1}_{z>0}" /> · <InlineMath math="x" />
+              <p className="text-sm font-mono text-muted-foreground ml-4 mt-3">
+                <span className="text-violet-400">Step 1:</span>{' '}
+                ∂L/∂a = <InlineMath math="-2(y-a)" />{' '}
+                <span className="text-muted-foreground/60">(loss derivative)</span>
+              </p>
+              <p className="text-sm font-mono text-muted-foreground ml-4">
+                <span className="text-violet-400">Step 2:</span>{' '}
+                ∂a/∂z ={' '}
+                <span className="text-violet-300">1 if z {'>'} 0, else 0</span>{' '}
+                <span className="text-muted-foreground/60">(ReLU derivative)</span>
+              </p>
+              <p className="text-sm font-mono text-muted-foreground ml-4">
+                <span className="text-violet-400">Step 3:</span>{' '}
+                ∂z/∂w = <InlineMath math="x" />{' '}
+                <span className="text-muted-foreground/60">(linear derivative)</span>
+              </p>
+              <p className="text-sm font-mono text-violet-300 ml-4 mt-2">
+                Multiply: ∂L/∂w = <InlineMath math="-2(y-a)" /> ·{' '}
+                <span className="text-violet-300">(1 if z{'>'} 0, else 0)</span> ·{' '}
+                <InlineMath math="x" />
               </p>
             </div>
             <p className="text-muted-foreground">
@@ -251,10 +256,31 @@ export function BackpropagationLesson() {
         </Row.Content>
         <Row.Aside>
           <InsightBlock title="Local × Local × Local">
-            Each layer only needs to know its own local derivative. The chain
-            rule multiplies them together. This is why backprop scales — each
-            layer is independent.
+            Each layer only needs to know its own local derivative and the
+            gradient arriving from the layer above. Layer 2 doesn&apos;t need
+            to know anything about layer 1&apos;s weights — it just passes
+            the gradient backward. This locality is why backprop scales.
           </InsightBlock>
+        </Row.Aside>
+      </Row>
+
+      {/* Interactive: Backprop Flow Explorer */}
+      <Row>
+        <Row.Content>
+          <ExercisePanel title="See Gradients Flow">
+            <BackpropFlowExplorer />
+          </ExercisePanel>
+        </Row.Content>
+        <Row.Aside>
+          <TryThisBlock title="Experiment">
+            <ul className="space-y-2 text-sm">
+              <li>• Click <strong>Step</strong> to advance one node at a time</li>
+              <li>• Click <strong>Run</strong> to watch the full forward → backward → update loop</li>
+              <li>• Watch the loss decrease over epochs as weights update</li>
+              <li>• Try x={'<'}0 to see ReLU block gradients in the backward pass</li>
+              <li>• Adjust the <strong>learning rate</strong>—too high overshoots, too low barely moves</li>
+            </ul>
+          </TryThisBlock>
         </Row.Aside>
       </Row>
 

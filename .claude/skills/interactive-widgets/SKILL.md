@@ -92,6 +92,7 @@ Pre-built interactive widgets for machine learning concepts.
 | `GradientDescentExplorer` | Animated ball rolling on loss curve | `initialPosition`, `initialLearningRate`, `showLearningRateSlider`, `showGradientArrow` |
 | `LearningRateExplorer` | Compare different learning rates | `mode: 'comparison' | 'interactive'` |
 | `TrainingLoopExplorer` | Complete training visualization with loss curve | `numPoints`, `initialLearningRate`, `width`, `height` |
+| `MermaidDiagram` | Render Mermaid diagrams as inline SVG | `chart` (mermaid definition string) |
 
 **Usage pattern:**
 ```tsx
@@ -328,20 +329,41 @@ export const items: WidgetItem[] = [
 
 ### 2. Create the Component
 
+For canvas-based widgets using `ZoomableCanvas`, **always use `useContainerWidth`** for responsive sizing:
+
 ```tsx
-// src/components/exercises/[WidgetName].tsx
+// src/components/widgets/[WidgetName].tsx
 'use client'
 
 import { useState } from 'react'
-// ... imports
+import { ZoomableCanvas } from '@/components/canvas/ZoomableCanvas'
+import { useContainerWidth } from '@/hooks/useContainerWidth'
 
-interface WidgetProps {
-  className?: string
-  // optional: items?: WidgetItem[] // if data should be passed in
+type WidgetProps = {
+  width?: number   // Override from ExercisePanel fullscreen
+  height?: number
 }
 
-export function WidgetName({ className }: WidgetProps) {
-  // State for interactivity
+export function WidgetName({ width: widthOverride, height = 350 }: WidgetProps) {
+  const { containerRef, width: measuredWidth } = useContainerWidth(600)
+  const width = widthOverride ?? measuredWidth
+
+  return (
+    <div ref={containerRef} className="space-y-4">
+      <ZoomableCanvas width={width} height={height} backgroundColor="#1a1a2e">
+        {/* Konva elements */}
+      </ZoomableCanvas>
+      {/* Controls below canvas */}
+    </div>
+  )
+}
+```
+
+For non-canvas widgets, the same pattern works — just use `width` for layout calculations.
+
+```tsx
+// Non-canvas widget
+export function WidgetName({ className }: { className?: string }) {
   const [selected, setSelected] = useState<string | null>(null)
 
   return (
@@ -421,11 +443,47 @@ These could be valuable for future lessons:
 | A/B Comparator | Toggle between two audio/score versions | Teaching before/after |
 | Parameter Explorer | Sliders that update a visualization | Teaching continuous concepts |
 
+### Mermaid Diagrams
+
+For static flowcharts, architecture diagrams, and process flows. Use instead of hand-building with react-konva when the diagram doesn't need interactivity.
+
+```tsx
+import { MermaidDiagram } from '@/components/widgets/MermaidDiagram'
+
+<MermaidDiagram chart={`
+  graph LR
+    A[Input] --> B[Hidden Layer]
+    B --> C[Output]
+`} />
+```
+
+**Agent verification workflow:** Before shipping a diagram, render it to PNG with the CLI and inspect visually:
+```bash
+pnpm dlx @mermaid-js/mermaid-cli -i diagram.mmd -o diagram.png -b transparent
+```
+Then use the Read tool on the PNG to verify it looks correct. Delete the temp files after.
+
+**When to use MermaidDiagram vs react-konva:**
+- **MermaidDiagram:** Static flowcharts, architecture diagrams, process flows, dependency graphs
+- **react-konva:** Interactive visualizations where the user drags, clicks, or manipulates elements
+
 ### Recently Extracted Components
 
 | Component | Location | Notes |
 |-----------|----------|-------|
 | `ModuleCompleteBlock` | `src/components/lessons/blocks.tsx` | Celebration block with emoji, achievements list, next module link |
+
+---
+
+## Interaction Design Rules
+
+**Pointer cursor on all clickable/draggable elements.** Any element the user can click, drag, or interact with must use `cursor-pointer` (for clickable) or `cursor-grab`/`cursor-ew-resize` (for draggable). If a user hovers over something interactive and the cursor doesn't change, they won't know they can interact with it. This applies to:
+- Buttons, toggles, selectors
+- Draggable numbers, points, handles
+- Clickable cards, expandable items
+- Canvas elements that respond to clicks
+
+Audit existing widgets when modifying them—many are missing cursor changes on interactive elements.
 
 ---
 
@@ -437,3 +495,4 @@ These could be valuable for future lessons:
 - [ ] Decided: standalone component or lesson-specific?
 - [ ] Chose appropriate colors for the category
 - [ ] Considered mobile responsiveness (min-width, overflow-x-auto)
+- [ ] All interactive elements have appropriate cursor styles (pointer, grab, ew-resize)

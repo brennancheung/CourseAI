@@ -4,36 +4,41 @@ Quick reference for all interactive components available in lessons.
 
 ---
 
-## Lesson Metadata (Exercise Type)
+## Lesson Metadata
 
-Every lesson exports an `Exercise` object defining its metadata.
+Lesson metadata lives in the curriculum tree (`src/data/curriculum/`). Each leaf node defines metadata inline:
 
-**Path:** `src/lib/exercises.ts`
+**Type:** `src/data/curriculum/types.ts`
 
-```tsx
-import { Exercise } from '@/lib/exercises'
-
-export const myLessonExercise: Exercise = {
-  slug: 'my-lesson',                    // URL slug
+```typescript
+// In src/data/curriculum/foundations.ts (or similar)
+{
+  slug: 'my-lesson',                      // URL slug — also the route
   title: 'My Lesson Title',
   description: 'One-line description of what you will learn.',
-  category: 'Fundamentals',             // Module/category name
-  duration: '20 min',                   // Estimated time
-  constraints: [                        // Scope boundaries (ADHD-friendly)
-    'Focus on intuition first',
-    'No code yet — just concepts',
-  ],
-  steps: [                              // Learning objectives
+  duration: '20 min',
+  category: 'Fundamentals',
+  objectives: [
     'Understand concept A',
     'See why B matters',
     'Practice with interactive widget',
   ],
   skills: ['skill-tag-1', 'skill-tag-2'],
   prerequisites: ['previous-lesson-slug'],
+  exercise: {
+    constraints: [
+      'Focus on intuition first',
+      'No code yet — just concepts',
+    ],
+    steps: [
+      'Understand concept A',
+      'See why B matters',
+    ],
+  },
 }
 ```
 
-Register lessons in `src/lib/exercises.ts` by importing and adding to the `exercises` record.
+Then create `src/app/app/lesson/{slug}/page.tsx` to render the lesson component.
 
 ---
 
@@ -151,8 +156,6 @@ import { Row } from '@/components/layout/Row'
 - Aside: `lg:w-64` (always present, even if empty)
 - Gap: `gap-8`
 
-**Note:** `LessonRow` is deprecated. Use `Row` instead.
-
 ---
 
 ## Data File Patterns
@@ -203,6 +206,60 @@ import { InlineMath, BlockMath } from 'react-katex'
 - Wrap important formulas in `bg-muted/50 rounded-lg` for emphasis
 - Use `InlineMath` in list items to explain each variable
 - Combine with `ConceptBlock` for formula explanations
+
+---
+
+## Mermaid Diagrams
+
+Render static flowcharts, architecture diagrams, and process flows as inline SVG.
+
+**Path:** `src/components/widgets/MermaidDiagram.tsx`
+
+```tsx
+import { MermaidDiagram } from '@/components/widgets/MermaidDiagram'
+
+// Simple flowchart
+<MermaidDiagram chart={`
+  graph LR
+    A[Input Layer] --> B[Hidden Layer]
+    B --> C[Output Layer]
+`} />
+
+// Inside a lesson row
+<Row>
+  <Row.Content>
+    <SectionHeader title="Network Architecture" />
+    <MermaidDiagram chart={`
+      graph TD
+        X[Input x] --> N1[Neuron 1]
+        X --> N2[Neuron 2]
+        N1 --> O[Output]
+        N2 --> O
+    `} />
+  </Row.Content>
+  <Row.Aside>
+    <ConceptBlock title="Architecture">Each arrow is a weighted connection.</ConceptBlock>
+  </Row.Aside>
+</Row>
+```
+
+**Props:**
+| Prop | Type | Description |
+|------|------|-------------|
+| `chart` | `string` | Mermaid diagram definition (any valid mermaid syntax) |
+| `className` | `string?` | Optional CSS class for the container div |
+
+**Supported diagram types:** flowchart, sequence, class, state, ER, gantt, pie, mindmap, timeline, and more.
+
+**When to use vs react-konva:**
+- **MermaidDiagram:** Static flowcharts, architecture diagrams, process flows, dependency graphs
+- **react-konva:** Interactive visualizations where the user drags, clicks, or manipulates elements
+
+**Agent verification:** Render to PNG with CLI before shipping:
+```bash
+pnpm dlx @mermaid-js/mermaid-cli -i diagram.mmd -o diagram.png -b transparent
+```
+Then Read the PNG to visually verify. Delete temp files after.
 
 ---
 
@@ -282,9 +339,11 @@ Pre-built interactive widgets for machine learning concepts.
 | `GradientDescentExplorer` | Animated ball rolling on loss curve | `initialPosition`, `initialLearningRate`, `showLearningRateSlider`, `showGradientArrow` |
 | `LearningRateExplorer` | Compare different learning rates | `mode: 'comparison' | 'interactive'` |
 | `TrainingLoopExplorer` | Complete training visualization with loss curve | `numPoints`, `initialLearningRate`, `width`, `height` |
+| `MermaidDiagram` | Render Mermaid diagrams as inline SVG | `chart` (mermaid definition string) |
 
 **Widget conventions:**
-- Accept `width` and `height` props for ExercisePanel fullscreen
+- **Always use `useContainerWidth` hook** (`src/hooks/useContainerWidth.ts`) for responsive width. Pattern: `const { containerRef, width: measuredWidth } = useContainerWidth(fallback)` then `const width = widthOverride ?? measuredWidth` and attach `ref={containerRef}` to the outer div
+- Accept `width` and `height` props for ExercisePanel fullscreen override
 - Use `ZoomableCanvas` as base
 - Show controls below canvas (buttons, sliders)
 - Display live stats in colored badges
@@ -294,7 +353,17 @@ Pre-built interactive widgets for machine learning concepts.
 
 ## Lesson Structure Pattern
 
-Standard lesson file organization:
+### Page file (`src/app/app/lesson/{slug}/page.tsx`)
+
+```tsx
+import { MyLesson } from '@/components/lessons/module-X-Y'
+
+export default function Page() {
+  return <MyLesson />
+}
+```
+
+### Component file (`src/components/lessons/module-X-Y/MyLesson.tsx`)
 
 ```tsx
 'use client'
@@ -302,21 +371,20 @@ Standard lesson file organization:
 import { LessonLayout } from '@/components/lessons/LessonLayout'
 import { Row } from '@/components/layout/Row'
 import { ... } from '@/components/lessons'  // Block components
-import { Exercise } from '@/lib/exercises'
 import 'katex/dist/katex.min.css'
 import { InlineMath, BlockMath } from 'react-katex'
 
-// 1. Export exercise metadata
-export const myExercise: Exercise = { ... }
-
-// 2. Export lesson component
 export function MyLesson() {
   return (
     <LessonLayout>
       {/* Header */}
       <Row>
         <Row.Content>
-          <LessonHeader ... />
+          <LessonHeader
+            title="Lesson Title"
+            description="One-line description."
+            category="Category Name"
+          />
         </Row.Content>
       </Row>
 
