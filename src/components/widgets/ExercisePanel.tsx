@@ -64,7 +64,7 @@ function Header({ title, subtitle }: HeaderProps) {
   const { isExpanded, setIsExpanded } = useExercisePanelContext()
 
   return (
-    <div className="flex items-center justify-between px-4 py-3 border-b border-border bg-muted/30">
+    <div className="flex items-center justify-between px-4 py-3 border-b border-border bg-muted/30 rounded-t-lg">
       <div>
         <h3 className="font-semibold text-sm">{title}</h3>
         {subtitle && (
@@ -237,7 +237,7 @@ function ExercisePanelBase({ children, title, subtitle }: ExercisePanelProps) {
 
   // Inline panel
   const inlinePanel = (
-    <div className="border border-border rounded-lg overflow-hidden bg-card">
+    <div className="border border-border rounded-lg bg-card">
       {panelContent}
     </div>
   )

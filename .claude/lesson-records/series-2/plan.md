@@ -1,6 +1,6 @@
 # Series 2: PyTorch — Plan
 
-**Status:** Planned
+**Status:** Complete
 **Prerequisites:** Series 1 (Foundations)
 
 ## Series Goal

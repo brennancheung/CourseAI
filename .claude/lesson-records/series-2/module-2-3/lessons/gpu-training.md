@@ -249,3 +249,139 @@ A widget that simulates GPU timing or device placement would be artificial -- th
 - [x] Cognitive load <= 3 new concepts (2-3 new concepts: device-aware loop, mixed precision, when-GPU-helps refinement)
 - [x] Every new concept connected to at least one existing concept
 - [x] Scope boundaries explicitly stated
+
+---
+
+## Review — 2026-02-09 (Iteration 1/3)
+
+### Summary
+- Critical: 0
+- Improvement: 4
+- Polish: 3
+
+### Verdict: NEEDS REVISION
+
+No critical findings. The lesson is well-structured, follows the plan faithfully, and successfully teaches the core concepts. However, four improvement-level findings would meaningfully strengthen the lesson if addressed: a missing misconception treatment, the lack of a concrete negative example for mixed precision, a checkpoint-section detail that may confuse the student, and the absence of a verbal/analogy modality for the device-aware training loop concept itself.
+
+### Findings
+
+#### [IMPROVEMENT] — Missing planned misconception: "Mixed precision is complicated and requires manual dtype management"
+
+**Location:** Section 12 (torch.amp: Automatic Mixed Precision)
+**Issue:** The planning document identifies misconception #5: "Mixed precision is complicated and requires manual dtype management." The plan calls for showing the manual approach (3-4 lines of casting per operation, error-prone) and then revealing torch.amp.autocast as the automated solution. The built lesson mentions this in passing ("You could manually cast every tensor to the right dtype at the right time... That would be error-prone and tedious. Instead, PyTorch automates it") but never actually shows the manual approach. The plan says "Show the manual approach then reveal autocast" as a contrast. The lesson skips the "show" part and only tells the student it would be tedious.
+**Student impact:** The student misses the contrast that makes autocast feel like a relief. Without seeing even a sketch of manual dtype management, the claim "this would be error-prone and tedious" is an assertion rather than a demonstration. The "not magic--automation" connection to autograd is weaker because the autograd lesson actually showed the manual version first.
+**Suggested fix:** Add a brief 3-4 line pseudo-code or code snippet showing what manual mixed precision would look like (cast to float16 before forward, cast back to float32 before backward, manage dtypes on loss, etc.). Does not need to be runnable -- just enough to make the student wince before seeing autocast. This mirrors the autograd lesson's pattern of showing manual work before the automation.
+
+#### [IMPROVEMENT] — No concrete negative example for "full float16 breaks training"
+
+**Location:** Section 11 (Why Mixed Precision?)
+**Issue:** The lesson shows a code block demonstrating that very small float32 values round to zero in float16 (the underflow demonstration). This is a good standalone example. However, the planning document calls for showing that "full float16 training causes gradient underflow -- small gradients round to zero, learning stops." The built lesson demonstrates underflow on isolated tensors but never shows it in the context of training. The student sees that 1e-08 rounds to zero but does not see that this causes a training loop to stop learning. The connection "underflow -> model stops learning" is stated verbally but not demonstrated.
+**Student impact:** The student understands the float16 underflow mechanism on individual values but must take on faith that this actually breaks training. A software engineer with a skeptical mindset might wonder: "How often do gradients actually get that small? Maybe it is fine in practice." The lesson does not answer this.
+**Suggested fix:** Add a brief verbal bridge after the underflow code block: something like "In a deep network, gradients passing through many layers often reach magnitudes of 1e-6 to 1e-8. At float16 precision, these effectively disappear. The optimizer receives zeros and makes no update. The model appears to train (loss computation still works in float16) but the deepest layers stop learning." This grounds the underflow example in training reality without requiring a full training demonstration.
+
+#### [IMPROVEMENT] — Checkpoint section uses `weights_only=False` without recapping security context
+
+**Location:** Section 8 (Device-Aware Checkpoints), line 529
+**Issue:** The code block shows `torch.load('checkpoint.pth', map_location=device, weights_only=False)`. The `weights_only` parameter was INTRODUCED in the saving-and-loading lesson (2.3.1) with security context. Here it appears in a code example without any explanation. A student who has partially forgotten the saving-and-loading details might wonder: "Why False? What does this mean?" More importantly, setting `weights_only=False` is the less-safe option, and the student should be reminded why it is needed here (the checkpoint dict contains non-tensor metadata like epoch and loss).
+**Student impact:** Mild confusion or glossing over a security-relevant parameter. The student may copy the pattern without understanding why `weights_only=False` is needed, and may default to using it everywhere.
+**Suggested fix:** Add a brief inline comment in the code block or a one-sentence note after it: "weights_only=False is needed because our checkpoint dictionary contains metadata (epoch, loss) alongside tensors. For state_dicts alone, use weights_only=True." This is a 15-word addition that reinforces the saving-and-loading lesson's concept.
+
+#### [IMPROVEMENT] — Verbal/analogy modality underused for the device-aware training loop concept
+
+**Location:** Section 5 (The Device-Aware Training Loop) and Section 7 (When Does GPU Help?)
+**Issue:** The planning document identifies five modalities, including "Verbal/Analogy: Same assembly line, faster workers." The aside in Section 7 uses the assembly line analogy briefly ("Think of the training loop as an assembly line. Moving to GPU swaps in faster workers..."). However, this is in an aside, not in the main content flow. The core device-aware training loop section (Section 5) relies almost entirely on code (symbolic) and the side-by-side visual (ComparisonRow). The "same heartbeat, new instruments" phrase appears but is not developed as an analogy -- it is used as a tagline rather than a mapped metaphor. The plan calls for the assembly line analogy as a primary modality, not a sidebar.
+**Student impact:** The student who learns best through analogy gets the concept mostly from code. The "same heartbeat, new instruments" tagline is memorable but does not map the parts: what is the heartbeat (the loop structure), what are the instruments (device placement calls), why do the instruments not change the heartbeat (because .to() moves data but does not alter the computation). The mapping is implicit.
+**Suggested fix:** In Section 5, after the ComparisonRow and before or after the "Three lines changed" paragraph, add 2-3 sentences that explicitly map the analogy: "The assembly line has four stations: forward, loss, backward, update. Moving to GPU does not add or remove any station. It upgrades the workers at each station to faster ones (GPU cores instead of CPU cores). The three new lines (.to(device)) are the truck that transports parts to the faster factory -- they are logistics, not a new manufacturing step." This makes the analogy do real work rather than serving as a label.
+
+#### [POLISH] — Section 8 checkpoint save pattern does not follow the plan's "robust pattern" suggestion
+
+**Location:** Section 8 (Device-Aware Checkpoints)
+**Issue:** The planning document mentions "Show the robust pattern: always save with model.cpu().state_dict() or use map_location on load." The built lesson only shows the map_location-on-load approach. This is the simpler and more common pattern, and is sufficient. The alternative (saving with model.cpu().state_dict()) is an unnecessary complication that might confuse the student. This is a planned element that was reasonably omitted during building.
+**Student impact:** None negative. The omission is fine. Documenting it for the record.
+**Suggested fix:** No fix needed. Acknowledge as a reasonable deviation from the plan.
+
+#### [POLISH] — "about six lessons ago" in the recap section is imprecise
+
+**Location:** Section 3 (Recap: Device Fundamentals), line 175
+**Issue:** The text says "You learned device management in Tensors, about six lessons ago." Counting from tensors (2.1.1) to gpu-training (2.3.2): tensors -> autograd -> nn-module -> training-loop -> datasets-and-dataloaders -> mnist-project -> debugging-and-visualization -> saving-and-loading -> gpu-training. That is 8 lessons ago, not 6. The imprecision is minor but a student who actually counts could lose a small amount of trust.
+**Student impact:** Negligible. Most students will not count.
+**Suggested fix:** Change "about six lessons ago" to "several lessons ago" or count accurately ("eight lessons ago").
+
+#### [POLISH] — Colab link points to a notebook that may not exist yet
+
+**Location:** Section 15 (Build It Yourself), line 1015
+**Issue:** The href points to `notebooks/2-3-2-gpu-training.ipynb`. If this notebook has not been created yet, the link will 404.
+**Student impact:** If the notebook is not ready, the student clicks the link and gets an error page. Frustrating but not a lesson content issue.
+**Suggested fix:** Verify the notebook exists. If not, create it before marking the lesson as complete.
+
+### Review Notes
+
+**What works well:**
+- The narrative arc is strong. The lesson starts with a genuine problem (CPU training will not scale), makes it concrete with timing numbers, and builds toward a portable solution. The "same heartbeat, new instruments" thread runs through the entire lesson and gives it coherence.
+- The ordering is excellent: problem before solution at every level. The device mismatch error comes before the fix. The float16 underflow comes before mixed precision. The student feels each problem before getting the tool.
+- The ComparisonRow usage is effective: CPU vs GPU training loops side-by-side, small vs large model timing. These visual diffs are where the key insights land.
+- The three checks are well-placed and test the right things: predict-the-error (device mismatch), transfer (advise a colleague about slow GPU training), and explain-the-mechanism (GradScaler purpose).
+- Scope boundaries are respected. The lesson does not wander into multi-GPU, CUDA programming, or memory management.
+- Connections to prior concepts are explicit and well-done: the "rough sketch with a micrometer" extension to float16, the "not magic -- automation" connection to autograd, the checkpoint pattern extension.
+- The cognitive load is well-managed for a STRETCH lesson. Device-aware training and mixed precision are the two genuine new concepts. The "when does GPU help?" section is a refinement of an existing mental model, not a new concept.
+
+**Patterns to watch:**
+- The lesson is quite long (1089 lines of JSX). For a code-centric lesson without a widget, this is expected but worth monitoring for student fatigue. The practice section comes late (section 15 of 17). ADHD-friendly design suggests keeping activation energy low -- consider whether the student needs a breather point earlier.
+- The lesson has three code blocks that are essentially the same training loop with incremental additions (basic GPU loop, complete GPU loop, mixed precision loop). This is intentional (scaffolding) but could feel repetitive if not justified. The "same heartbeat" framing helps but might need reinforcement.
+
+---
+
+## Review — 2026-02-09 (Iteration 2/3)
+
+### Summary
+- Critical: 0
+- Improvement: 0
+- Polish: 3
+
+### Verdict: PASS
+
+All four improvement findings from iteration 1 have been successfully addressed. The manual mixed precision code block is now present and creates effective contrast with autocast. The verbal bridge grounding float16 underflow in training reality is clear and well-placed. The `weights_only=False` explanation reinforces the saving-and-loading lesson's concept. The assembly line analogy is now explicitly mapped in the main content with four stations, faster workers, and logistics framing. The imprecise "about six lessons ago" has been corrected to "several lessons ago." No new critical or improvement-level issues found. Three minor polish items remain.
+
+### Findings
+
+#### [POLISH] — Check 3 answer contains meta-commentary about itself
+
+**Location:** Section 14 (Check 3: Predict-and-Verify), inside the answer reveal
+**Issue:** The answer ends with: "This tests understanding of why mixed precision is 'mixed' -- float16 alone is not precise enough for small gradient values." This reads as a note to the lesson builder about what the check is testing, not as part of the student-facing answer. It is inside the `<details>` reveal, so the student sees it after clicking "Show answer."
+**Student impact:** Mildly jarring. The student is reading an explanation and encounters a sentence that talks about the check in the third person ("This tests understanding of..."). It breaks the student-facing voice.
+**Suggested fix:** Remove the sentence or rewrite it in student-facing voice: "The key idea: mixed precision is 'mixed' because float16 alone is not precise enough for small gradient values."
+
+#### [POLISH] — "Complete, copy-ready" script omits MNISTClassifier definition
+
+**Location:** Section 9 (GPU Training in Practice), subtitle and code block
+**Issue:** The subtitle says "The complete pattern, ready to type into Colab" and the code block includes standard imports but uses `MNISTClassifier()` without defining or importing it. The student built this class in the MNIST project (2.2.2) and would bring it into a notebook, but calling the pattern "complete" overpromises slightly. Earlier code snippets using `MNISTClassifier()` are clearly fragments, but this section positions itself as the definitive reference.
+**Student impact:** A student copying the code block into a fresh Colab cell would get a `NameError: name 'MNISTClassifier' is not defined`. Momentary confusion before they realize they need their model class.
+**Suggested fix:** Add a comment in the code block after the imports: `# (MNISTClassifier class definition goes here -- from your MNIST project)` or soften the subtitle to "The complete pattern, ready to type into Colab alongside your model class."
+
+#### [POLISH] — Colab notebook still does not exist
+
+**Location:** Section 15 (Build It Yourself), Colab link
+**Issue:** The href points to `notebooks/2-3-2-gpu-training.ipynb`. This file does not exist in the repository. The link will 404 when clicked.
+**Student impact:** Student clicks the link and gets an error page. Frustrating.
+**Suggested fix:** Create the notebook before marking the lesson as complete. (Carried forward from iteration 1.)
+
+### Review Notes
+
+**Iteration 1 fixes verified:**
+All four improvement findings from iteration 1 have been addressed. Specifically:
+1. Manual mixed precision code block added (section 12, ~lines 840-855) -- shows the tedious approach before autocast, creating effective contrast. The "not magic -- automation" connection now mirrors the autograd lesson's manual-then-automated pattern.
+2. Verbal bridge for float16 underflow in training (section 11, ~lines 796-804) -- grounds the underflow example in real training scenarios (gradients at 1e-6 to 1e-8 in deep networks). The student no longer needs to take on faith that underflow breaks training.
+3. `weights_only=False` explanation added (section 8, ~lines 561-569) -- brief note connecting back to the saving-and-loading lesson. Reinforces when to use True vs False.
+4. Assembly line analogy explicitly mapped in main content (section 5, ~lines 352-367) -- four stations (forward, loss, backward, update), faster workers (GPU cores), logistics not a new step (the .to(device) lines). The analogy now does real explanatory work rather than serving as a tagline.
+
+**What works well (confirmed from iteration 1, still holds):**
+- The narrative arc remains strong and coherent. "Same heartbeat, new instruments" runs through the entire lesson.
+- Problem-before-solution ordering is consistent at every level.
+- All five planned modalities are present and effective.
+- All five planned misconceptions are addressed with concrete examples.
+- Scope boundaries are respected throughout.
+- Connections to prior concepts are explicit and numerous (tensors, autograd, training-loop, saving-and-loading, MNIST project).
+- Cognitive load is well-managed for a STRETCH lesson.
+- The three checks test the right things at the right level.
+
+**Overall assessment:** The lesson is pedagogically sound and ready to ship. The three remaining polish items are minor and can be addressed quickly without re-review. The lesson successfully teaches device-aware training as a natural extension of existing patterns rather than a new paradigm, and introduces mixed precision with clear motivation and appropriate depth for an INTRODUCED concept.

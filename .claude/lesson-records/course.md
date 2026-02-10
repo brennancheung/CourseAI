@@ -8,11 +8,11 @@ Take a software engineer from "uses AI tools" to "understands how models actuall
 | Series | Title | Status | Description |
 |--------|-------|--------|-------------|
 | 1 | Foundations | complete | Neural networks, backprop, optimization, regularization |
-| 2 | PyTorch | in progress | Practical implementation skills |
+| 2 | PyTorch | complete | Practical implementation skills |
 | 3 | CNNs | complete | Convolutional networks, spatial reasoning, architectures |
-| 4 | LLMs | planned | Transformers, attention, training, fine-tuning, prompting |
+| 4 | LLMs & Transformers | in progress | Transformers, deep KQV intuition, build GPT from scratch, finetuning, alignment |
 | 5 | Recent LLM Advances | planned | RLHF, constitutional AI, reasoning models, multimodal |
-| 6 | Stable Diffusion | planned | Classical diffusion, DDPM, latent diffusion, LoRA fine-tuning |
+| 6 | Stable Diffusion | in progress | Classical diffusion, DDPM, latent diffusion, LoRA fine-tuning |
 | 7 | Post-SD Advances | planned | ControlNet, SDXL, consistency models, flow matching |
 
 ## Module Status
@@ -24,10 +24,16 @@ Take a software engineer from "uses AI tools" to "understands how models actuall
 | 1.3 | Training Neural Networks | 7 | complete |
 | 2.1 | PyTorch Core | 4 of 4 | complete |
 | 2.2 | Real Data | 3 of 3 | complete |
-| 2.3 | Practical Patterns | 1 of 3 | in progress |
+| 2.3 | Practical Patterns | 3 of 3 | complete |
 | 3.1 | Convolutions | 3 of 3 | complete |
 | 3.2 | Modern Architectures | 3 of 3 | complete |
 | 3.3 | Seeing What CNNs See | 2 of 2 | complete |
+| 4.1 | Language Modeling Fundamentals | 3 of 3 | complete |
+| 4.2 | Attention & the Transformer | 6 of 6 | complete |
+| 4.3 | Building & Training GPT | 4 of 4 | complete |
+| 4.4 | Beyond Pretraining | 2 of 5 | in progress |
+| 6.1 | Generative Foundations | 4 of 4 | complete |
+| 6.2 | Diffusion | 2 of 5 | in progress |
 
 ## Progression
 Series 1 (Foundations) establishes the complete path from "what is learning?" through linear models, neural networks, and training. Series 2 (PyTorch) bridges theory to practice — hands-on implementation right after the concepts. Series 3 (CNNs) covers convolutional architectures with PyTorch in hand, needed for understanding U-Net in Stable Diffusion. Series 4-7 cover the target domains: LLMs and generative models.

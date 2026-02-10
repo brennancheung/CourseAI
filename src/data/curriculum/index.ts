@@ -9,6 +9,8 @@ import { CurriculumNode } from './types'
 import { foundations } from './foundations'
 import { pytorch } from './pytorch'
 import { cnns } from './cnns'
+import { llms } from './llms'
+import { stableDiffusion } from './stable-diffusion'
 
 // Re-export types and utilities
 export * from './types'
@@ -23,4 +25,6 @@ export const curriculum: CurriculumNode[] = [
   foundations,
   pytorch,
   cnns,
+  llms,
+  stableDiffusion,
 ]

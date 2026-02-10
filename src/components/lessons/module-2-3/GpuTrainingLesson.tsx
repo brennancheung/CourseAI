@@ -171,7 +171,7 @@ export function GpuTrainingLesson() {
           />
           <div className="space-y-4">
             <p className="text-muted-foreground">
-              You learned device management in Tensors, about six lessons ago.
+              You learned device management in Tensors, several lessons ago.
               Quick refresher before we build on it:
             </p>
 
@@ -322,7 +322,7 @@ for images, labels in train_loader:
             </p>
 
             <p className="text-muted-foreground">
-              Here is the complete, copy-ready pattern:
+              Here is the complete pattern (assuming your model and data are defined):
             </p>
 
             <CodeBlock
@@ -350,7 +350,17 @@ for epoch in range(num_epochs):
             />
 
             <p className="text-muted-foreground">
-              That moment of &ldquo;that is all?&rdquo; is the point.{' '}
+              That moment of &ldquo;that is all?&rdquo; is the point. Think of
+              the training loop as an assembly line with four stations: forward,
+              loss, backward, update. Moving to GPU does not add or remove any
+              station&mdash;it upgrades the workers at each station to faster
+              ones (GPU cores instead of CPU cores). The three new{' '}
+              <code className="text-sm bg-muted px-1.5 py-0.5 rounded">.to(device)</code>{' '}
+              lines are the truck that transports parts to the faster
+              factory&mdash;they are logistics, not a new manufacturing step.
+            </p>
+
+            <p className="text-muted-foreground">
               <strong>Same heartbeat, new instruments.</strong> GPU placement is
               just one more instrument that slots into the existing training
               loop pattern. You do not need to rewrite anything.
@@ -526,7 +536,8 @@ torch.save(checkpoint, 'checkpoint.pth')
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 checkpoint = torch.load('checkpoint.pth',
                         map_location=device,
-                        weights_only=False)
+                        weights_only=False)  # checkpoint has non-tensor
+                                             # metadata (epoch, loss)
 
 model = MNISTClassifier().to(device)
 optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
@@ -545,6 +556,16 @@ start_epoch = checkpoint['epoch'] + 1`}
               regardless of where they were when saved. Saved on GPU, loading on
               CPU? The tensors move to CPU. Saved on CPU, loading on GPU? They
               move to GPU. Your checkpoint files are portable.
+            </p>
+
+            <p className="text-muted-foreground">
+              Note{' '}
+              <code className="text-sm bg-muted px-1.5 py-0.5 rounded">weights_only=False</code>&mdash;remember
+              from Saving, Loading, and Checkpoints that this is needed because
+              our checkpoint dictionary contains non-tensor metadata (epoch,
+              loss) alongside the state_dicts. For pure state_dicts without
+              metadata, use{' '}
+              <code className="text-sm bg-muted px-1.5 py-0.5 rounded">weights_only=True</code>.
             </p>
           </div>
         </Row.Content>
@@ -774,6 +795,15 @@ print(f"float16: {very_tiny_fp16.item()}")  # 0.0 -- UNDERFLOW!`}
             </p>
 
             <p className="text-muted-foreground">
+              This is not a theoretical concern. In a deep network, gradients
+              passing through many layers routinely reach magnitudes of 1e-6 to
+              1e-8. At float16 precision, these effectively disappear. The
+              optimizer receives zeros and makes no update&mdash;the model
+              appears to train (the loss computation still works) but the
+              deepest layers stop learning entirely.
+            </p>
+
+            <p className="text-muted-foreground">
               The solution: use float16 where it is safe (the forward pass,
               where values are typically large) and float32 where precision
               matters (gradient accumulation and weight updates, where values
@@ -801,10 +831,37 @@ print(f"float16: {very_tiny_fp16.item()}")  # 0.0 -- UNDERFLOW!`}
           />
           <div className="space-y-4">
             <p className="text-muted-foreground">
-              You could manually cast every tensor to the right dtype at the
-              right time&mdash;float16 for the forward pass, float32 for the
-              backward pass, careful dtype management throughout. That would be
-              error-prone and tedious. Instead, PyTorch automates it:
+              What would manual mixed precision look like? You would need to
+              cast tensors to float16 before the forward pass, compute the loss,
+              cast back to float32 for the backward pass, and manage dtypes on
+              every operation:
+            </p>
+
+            <CodeBlock
+              language="python"
+              filename="manual_mixed_precision.py"
+              code={`# Manual mixed precision -- tedious and error-prone
+for images, labels in train_loader:
+    images = images.to(device).half()         # cast to float16
+    model.half()                              # cast model to float16
+    outputs = model(images)                   # forward in float16
+    loss = criterion(outputs, labels.to(device))
+
+    model.float()                             # cast model back to float32
+    loss = loss.float()                       # cast loss back to float32
+    optimizer.zero_grad()
+    loss.backward()                           # backward in float32
+    optimizer.step()
+    # ...and you'd need to manage this for every operation`}
+            />
+
+            <p className="text-muted-foreground">
+              Every forward pass requires casting down, every backward pass
+              requires casting back up, and you must track which tensors are in
+              which dtype at all times. Miss one cast and you get a dtype
+              mismatch error&mdash;or worse, silently wrong results. This is the
+              manual version of what autograd automates for differentiation:
+              correct but tedious. PyTorch automates it:
             </p>
 
             <CodeBlock
@@ -963,7 +1020,7 @@ for epoch in range(num_epochs):
                       step.
                     </p>
                     <p>
-                      This tests understanding of <em>why</em> mixed precision
+                      This is the core reason mixed precision
                       is &ldquo;mixed&rdquo;&mdash;float16 alone is not precise
                       enough for small gradient values.
                     </p>

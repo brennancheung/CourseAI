@@ -327,6 +327,42 @@ const practicalPatterns: CurriculumNode = {
         ],
       },
     },
+    {
+      slug: 'fashion-mnist-project',
+      title: 'Fashion-MNIST Project',
+      description: 'Your second end-to-end project -- same tools, harder problem, less hand-holding. Prove you can build, train, debug, and improve a classifier independently.',
+      duration: '40 min',
+      category: 'Practical Patterns',
+      objectives: [
+        'Load Fashion-MNIST and understand its 10 clothing classes',
+        'Design and build an FC classification model independently',
+        'Train with GPU, checkpointing, and early stopping',
+        'Diagnose issues using the debugging checklist',
+        'Experiment with architecture size, regularization, and training duration',
+        'Analyze per-class accuracy to understand model behavior',
+      ],
+      skills: ['pytorch', 'classification', 'fashion-mnist', 'regularization', 'debugging', 'experimentation'],
+      prerequisites: ['gpu-training'],
+      exercise: {
+        constraints: [
+          'Fully-connected networks only -- no convolutional layers',
+          'No data augmentation beyond ToTensor + Normalize',
+          'No learning rate schedulers or gradient clipping',
+          'No hyperparameter search strategies',
+          'Realistic target: ~88-90% accuracy with FC layers',
+        ],
+        steps: [
+          'Load Fashion-MNIST, inspect samples, understand the 10 classes',
+          'Run the baseline model (MNIST architecture), observe ~87-88% accuracy',
+          'Diagnose the baseline: convergence, overfitting, gradient health',
+          'Experiment 1: Train longer (20 epochs), observe plateau',
+          'Experiment 2: Add regularization (BatchNorm, Dropout, weight decay), reach ~89-90%',
+          'Experiment 3: Try different architectures, compare with training curves',
+          'Compute per-class accuracy, identify easy vs hard classes',
+          'Build the complete pipeline: GPU + checkpointing + early stopping + per-class analysis',
+        ],
+      },
+    },
   ],
 }
 

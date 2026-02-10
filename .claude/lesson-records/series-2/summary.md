@@ -1,6 +1,6 @@
 # Series 2: PyTorch — Summary
 
-**Status:** In Progress (Module 2.1: complete, Module 2.2: complete, Module 2.3: in progress — 1 of 3)
+**Status:** Complete (Module 2.1: complete, Module 2.2: complete, Module 2.3: complete)
 
 ## Series Goal
 
@@ -70,6 +70,32 @@ Bridge theory to practice. The student understands backprop, optimizers, and tra
 | Systematic 4-phase debugging checklist | DEVELOPED | torchinfo before, gradient check first iteration, TensorBoard during, diagnose by symptom. |
 | "Loss going down ≠ training working" principle | DEVELOPED | Always monitor accuracy alongside loss. Silent failures (class prior learning) are real. |
 
+### From Module 2.3: Practical Patterns (complete)
+
+| Concept | Depth | Key Teaching |
+|---------|-------|-------------|
+| model.state_dict() as dictionary of named tensors | DEVELOPED | Printed immediately to demystify. "Snapshot of all the knobs." Layer names mapped to tensor shapes. |
+| torch.save() / torch.load() for state_dicts | DEVELOPED | Complete round-trip pattern with torch.allclose() verification. |
+| load_state_dict() requires matching architecture | DEVELOPED | State_dict stores values only, not architecture. Keras misconception addressed. |
+| optimizer.state_dict() (Adam momentum + adaptive rates) | DEVELOPED | Printed to show exp_avg and exp_avg_sq per parameter. Connected to Optimizers (1.3.5). |
+| Checkpoint pattern (model + optimizer + epoch + loss dict) | DEVELOPED | Bundle all state into one dictionary. Periodic saves + best-model save in training loop. |
+| Resume training from checkpoint | DEVELOPED | Restore model + optimizer state_dicts. Loss curve showed smooth resume vs spike without optimizer state. |
+| torch.save(model) pickle fragility | INTRODUCED | Negative example: rename class file -> ModuleNotFoundError. Anti-pattern vs state_dict. |
+| map_location for cross-device loading | DEVELOPED | map_location=device for portable checkpoint files across CPU/GPU. |
+| weights_only parameter in torch.load() | INTRODUCED | weights_only=True for state_dicts, False for checkpoint dicts with metadata. |
+| Early stopping implementation with checkpoints | DEVELOPED | Connects conceptual early stopping (1.3.7) to concrete PyTorch code: patience counter + save best + restore best. |
+| Device-aware training loop pattern | DEVELOPED | model.to(device), inputs.to(device), labels.to(device) inside loop. Three lines added to existing loop. |
+| Device mismatch RuntimeError in training context | DEVELOPED | Elevated from INTRODUCED (tensors 2.1.1). Multi-component context: model on GPU, DataLoader yields CPU tensors. |
+| "When does GPU help?" timing-based decision | DEVELOPED | Three factors: model size, batch size, transfer overhead. Under 30s on CPU -> GPU probably no help. |
+| Mixed precision training (autocast + GradScaler) | INTRODUCED | Float16 forward, float32 gradients. 4-line addition to training loop. "Not magic -- automation." |
+| Gradient underflow in float16 | INTRODUCED | Very small gradients (1e-8) round to zero in float16. WHY mixed precision is "mixed." |
+| Portable device detection pattern | DEVELOPED | `device = torch.device('cuda' if ...)` at top of script. Code runs identically on CPU and GPU. |
+| Fashion-MNIST dataset (loading and class structure) | INTRODUCED | Drop-in replacement for MNIST. 10 clothing classes with visual confusability. |
+| Per-class accuracy analysis | INTRODUCED | Accuracy per class reveals easy vs hard classes. A single accuracy number hides important structure. |
+| Independent model design and experimentation workflow | APPLIED | Baseline -> diagnose -> experiment -> analyze -> full pipeline. No step-by-step scaffolding. |
+| Complete training pipeline (all Series 2 skills integrated) | APPLIED | Nine prior lessons integrated: device detection, data loading, regularized model, checkpointing, early stopping, evaluation. |
+| Baseline-then-improve experimental methodology | INTRODUCED | Start with simplest model, observe, diagnose with checklist, improve systematically. |
+
 ## Key Mental Models Carried Forward
 
 1. **"Tensors are NumPy arrays that know where they live"** — Core framing for PyTorch's data structure
@@ -96,8 +122,34 @@ Bridge theory to practice. The student understands backprop, optimizers, and tra
 22. **"Debugging is a systematic workflow, not random guessing"** — 4-phase checklist replaces ad-hoc debugging
 23. **"Loss going down does not mean training is working"** — Always track accuracy alongside loss
 24. **"Shape errors are plumbing problems, not design flaws"** — Reduces panic; usually a single mismatched number
+25. **"state_dict is a snapshot of all the knobs"** — Persistence format for models and optimizers; extends "parameters are knobs" from Series 1
+26. **"Architecture in code, values in file"** — state_dict decouples learned values from code structure; relevant for model hubs and transfer learning
+27. **"Giving an experienced pilot amnesia"** — Resuming without optimizer state causes loss spikes; always save optimizer alongside model
+28. **"Assembly line with four stations, faster workers"** — GPU training loop; forward/loss/backward/update are stations, GPU upgrades the workers
+29. **"Micrometer -> ruler -> tape measure"** — float64 -> float32 -> float16 precision spectrum; extends "rough sketch with a micrometer"
+30. **"The 5% gap"** — FC model tops out at ~89-90% on Fashion-MNIST, CNNs reach ~93-95%; motivates Series 3
+31. **"Baseline-then-improve"** — Start simple, observe, diagnose, improve. The experimental methodology for every ML project
 
-## What This Series Does NOT Cover (Yet)
+## What This Series Does NOT Cover
 
-- Saving/loading models (Module 2.3)
-- GPU training patterns (Module 2.3)
+- Multi-GPU or distributed training
+- CUDA programming, kernels, or streams
+- Memory management, OOM debugging, torch.cuda.empty_cache()
+- pin_memory or num_workers DataLoader optimizations
+- TorchScript, ONNX export, model compilation, torch.compile
+- Custom autograd functions
+- Domain-specific libraries (torchvision models beyond datasets, torchaudio, etc.)
+- Hyperparameter tuning frameworks (grid search, Bayesian optimization)
+- Learning rate schedulers or gradient clipping
+- Data augmentation strategies beyond ToTensor + Normalize
+- Experiment management tools (MLflow, Weights & Biases)
+- Convolutional networks (Series 3)
+- Confusion matrices (mentioned as stretch goal only; per-class accuracy is INTRODUCED)
+
+## Series Completion Notes
+
+Series 2 is complete. The student has a full PyTorch training pipeline that they can use independently: tensor operations, autograd, nn.Module, training loops, data loading, debugging, saving/loading, GPU training, and end-to-end projects (MNIST and Fashion-MNIST). The emotional arc lands: "I already understand this" -> "PyTorch automates what I did manually" -> "I can build real things now" -> "I figured it out myself."
+
+The Fashion-MNIST project (2.3.3) establishes the "5% gap" framing that directly motivates Series 3 (CNNs). The student's best FC model reaches ~89-90%; CNNs can reach ~93-95%. The pipeline transfers unchanged -- only the model architecture evolves.
+
+**One outstanding deliverable:** The Colab notebook for the Fashion-MNIST project (`notebooks/2-3-3-fashion-mnist-project.ipynb`) has not been created yet. The lesson page is complete and pedagogically sound, but the notebook (the primary hands-on deliverable) is a separate work item.
