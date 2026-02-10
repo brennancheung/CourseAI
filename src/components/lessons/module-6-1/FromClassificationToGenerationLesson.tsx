@@ -84,10 +84,10 @@ export function FromClassificationToGenerationLesson() {
               'The conceptual distinction between discriminative and generative models',
               'What it means to "learn a distribution" at an intuitive level',
               'Why sampling from a distribution produces novel instances',
-              'NOT: any specific generative architecture (autoencoders, GANs, diffusion)\u2014those start next lesson',
+              'NOT: any specific generative architecture (autoencoders, GANs, diffusion)—those start next lesson',
               'NOT: probability density functions, likelihood, or formal probability theory',
-              'NOT: how to train a generative model\u2014this is the "what and why," not the "how"',
-              'NOT: code or implementation\u2014this is conceptual only',
+              'NOT: how to train a generative model—this is the "what and why," not the "how"',
+              'NOT: code or implementation—this is conceptual only',
             ]}
           />
         </Row.Content>
@@ -185,13 +185,13 @@ export function FromClassificationToGenerationLesson() {
             </p>
             <ul className="list-disc list-inside text-muted-foreground space-y-1 ml-4">
               <li>
-                <strong>MNIST classifier:</strong> 784 pixels {'\u2192'} 10 probabilities (which digit?)
+                <strong>MNIST classifier:</strong> 784 pixels {'→'} 10 probabilities (which digit?)
               </li>
               <li>
-                <strong>CNN on images:</strong> spatial features {'\u2192'} class label (cat or dog?)
+                <strong>CNN on images:</strong> spatial features {'→'} class label (cat or dog?)
               </li>
               <li>
-                <strong>Sentiment classifier:</strong> text {'\u2192'} positive or negative (what&apos;s
+                <strong>Sentiment classifier:</strong> text {'→'} positive or negative (what&apos;s
                 the tone?)
               </li>
             </ul>
@@ -318,7 +318,7 @@ export function FromClassificationToGenerationLesson() {
                   'Studies paintings and judges: "This is impressionist, not cubist"',
                   'Draws boundaries between styles',
                   'Cannot create a new painting',
-                  'Learns P(y|x)\u2014the style given a painting',
+                  'Learns P(y|x)—the style given a painting',
                 ],
               }}
               right={{
@@ -328,7 +328,7 @@ export function FromClassificationToGenerationLesson() {
                   'Studies paintings and internalizes: "This is what impressionism looks like"',
                   'Models the space of possible paintings within a style',
                   'Can paint new impressionist works',
-                  'Learns P(x)\u2014the distribution of paintings',
+                  'Learns P(x)—the distribution of paintings',
                 ],
               }}
             />
@@ -423,17 +423,17 @@ export function FromClassificationToGenerationLesson() {
         <Row.Aside>
           <TryThisBlock title="Experiments">
             <ul className="space-y-2 text-sm">
-              <li>{'\u2022'} Start in <strong>Discriminative</strong> mode. Notice the dashed
+              <li>{'•'} Start in <strong>Discriminative</strong> mode. Notice the dashed
                 boundary&mdash;everything on one side is &ldquo;Class A,&rdquo; everything on
                 the other is &ldquo;Class B.&rdquo; The model says nothing about where the
                 points cluster.</li>
-              <li>{'\u2022'} Switch to <strong>Generative</strong> mode. The boundary
+              <li>{'•'} Switch to <strong>Generative</strong> mode. The boundary
                 disappears. Instead you see a heatmap showing where data is likely to appear.
                 Darker = more likely.</li>
-              <li>{'\u2022'} Click <strong>Sample 5 Points</strong> a few times. Are the new
+              <li>{'•'} Click <strong>Sample 5 Points</strong> a few times. Are the new
                 points identical? Do they fall exactly on training points? Notice how they
                 cluster in high-density regions but are never exact copies.</li>
-              <li>{'\u2022'} Sample 20+ points. The sampled distribution starts to resemble
+              <li>{'•'} Sample 20+ points. The sampled distribution starts to resemble
                 the training data&mdash;because both come from the same underlying
                 distribution.</li>
             </ul>
@@ -562,12 +562,12 @@ export function FromClassificationToGenerationLesson() {
                 headline:
                   'Two paradigms: "what is this?" (discriminative) vs "what could exist?" (generative).',
                 description:
-                  'Discriminative models learn P(y|x)\u2014decision boundaries between classes. Generative models learn P(x)\u2014the distribution of the data itself.',
+                  'Discriminative models learn P(y|x)—decision boundaries between classes. Generative models learn P(x)—the distribution of the data itself.',
               },
               {
                 headline: 'Generation = sampling from a learned distribution.',
                 description:
-                  'The model doesn\u2019t memorize specific instances. It learns the structure of the data well enough to produce plausible new instances by sampling.',
+                  `The model doesn't memorize specific instances. It learns the structure of the data well enough to produce plausible new instances by sampling.`,
               },
               {
                 headline: 'You already know a generative model: the language model.',

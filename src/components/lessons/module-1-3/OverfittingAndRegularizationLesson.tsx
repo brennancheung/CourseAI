@@ -16,6 +16,7 @@ import {
   ComparisonRow,
   GradientCard,
   ModuleCompleteBlock,
+  ReferencesBlock,
 } from '@/components/lessons'
 import { ExercisePanel } from '@/components/widgets/ExercisePanel'
 import { RegularizationExplorer } from '@/components/widgets/RegularizationExplorer'
@@ -78,14 +79,14 @@ export function OverfittingAndRegularizationLesson() {
           <ConstraintBlock
             items={[
               'We cover three regularization techniques: dropout, weight decay, and early stopping. Other approaches (data augmentation, L1 regularization) come later.',
-              'No PyTorch implementation\u2014that comes in the next series',
+              'No PyTorch implementation—that comes in the next series',
               'No hyperparameter tuning strategies (grid search, etc.)',
             ]}
           />
         </Row.Content>
       </Row>
 
-      {/* 2. Hook \u2014 The Full Circle */}
+      {/* 2. Hook — The Full Circle */}
       <Row>
         <Row.Content>
           <SectionHeader
@@ -142,7 +143,7 @@ export function OverfittingAndRegularizationLesson() {
         </Row.Aside>
       </Row>
 
-      {/* 3. Recap \u2014 Overfitting Revisited */}
+      {/* 3. Recap — Overfitting Revisited */}
       <Row>
         <Row.Content>
           <SectionHeader
@@ -181,7 +182,7 @@ export function OverfittingAndRegularizationLesson() {
         </Row.Aside>
       </Row>
 
-      {/* 4. Explain \u2014 Reading Training Curves */}
+      {/* 4. Explain — Reading Training Curves */}
       <Row>
         <Row.Content>
           <SectionHeader
@@ -216,13 +217,13 @@ export function OverfittingAndRegularizationLesson() {
                 <text x="165" y="28" textAnchor="middle" fill="#f97316" fontSize="7" fontWeight="500">Sweet spot</text>
                 <text x="290" y="28" textAnchor="middle" fill="#ef4444" fontSize="7" fontWeight="500">Overfitting</text>
 
-                {/* Training loss \u2014 steadily decreasing */}
+                {/* Training loss — steadily decreasing */}
                 <polyline
                   points="40,120 80,85 120,60 160,42 200,30 240,24 280,21 320,19 360,18"
                   fill="none" stroke="#3b82f6" strokeWidth="2"
                 />
 
-                {/* Validation loss \u2014 decreases then rises */}
+                {/* Validation loss — decreases then rises */}
                 <polyline
                   points="40,122 80,90 120,68 155,52 170,48 190,52 230,62 270,75 310,90 350,100"
                   fill="none" stroke="#ef4444" strokeWidth="2"
@@ -275,7 +276,7 @@ export function OverfittingAndRegularizationLesson() {
         </Row.Aside>
       </Row>
 
-      {/* 5. Check 1 \u2014 Predict and Verify */}
+      {/* 5. Check 1 — Predict and Verify */}
       <Row>
         <Row.Content>
           <div className="rounded-lg border-2 border-primary/30 bg-primary/5 p-5">
@@ -303,7 +304,7 @@ export function OverfittingAndRegularizationLesson() {
         </Row.Content>
       </Row>
 
-      {/* 6. Explain \u2014 Regularization (the general principle) */}
+      {/* 6. Explain — Regularization (the general principle) */}
       <Row>
         <Row.Content>
           <SectionHeader
@@ -349,7 +350,7 @@ export function OverfittingAndRegularizationLesson() {
         </Row.Aside>
       </Row>
 
-      {/* 7. Explain \u2014 Dropout */}
+      {/* 7. Explain — Dropout */}
       <Row>
         <Row.Content>
           <SectionHeader
@@ -413,7 +414,7 @@ export function OverfittingAndRegularizationLesson() {
         </Row.Aside>
       </Row>
 
-      {/* 8. Explain \u2014 Weight Decay / L2 Regularization */}
+      {/* 8. Explain — Weight Decay / L2 Regularization */}
       <Row>
         <Row.Content>
           <SectionHeader
@@ -504,7 +505,7 @@ export function OverfittingAndRegularizationLesson() {
         </Row.Aside>
       </Row>
 
-      {/* 9. Explain \u2014 Early Stopping */}
+      {/* 9. Explain — Early Stopping */}
       <Row>
         <Row.Content>
           <SectionHeader
@@ -572,7 +573,7 @@ export function OverfittingAndRegularizationLesson() {
         </Row.Aside>
       </Row>
 
-      {/* 10. Explore \u2014 RegularizationExplorer Widget */}
+      {/* 10. Explore — RegularizationExplorer Widget */}
       <Row>
         <Row.Content>
           <ExercisePanel
@@ -587,7 +588,7 @@ export function OverfittingAndRegularizationLesson() {
             <ol className="space-y-2 text-sm list-decimal list-inside">
               <li><strong>High capacity, no regularization, 200 epochs.</strong> Watch the scissors open&mdash;validation loss diverges while training loss approaches zero.</li>
               <li><strong>Same setup, toggle Dropout ON (p=0.5).</strong> Watch the scissors close. Notice training loss is noisier but validation loss is lower.</li>
-              <li><strong>Replace dropout with Weight Decay ({'\u03BB'}=0.01).</strong> The scissors close differently&mdash;training loss floors higher, but validation loss stays low.</li>
+              <li><strong>Replace dropout with Weight Decay ({'λ'}=0.01).</strong> The scissors close differently&mdash;training loss floors higher, but validation loss stays low.</li>
               <li><strong>No dropout or weight decay, enable Early Stopping (patience=10).</strong> When does it stop? Check the green dashed line.</li>
               <li><strong>Medium capacity with all three.</strong> Compare to the high-capacity unregularized model.</li>
               <li><strong>Try Low capacity.</strong> Notice that regularization makes underfitting <em>worse</em>&mdash;it is for overfitting, not underfitting.</li>
@@ -596,7 +597,7 @@ export function OverfittingAndRegularizationLesson() {
         </Row.Aside>
       </Row>
 
-      {/* 11. Elaborate \u2014 When to Use Which */}
+      {/* 11. Elaborate — When to Use Which */}
       <Row>
         <Row.Content>
           <SectionHeader
@@ -618,7 +619,7 @@ export function OverfittingAndRegularizationLesson() {
                   'Randomly silences neurons during training',
                   'Creates implicit ensemble of sub-networks',
                   'Best for: large networks with fully connected layers',
-                  'Typical p = 0.5 (hidden), 0.1\u20130.3 (input)',
+                  'Typical p = 0.5 (hidden), 0.1–0.3 (input)',
                 ],
               }}
               right={{
@@ -628,7 +629,7 @@ export function OverfittingAndRegularizationLesson() {
                   'Penalizes large weights, shrinks toward zero',
                   'Makes functions smoother, less sensitive',
                   'Best for: any model (built into AdamW)',
-                  'Typical \u03BB = 0.0001\u20130.01',
+                  'Typical λ = 0.0001–0.01',
                 ],
               }}
             />
@@ -681,7 +682,7 @@ export function OverfittingAndRegularizationLesson() {
         </Row.Aside>
       </Row>
 
-      {/* 12. Check 2 \u2014 Transfer Question */}
+      {/* 12. Check 2 — Transfer Question */}
       <Row>
         <Row.Content>
           <div className="rounded-lg border-2 border-primary/30 bg-primary/5 p-5">
@@ -721,7 +722,7 @@ export function OverfittingAndRegularizationLesson() {
         </Row.Content>
       </Row>
 
-      {/* 13. Summary \u2014 Series Capstone */}
+      {/* 13. Summary — Series Capstone */}
       <Row>
         <Row.Content>
           <SummaryBlock
@@ -734,7 +735,7 @@ export function OverfittingAndRegularizationLesson() {
               {
                 headline: 'Dropout: randomly silence neurons during training',
                 description:
-                  'Forces the network to learn robust features that do not depend on any single neuron. Only during training\u2014all neurons active at inference. p=0.5 default.',
+                  'Forces the network to learn robust features that do not depend on any single neuron. Only during training—all neurons active at inference. p=0.5 default.',
               },
               {
                 headline: 'Weight decay (L2): penalize large weights',
@@ -750,6 +751,28 @@ export function OverfittingAndRegularizationLesson() {
                 headline: 'The complete training recipe',
                 description:
                   'Good initialization (Xavier/He) + batch normalization + AdamW + regularization (dropout + weight decay) + early stopping. This is the modern baseline.',
+              },
+            ]}
+          />
+        </Row.Content>
+      </Row>
+
+      {/* References */}
+      <Row>
+        <Row.Content>
+          <ReferencesBlock
+            references={[
+              {
+                title: 'Dropout: A Simple Way to Prevent Neural Networks from Overfitting',
+                authors: 'Srivastava, Hinton, Krizhevsky, Sutskever & Salakhutdinov, 2014',
+                url: 'http://jmlr.org/papers/v15/srivastava14a.html',
+                note: 'The definitive paper on dropout, one of the most effective regularization techniques in deep learning.',
+              },
+              {
+                title: 'Decoupled Weight Decay Regularization',
+                authors: 'Loshchilov & Hutter, 2017',
+                url: 'https://arxiv.org/abs/1711.05101',
+                note: 'Introduced AdamW, fixing weight decay in Adam — now the default optimizer for most modern deep learning.',
               },
             ]}
           />

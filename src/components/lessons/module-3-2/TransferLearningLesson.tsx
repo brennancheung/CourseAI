@@ -254,7 +254,7 @@ function TransferDiagram() {
   )
 }
 
-const sublabelArrow = '\u2192'
+const sublabelArrow = '→'
 
 // ---------------------------------------------------------------------------
 // Main component
@@ -1133,7 +1133,7 @@ optimizer = optim.Adam([
               },
               {
                 headline:
-                  'Feature extraction is the simple, safe default\u2014start here.',
+                  'Feature extraction is the simple, safe default—start here.',
                 description:
                   'Freeze the backbone, replace the head, train only the new layer. A few lines of code separate "overfitting on a small dataset" from "85%+ accuracy."',
               },
@@ -1141,7 +1141,7 @@ optimizer = optim.Adam([
                 headline:
                   'Fine-tuning gives more flexibility when you have enough data.',
                 description:
-                  'Unfreeze later layers with a low learning rate (differential LR). The training loop is unchanged\u2014just parameter groups in the optimizer.',
+                  'Unfreeze later layers with a low learning rate (differential LR). The training loop is unchanged—just parameter groups in the optimizer.',
               },
               {
                 headline:

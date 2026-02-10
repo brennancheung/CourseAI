@@ -554,16 +554,16 @@ export function AlphaBarCurveWidget({
 
 function getDescription(t: number, alphaBar: number): string {
   if (t === 0)
-    return 'Clean image. Alpha-bar is 1 \u2014 the signal coefficient is 1 and the noise coefficient is 0. The formula gives back the original image unchanged.'
+    return 'Clean image. Alpha-bar is 1 — the signal coefficient is 1 and the noise coefficient is 0. The formula gives back the original image unchanged.'
   if (alphaBar > 0.9)
-    return 'Very early timestep. Alpha-bar is close to 1 \u2014 nearly all signal, almost no noise. The image is barely changed.'
+    return 'Very early timestep. Alpha-bar is close to 1 — nearly all signal, almost no noise. The image is barely changed.'
   if (alphaBar > 0.5)
-    return 'Alpha-bar above 0.5 \u2014 the signal term still dominates. You can clearly see the original image through the noise.'
+    return 'Alpha-bar above 0.5 — the signal term still dominates. You can clearly see the original image through the noise.'
   if (alphaBar > 0.3)
-    return 'Alpha-bar between 0.3 and 0.5 \u2014 signal and noise are roughly balanced. The image is recognizable but degraded.'
+    return 'Alpha-bar between 0.3 and 0.5 — signal and noise are roughly balanced. The image is recognizable but degraded.'
   if (alphaBar > 0.1)
-    return 'Alpha-bar below 0.3 \u2014 the noise term dominates. Hard to make out the original image.'
+    return 'Alpha-bar below 0.3 — the noise term dominates. Hard to make out the original image.'
   if (alphaBar > 0.01)
-    return 'Alpha-bar near zero \u2014 almost pure noise. The signal coefficient is tiny. Almost nothing of the original remains.'
-  return 'Effectively pure noise. Alpha-bar is essentially zero \u2014 the formula produces pure Gaussian noise regardless of the input image.'
+    return 'Alpha-bar near zero — almost pure noise. The signal coefficient is tiny. Almost nothing of the original remains.'
+  return 'Effectively pure noise. Alpha-bar is essentially zero — the formula produces pure Gaussian noise regardless of the input image.'
 }

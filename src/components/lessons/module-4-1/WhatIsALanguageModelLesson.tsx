@@ -15,6 +15,7 @@ import {
   NextStepBlock,
   GradientCard,
   ComparisonRow,
+  ReferencesBlock,
 } from '@/components/lessons'
 import { TemperatureExplorer } from '@/components/widgets/TemperatureExplorer'
 import { ExercisePanel } from '@/components/widgets/ExercisePanel'
@@ -66,7 +67,7 @@ const NEXT_TOKEN_PROBS = [
   { token: 'couch', probability: 0.15 },
   { token: 'bed', probability: 0.10 },
   { token: 'roof', probability: 0.05 },
-  { token: 'other\u2026', probability: 0.15 },
+  { token: 'other…', probability: 0.15 },
 ]
 
 type ProbTooltipPayload = {
@@ -214,7 +215,7 @@ function GenerationStepCard({ step, index }: { step: GenerationStep; index: numb
       </div>
       <p className="ml-8 text-xs text-muted-foreground">
         Sampled: <strong className="text-violet-400">&ldquo;{step.sampled}&rdquo;</strong>{' '}
-        {'\u2192'} append to context
+        {'→'} append to context
       </p>
     </div>
   )
@@ -269,10 +270,10 @@ export function WhatIsALanguageModelLesson() {
               'How autoregressive generation works: the sample-append-repeat loop',
               'What temperature does to the output distribution',
               'Why "just predict the next token" produces capable models',
-              'NOT: how the model works internally (attention, transformers)\u2014Module 4.2',
-              'NOT: tokenization or embeddings\u2014Lessons 2 and 3',
-              'NOT: how models are trained at scale\u2014Module 4.3',
-              'NOT: code or implementation\u2014this is conceptual only',
+              'NOT: how the model works internally (attention, transformers)—Module 4.2',
+              'NOT: tokenization or embeddings—Lessons 2 and 3',
+              'NOT: how models are trained at scale—Module 4.3',
+              'NOT: code or implementation—this is conceptual only',
             ]}
           />
         </Row.Content>
@@ -495,7 +496,7 @@ export function WhatIsALanguageModelLesson() {
                   'House prices: input = features, target = price',
                   'MNIST: input = pixels, target = digit',
                   'Loss = cross-entropy ("confidence penalty")',
-                  'Training loop: forward \u2192 loss \u2192 backward \u2192 update',
+                  'Training loop: forward → loss → backward → update',
                 ],
               }}
               right={{
@@ -503,9 +504,9 @@ export function WhatIsALanguageModelLesson() {
                 color: 'violet',
                 items: [
                   'LM: input = preceding tokens, target = next token',
-                  'Same: input \u2192 model \u2192 prediction \u2192 compare to target',
+                  'Same: input → model → prediction → compare to target',
                   'Loss = cross-entropy (same "confidence penalty")',
-                  'Same training loop: forward \u2192 loss \u2192 backward \u2192 update',
+                  'Same training loop: forward → loss → backward → update',
                 ],
               }}
             />
@@ -745,7 +746,7 @@ export function WhatIsALanguageModelLesson() {
             <ul className="list-disc list-inside text-muted-foreground space-y-1 ml-4">
               <li>
                 <strong>Low T (e.g., 0.1):</strong> dividing by a small number makes
-                the logits huge {'\u2192'} softmax becomes winner-take-all {'\u2192'} nearly
+                the logits huge {'→'} softmax becomes winner-take-all {'→'} nearly
                 deterministic
               </li>
               <li>
@@ -753,7 +754,7 @@ export function WhatIsALanguageModelLesson() {
               </li>
               <li>
                 <strong>High T (e.g., 3.0):</strong> dividing by a large number compresses
-                the logits toward zero {'\u2192'} softmax becomes nearly uniform {'\u2192'} nearly
+                the logits toward zero {'→'} softmax becomes nearly uniform {'→'} nearly
                 random
               </li>
             </ul>
@@ -782,11 +783,11 @@ export function WhatIsALanguageModelLesson() {
         <Row.Aside>
           <TryThisBlock title="Experiments">
             <ul className="space-y-2 text-sm">
-              <li>{'\u2022'} Set T=0.1. Which token dominates? What happens to the others?</li>
-              <li>{'\u2022'} Set T=1.0. How spread out is the distribution?</li>
-              <li>{'\u2022'} Set T=3.0. Could any token be sampled? Is this useful?</li>
-              <li>{'\u2022'} Watch the entropy stat as you drag. Higher entropy = more randomness.</li>
-              <li>{'\u2022'} Notice: at every temperature, the <em>ranking</em> of tokens stays the same. Temperature changes probabilities, not preferences.</li>
+              <li>{'•'} Set T=0.1. Which token dominates? What happens to the others?</li>
+              <li>{'•'} Set T=1.0. How spread out is the distribution?</li>
+              <li>{'•'} Set T=3.0. Could any token be sampled? Is this useful?</li>
+              <li>{'•'} Watch the entropy stat as you drag. Higher entropy = more randomness.</li>
+              <li>{'•'} Notice: at every temperature, the <em>ranking</em> of tokens stays the same. Temperature changes probabilities, not preferences.</li>
             </ul>
           </TryThisBlock>
         </Row.Aside>
@@ -976,19 +977,19 @@ export function WhatIsALanguageModelLesson() {
                   'The model predicts one token at a time. Each generated token becomes part of the context for the next prediction. This feedback loop produces text.',
               },
               {
-                headline: 'Temperature reshapes the distribution, not the model\u2019s knowledge.',
+                headline: 'Temperature reshapes the distribution, not the model’s knowledge.',
                 description:
-                  'Low temperature = nearly deterministic (greedy). High temperature = nearly random. The model\u2019s parameters are unchanged\u2014only the sampling strategy changes.',
+                  'Low temperature = nearly deterministic (greedy). High temperature = nearly random. The model’s parameters are unchanged—only the sampling strategy changes.',
               },
               {
                 headline: 'Next-token prediction is simple to state, but doing it well requires learning everything about language.',
                 description:
-                  'Grammar, facts, reasoning patterns, style\u2014all compressed into one objective. The simplicity of the task is a feature: it\u2019s a universal training signal.',
+                  'Grammar, facts, reasoning patterns, style—all compressed into one objective. The simplicity of the task is a feature: it’s a universal training signal.',
               },
               {
                 headline: 'This is supervised learning with self-generated labels.',
                 description:
-                  'Input = context, target = next token, loss = cross-entropy. The same training loop you\u2019ve been running since the Foundations series.',
+                  'Input = context, target = next token, loss = cross-entropy. The same training loop you’ve been running since the Foundations series.',
               },
             ]}
           />
@@ -1004,6 +1005,21 @@ export function WhatIsALanguageModelLesson() {
             functions, gradients, parameters, training loops&mdash;applies directly. The domain
             changed from images to text. The machinery is the same.
           </InsightBlock>
+        </Row.Content>
+      </Row>
+
+      <Row>
+        <Row.Content>
+          <ReferencesBlock
+            references={[
+              {
+                title: 'A Mathematical Theory of Communication',
+                authors: 'Shannon, 1948',
+                url: 'https://people.math.harvard.edu/~ctm/home/text/others/shannon/entropy/entropy.pdf',
+                note: 'Foundational work on information theory and entropy that underlies the probabilistic framework of language modeling.',
+              },
+            ]}
+          />
         </Row.Content>
       </Row>
 

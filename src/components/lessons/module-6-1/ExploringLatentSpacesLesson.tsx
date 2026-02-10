@@ -332,7 +332,7 @@ show_grid(images, nrow=5)`}
                 'Formula: 0.5 * image_A + 0.5 * image_B',
                 'T-shirt + trousers = faint T-shirt ghosted on top of faint trousers',
                 'Both shapes visible at once, transparent and overlapping',
-                'Edges from both objects compete\u2014nothing looks solid',
+                'Edges from both objects compete—nothing looks solid',
                 'Like a double-exposed photograph, not a real garment',
               ],
             }}
@@ -342,7 +342,7 @@ show_grid(images, nrow=5)`}
               items: [
                 'Formula: decode(0.5 * z_A + 0.5 * z_B)',
                 'T-shirt + trousers = a long shirt morphing toward trousers',
-                'One coherent shape at every step\u2014no ghosting',
+                'One coherent shape at every step—no ghosting',
                 'Intermediate forms look like actual clothing items',
                 'Like watching one garment transform into another',
               ],
@@ -714,7 +714,7 @@ plt.show()`}
         <Row.Content>
           <SectionHeader
             title="The Quality Ceiling"
-            subtitle="Why VAE images are blurry\u2014and why that matters"
+            subtitle="Why VAE images are blurry—and why that matters"
           />
           <div className="space-y-4">
             <p className="text-muted-foreground">
@@ -937,7 +937,7 @@ plt.show()`}
             items={[
               {
                 headline:
-                  'A trained VAE\u2019s latent space is a continuous, organized space where you can sample, interpolate, and do arithmetic.',
+                  `A trained VAE’s latent space is a continuous, organized space where you can sample, interpolate, and do arithmetic.`,
                 description:
                   'Sample from N(0,1), decode, and you get novel images. The KL regularizer organized the space so every region is meaningful.',
               },
@@ -957,13 +957,13 @@ plt.show()`}
                 headline:
                   'VAE generation works but has a fundamental quality ceiling from the reconstruction-vs-KL tradeoff.',
                 description:
-                  'The blurriness is not a training failure\u2014it is the price of a smooth, sampleable latent space. You cannot fix it with more epochs.',
+                  'The blurriness is not a training failure—it is the price of a smooth, sampleable latent space. You cannot fix it with more epochs.',
               },
               {
                 headline:
                   'Diffusion models overcome this quality limitation.',
                 description:
-                  'The VAE proved the concept: generation by sampling from a learned latent space works. Diffusion models deliver the quality. That\u2019s Module 6.2.',
+                  `The VAE proved the concept: generation by sampling from a learned latent space works. Diffusion models deliver the quality. That’s Module 6.2.`,
               },
             ]}
           />

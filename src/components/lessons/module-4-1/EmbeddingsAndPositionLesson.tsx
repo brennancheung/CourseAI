@@ -16,6 +16,7 @@ import {
   GradientCard,
   ComparisonRow,
   ModuleCompleteBlock,
+  ReferencesBlock,
 } from '@/components/lessons'
 import { ExercisePanel } from '@/components/widgets/ExercisePanel'
 import { EmbeddingSpaceExplorer } from '@/components/widgets/EmbeddingSpaceExplorer'
@@ -110,9 +111,9 @@ export function EmbeddingsAndPositionLesson() {
               'Why position matters: the bag-of-words problem',
               'Sinusoidal positional encoding (the original transformer approach)',
               'Learned positional encoding (the simpler, now more common approach)',
-              'NOT: how the model uses these vectors internally (attention, Q/K/V)\u2014that\u2019s Module 4.2',
-              'NOT: training embeddings from scratch on a dataset\u2014Module 4.3',
-              'NOT: Word2Vec, GloVe, or standalone embedding methods\u2014different paradigm',
+              'NOT: how the model uses these vectors internally (attention, Q/K/V)—that’s Module 4.2',
+              'NOT: training embeddings from scratch on a dataset—Module 4.3',
+              'NOT: Word2Vec, GloVe, or standalone embedding methods—different paradigm',
             ]}
           />
         </Row.Content>
@@ -1002,12 +1003,12 @@ input = token_embedding(token_ids) + pos_embedding(positions)`}
               {
                 headline: 'Token IDs are arbitrary integers. Embeddings map them to dense vectors where similarity is meaningful.',
                 description:
-                  'nn.Embedding is a learnable weight matrix indexed by integer. Mathematically equivalent to one-hot \u00d7 matrix, but without creating the sparse vector.',
+                  'nn.Embedding is a learnable weight matrix indexed by integer. Mathematically equivalent to one-hot × matrix, but without creating the sparse vector.',
               },
               {
                 headline: 'Without positional encoding, embeddings create a bag of words.',
                 description:
-                  'The model can\u2019t tell \u201cdog bites man\u201d from \u201cman bites dog.\u201d Position must be injected explicitly.',
+                  'The model can’t tell “dog bites man” from “man bites dog.” Position must be injected explicitly.',
               },
               {
                 headline: 'Sinusoidal PE uses multi-frequency waves. Learned PE just learns a vector per position.',
@@ -1015,14 +1016,14 @@ input = token_embedding(token_ids) + pos_embedding(positions)`}
                   'Sinusoidal can extrapolate to unseen lengths. Learned is simpler and often works as well for training-length sequences.',
               },
               {
-                headline: 'Token embedding + positional encoding = the model\u2019s input.',
+                headline: 'Token embedding + positional encoding = the model’s input.',
                 description:
-                  'The complete pipeline: text \u2192 BPE tokens \u2192 integer IDs \u2192 embedding vectors + position \u2192 the tensor the transformer processes.',
+                  'The complete pipeline: text → BPE tokens → integer IDs → embedding vectors + position → the tensor the transformer processes.',
               },
               {
                 headline: 'Embeddings are learned parameters, not preprocessing.',
                 description:
-                  'They start as random noise and training shapes them so similar tokens cluster. They\u2019re the first layer of the model, with gradients and everything.',
+                  'They start as random noise and training shapes them so similar tokens cluster. They’re the first layer of the model, with gradients and everything.',
               },
             ]}
           />
@@ -1058,6 +1059,21 @@ input = token_embedding(token_ids) + pos_embedding(positions)`}
         </Row.Content>
       </Row>
 
+      <Row>
+        <Row.Content>
+          <ReferencesBlock
+            references={[
+              {
+                title: 'Attention Is All You Need',
+                authors: 'Vaswani et al., 2017',
+                url: 'https://arxiv.org/abs/1706.03762',
+                note: 'Section 3.5 introduces the sinusoidal positional encoding formula developed in this lesson.',
+              },
+            ]}
+          />
+        </Row.Content>
+      </Row>
+
       {/* ================================================================
           Section 14: Module Complete + Next Step
           ================================================================ */}
@@ -1071,7 +1087,7 @@ input = token_embedding(token_ids) + pos_embedding(positions)`}
               'Subword tokenization and BPE (built from scratch)',
               'Token embeddings as learned lookup tables',
               'Positional encoding (sinusoidal and learned)',
-              'The complete input pipeline: text \u2192 tokens \u2192 IDs \u2192 embeddings + position',
+              'The complete input pipeline: text → tokens → IDs → embeddings + position',
             ]}
             nextModule="4.2"
             nextTitle="Attention"

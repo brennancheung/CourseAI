@@ -60,6 +60,7 @@ Use these in the main content area (first child of `Row.Content`):
 | `ConstraintBlock` | Scope boundaries | Amber | When limiting scope helps focus |
 | `StepList` | Numbered instructions | Neutral | For procedural "do this" content |
 | `SummaryBlock` | Key takeaways | Primary+Violet gradient | End of lesson or major section |
+| `ReferencesBlock` | External references | Neutral card | After summary, before next step |
 | `ModuleCompleteBlock` | Module celebration | Emerald gradient | End of module's final lesson |
 | `NextStepBlock` | Session completion link | Primary gradient | End of lesson |
 
@@ -432,6 +433,17 @@ export function MyLesson() {
       <Row>
         <Row.Content>
           <SummaryBlock items={[...]} />
+        </Row.Content>
+      </Row>
+
+      {/* References (2-4 curated links) */}
+      <Row>
+        <Row.Content>
+          <ReferencesBlock
+            references={[
+              { title: 'Paper Title', authors: 'Author et al., Year', url: '...', note: 'What to focus on' },
+            ]}
+          />
         </Row.Content>
       </Row>
 

@@ -16,6 +16,7 @@ import {
   NextStepBlock,
   GradientCard,
   ComparisonRow,
+  ReferencesBlock,
 } from '@/components/lessons'
 import { CodeBlock } from '@/components/common/CodeBlock'
 import { ResNetBlockExplorer } from '@/components/widgets/ResNetBlockExplorer'
@@ -1123,6 +1124,28 @@ out = F.relu(self.bn2(self.conv2(out)) + self.shortcut(x))`}
             title="Transfer Learning"
             description="You now understand the architecture that made modern deep learning possible. The next lesson puts it to practical use: take a pretrained ResNet and adapt it to new tasks in minutes instead of training from scratch."
             buttonText="Continue to Transfer Learning"
+          />
+        </Row.Content>
+      </Row>
+
+      {/* References */}
+      <Row>
+        <Row.Content>
+          <ReferencesBlock
+            references={[
+              {
+                title: 'Deep Residual Learning for Image Recognition',
+                authors: 'He, Zhang, Ren & Sun, 2015',
+                url: 'https://arxiv.org/abs/1512.03385',
+                note: 'The ResNet paper that introduced skip connections, solving the degradation problem and enabling 152-layer networks.',
+              },
+              {
+                title: 'Batch Normalization: Accelerating Deep Network Training by Reducing Internal Covariate Shift',
+                authors: 'Ioffe & Szegedy, 2015',
+                url: 'https://arxiv.org/abs/1502.03167',
+                note: 'Batch normalization is used throughout the Conv-BN-ReLU pattern in ResNet blocks.',
+              },
+            ]}
           />
         </Row.Content>
       </Row>

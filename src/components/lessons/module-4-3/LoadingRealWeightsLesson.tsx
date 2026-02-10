@@ -314,9 +314,9 @@ export function LoadingRealWeightsLesson() {
               'Handle weight tying during loading',
               'Verify correctness by comparing logits against the HuggingFace reference',
               'Generate coherent text from the correctly loaded model',
-              'NOT: training or fine-tuning the loaded model\u2014that\u2019s Module 4.4',
-              'NOT: loading different GPT-2 sizes (medium, large, XL)\u2014stretch exercise only',
-              'NOT: understanding HuggingFace in depth\u2014used only as a weight source',
+              'NOT: training or fine-tuning the loaded model—that\u2019s Module 4.4',
+              'NOT: loading different GPT-2 sizes (medium, large, XL)—stretch exercise only',
+              'NOT: understanding HuggingFace in depth—used only as a weight source',
               'NOT: quantization, deployment, or KV caching implementation',
             ]}
           />
@@ -750,7 +750,7 @@ model_ours.load_state_dict(model_hf.state_dict())
                 copy.{' '}
                 <span className="text-rose-400">Red</span> = transpose
                 required. The pattern: all 2D weight matrices in attention and
-                FFN need transposing (Conv1D {'\u2192'} nn.Linear). Everything
+                FFN need transposing (Conv1D {'→'} nn.Linear). Everything
                 else&mdash;embeddings, layer norms, biases&mdash;copies
                 directly.
               </p>
@@ -889,8 +889,8 @@ print(len(model_ours.state_dict())) # 147 keys (weight tying: one tensor, two na
                     nn.Linear stores (out_features, in_features).
                   </p>
                   <p>
-                    <strong>2.</strong> 2304 = 3 {'\u00d7'} 768 = 3{' '}
-                    {'\u00d7'} d_model. The combined Q, K, V projection
+                    <strong>2.</strong> 2304 = 3 {'×'} 768 = 3{' '}
+                    {'×'} d_model. The combined Q, K, V projection
                     concatenates three 768-dimensional projections into a
                     single weight matrix. You saw this in Building nanoGPT
                     when you built CausalSelfAttention.
@@ -1270,19 +1270,19 @@ for prompt in prompts:
                   <span className="text-rose-400 font-medium">
                     Random weights
                   </span>{' '}
-                  {'\u2192'} gibberish
+                  {'→'} gibberish
                 </p>
                 <p>
                   <span className="text-amber-400 font-medium">
                     Trained on Shakespeare
                   </span>{' '}
-                  {'\u2192'} recognizable English
+                  {'→'} recognizable English
                 </p>
                 <p>
                   <span className="text-emerald-400 font-medium">
                     Real GPT-2 weights
                   </span>{' '}
-                  {'\u2192'} coherent, knowledgeable text
+                  {'→'} coherent, knowledgeable text
                 </p>
               </div>
               <p className="text-xs text-muted-foreground/80">
@@ -1391,13 +1391,13 @@ for prompt in prompts:
                 headline:
                   'Conv1D vs nn.Linear: same parameters, different layout.',
                 description:
-                  'HuggingFace\u2019s GPT-2 uses Conv1D (in, out). Your model uses nn.Linear (out, in). The fix is .t()\u2014one transpose per 2D weight in attention and FFN.',
+                  'HuggingFace\u2019s GPT-2 uses Conv1D (in, out). Your model uses nn.Linear (out, in). The fix is .t()—one transpose per 2D weight in attention and FFN.',
               },
               {
                 headline:
                   'Logit comparison is the gold standard.',
                 description:
-                  'Same input, same weights, same computation\u2014if torch.allclose returns True, the models are functionally identical. Stronger than parameter counting. Stronger than text comparison.',
+                  'Same input, same weights, same computation—if torch.allclose returns True, the models are functionally identical. Stronger than parameter counting. Stronger than text comparison.',
               },
               {
                 headline:

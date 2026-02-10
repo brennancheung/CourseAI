@@ -16,6 +16,7 @@ import {
   ConstraintBlock,
   ComparisonRow,
   GradientCard,
+  ReferencesBlock,
 } from '@/components/lessons'
 import { ExercisePanel } from '@/components/widgets/ExercisePanel'
 import { TrainingDynamicsExplorer } from '@/components/widgets/TrainingDynamicsExplorer'
@@ -351,11 +352,11 @@ export function TrainingDynamicsLesson() {
                     { layer: 8, hops: 2, grad: '0.0625' },
                     { layer: 7, hops: 3, grad: '0.0156' },
                     { layer: 6, hops: 4, grad: '0.00391' },
-                    { layer: 5, hops: 5, grad: '9.77 \u00D7 10\u207B\u2074' },
-                    { layer: 4, hops: 6, grad: '2.44 \u00D7 10\u207B\u2074' },
-                    { layer: 3, hops: 7, grad: '6.10 \u00D7 10\u207B\u2075' },
-                    { layer: 2, hops: 8, grad: '1.53 \u00D7 10\u207B\u2075' },
-                    { layer: 1, hops: 9, grad: '9.54 \u00D7 10\u207B\u2077' },
+                    { layer: 5, hops: 5, grad: '9.77 × 10⁻⁴' },
+                    { layer: 4, hops: 6, grad: '2.44 × 10⁻⁴' },
+                    { layer: 3, hops: 7, grad: '6.10 × 10⁻⁵' },
+                    { layer: 2, hops: 8, grad: '1.53 × 10⁻⁵' },
+                    { layer: 1, hops: 9, grad: '9.54 × 10⁻⁷' },
                   ].map((row) => (
                     <tr key={row.layer} className="border-b border-border/50">
                       <td className="py-2 px-3 font-mono">{row.layer}</td>
@@ -963,7 +964,7 @@ export function TrainingDynamicsLesson() {
               {
                 headline: 'Vanishing gradients: small factors multiply to near-zero',
                 description:
-                  'Sigmoid\u2019s max derivative is 0.25. After 10 layers: 0.25\u00B9\u2070 \u2248 10\u207B\u2076. Early layers learn a million times slower than later layers.',
+                  'Sigmoid’s max derivative is 0.25. After 10 layers: 0.25¹⁰ ≈ 10⁻⁶. Early layers learn a million times slower than later layers.',
               },
               {
                 headline: 'Exploding gradients: large factors multiply to infinity',
@@ -976,19 +977,47 @@ export function TrainingDynamicsLesson() {
                   'Gradients are products of local derivatives. The product is only stable when each factor is close to 1.0.',
               },
               {
-                headline: 'Xavier (1/n\u1d62\u2099) and He (2/n\u1d62\u2099) initialization preserve signal',
+                headline: 'Xavier (1/nᵢₙ) and He (2/nᵢₙ) initialization preserve signal',
                 description:
                   'Xavier for sigmoid/tanh, He for ReLU. They ensure each layer neither amplifies nor dampens the signal, keeping gradient products near 1.0.',
               },
               {
                 headline: 'Batch normalization stabilizes during training',
                 description:
-                  'Normalizes activations between layers at every step. Learned \u03B3 and \u03B2 parameters let the network find the right distribution. Allows deeper networks and higher learning rates.',
+                  'Normalizes activations between layers at every step. Learned γ and β parameters let the network find the right distribution. Allows deeper networks and higher learning rates.',
               },
               {
                 headline: 'ReLU + He init + batch norm = modern baseline',
                 description:
                   'This combination turned deep learning from 2-3 layers into hundreds. Start here for any new deep network.',
+              },
+            ]}
+          />
+        </Row.Content>
+      </Row>
+
+      {/* References */}
+      <Row>
+        <Row.Content>
+          <ReferencesBlock
+            references={[
+              {
+                title: 'Understanding the difficulty of training deep feedforward neural networks',
+                authors: 'Glorot & Bengio, 2010',
+                url: 'http://proceedings.mlr.press/v9/glorot10a/glorot10a.pdf',
+                note: 'Introduced Xavier initialization and analyzed vanishing/exploding gradients in deep networks.',
+              },
+              {
+                title: 'Delving Deep into Rectifiers: Surpassing Human-Level Performance on ImageNet Classification',
+                authors: 'He, Zhang, Ren & Sun, 2015',
+                url: 'https://arxiv.org/abs/1502.01852',
+                note: 'Introduced He initialization for ReLU networks, enabling training of much deeper architectures.',
+              },
+              {
+                title: 'Batch Normalization: Accelerating Deep Network Training by Reducing Internal Covariate Shift',
+                authors: 'Ioffe & Szegedy, 2015',
+                url: 'https://arxiv.org/abs/1502.03167',
+                note: 'Introduced batch normalization, stabilizing training and allowing higher learning rates.',
               },
             ]}
           />

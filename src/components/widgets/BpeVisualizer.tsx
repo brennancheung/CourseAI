@@ -144,7 +144,7 @@ function computeAllMerges(text: string, maxMerges: number = 50): BpeState[] {
 
 function displayToken(token: string): string {
   // Make whitespace visible
-  return token.replace(/ /g, '\u2423') // ␣ symbol for space
+  return token.replace(/ /g, '␣') // ␣ symbol for space
 }
 
 // ---------------------------------------------------------------------------
@@ -240,7 +240,7 @@ export function BpeVisualizer({ width: _widthOverride }: BpeVisualizerProps) {
             <span className="font-mono">
               &ldquo;{displayToken(latestMerge.pair[0])}&rdquo; + &ldquo;{displayToken(latestMerge.pair[1])}&rdquo;
             </span>{' '}
-            {'\u2192'}{' '}
+            {'→'}{' '}
             <span className="font-mono font-semibold text-violet-300">
               &ldquo;{displayToken(latestMerge.newToken)}&rdquo;
             </span>{' '}
@@ -348,7 +348,7 @@ export function BpeVisualizer({ width: _widthOverride }: BpeVisualizerProps) {
                 <tr className="text-left text-muted-foreground/70">
                   <th className="px-3 py-1.5 font-medium">#</th>
                   <th className="px-3 py-1.5 font-medium">Pair</th>
-                  <th className="px-3 py-1.5 font-medium">{'\u2192'}</th>
+                  <th className="px-3 py-1.5 font-medium">{'→'}</th>
                   <th className="px-3 py-1.5 font-medium text-right">Count</th>
                 </tr>
               </thead>

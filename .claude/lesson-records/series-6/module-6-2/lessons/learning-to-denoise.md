@@ -361,6 +361,147 @@ One critical finding (missing notebook) must be resolved before the lesson is us
 
 ---
 
+## Review — 2026-02-10 (Iteration 2/3)
+
+### Summary
+- Critical: 0
+- Improvement: 2
+- Polish: 3
+
+### Verdict: NEEDS REVISION
+
+All Iteration 1 findings have been addressed effectively. No critical issues remain. The lesson is pedagogically sound and delivers on its BUILD intent. Two improvement findings would make the lesson measurably stronger for the student. The polish items are minor and can be fixed quickly.
+
+### Evaluation of Iteration 1 Fixes
+
+1. **Notebook created** (was CRITICAL): Fully resolved. The notebook at `notebooks/6-2-3-learning-to-denoise.ipynb` has all 4 planned exercises with correct scaffolding progression (Guided -> Guided -> Supported -> Independent). Self-contained, Colab-ready, uses correct terminology. Exercise quality is strong throughout.
+
+2. **ExercisePanel with Colab notebook link** (was part of CRITICAL): Resolved. The Practice section (Section 17) has a clear Colab link with descriptive text.
+
+3. **Mini-batch example added** (was IMPROVEMENT): Resolved well. The table showing three images (Cat at t=800, Shoe at t=50, Landscape at t=400) is compact and effectively demonstrates batch-level timestep randomness. Placed immediately after the "One Random Timestep" misconception card, which is the right location.
+
+4. **Coefficient symmetry fix** (was IMPROVEMENT): Resolved well. The t=50 block now explicitly says "the mirror image of t=500. The coefficients swap roles: now the signal coefficient is 0.975 and the noise coefficient is only 0.224." This eliminates the confusion about why the same numbers appear in both examples. Adding t=950 as a third comparison point strengthens the section further.
+
+5. **Compact MSE comparison moved earlier** (was IMPROVEMENT): Resolved. The side-by-side comparison (Series 1 MSE vs DDPM MSE) now appears in the hook section (Section 4), right after the MSE formula reveal. This lands the "same formula, different letters" insight early, when it matters most. The full "Three Faces of MSE" table remains in Section 12 as a synthesis moment that adds the autoencoder context. Good layering.
+
+6. **Open-book exam analogy reinforced in PhaseCards** (was IMPROVEMENT): Resolved. Step 3: "This is the answer key." Step 5: "The network takes the exam — it outputs its best guess of the noise that was added. The timestep embedding is the open-book answer." Step 6: "Grade the exam." The analogy now threads through the entire training algorithm walkthrough rather than being a one-time metaphor.
+
+7. **TrainingStepSimulator widget added** (was IMPROVEMENT): Resolved. The widget lets the student pick a timestep, see the noisy image, predicted vs actual noise, and MSE loss. It has correct interaction design (cursor-ew-resize on slider, cursor-pointer on preset buttons). The signal-vs-noise bar and coefficient display provide good grounding. See IMPROVEMENT finding below about placement.
+
+### Findings
+
+#### [IMPROVEMENT] — Widget placement is too late in the lesson
+
+**Location:** Section 16 (lines 949-993), after all three checks, Three Faces of MSE, One Network card, simplified loss note, and transfer check
+**Issue:** The TrainingStepSimulator widget appears approximately 600 lines after the training algorithm walkthrough (Section 7). By the time the student reaches the widget, they have already understood the algorithm through text, traced a concrete example, answered two check questions, and completed a transfer check. The widget becomes a "play with it" appendix rather than an integrated part of the learning flow. In the previous two lessons (the-diffusion-idea and the-forward-process), the interactive widgets appeared near the concepts they illustrate, making the exploration feel immediate and connected.
+**Student impact:** A student who is slightly disengaged by Section 16 (after ~15 minutes of reading) may not engage deeply with the widget. The widget's main value — letting the student see how coefficients, noisy images, and MSE loss change across timesteps — would be most impactful right after the training algorithm walkthrough and the "Tracing a Training Step" section (Section 10), where the student has just seen one specific example and is primed to explore variations.
+**Suggested fix:** Move the widget and its ExercisePanel to appear between the concrete example (Section 10) and the second check (Section 11). This places it at the moment of highest curiosity: the student has traced one training step at t=500, seen the t=50 and t=950 comparisons in text, and is ready to explore other timesteps interactively. The TryThisBlock aside already suggests trying t=50 and t=950, which directly extends the worked example. The check that follows ("Trace a Training Step" with the sneaker scenario) would then feel like an assessment of both the text AND the interactive exploration.
+
+---
+
+#### [IMPROVEMENT] — Notebook Exercise 3 has no fallback for students who skip Exercises 1-2
+
+**Location:** Notebook, Exercise 3 (cell-13 through cell-15)
+**Issue:** The lesson component says "Each exercise is independent — skip to whichever interests you most" (line 1015). However, Exercise 3's `ddpm_training_step` function relies on the `alpha_bar` tensor defined in the "Shared Setup" cells (cells 3-5) and the Fashion-MNIST dataset loaded in cell 4. If a student skips to Exercise 3 after running only the Setup cells, they would be fine. But the lesson's framing ("skip to whichever interests you most") combined with the notebook's structure could lead a student to try running Exercise 3's verification cell (cell-15) before filling in the TODOs, producing an error that is not about understanding but about incomplete code. More importantly, the lesson page's description of exercises says "create noisy images at various timesteps, compute MSE loss by hand, write training pseudocode, and predict the loss landscape" — this reads as a list of independent tasks, but Exercise 3 specifically builds on the patterns demonstrated in Exercises 1 and 2.
+**Student impact:** A student who skips to Exercise 3 may be confused by the TODO skeleton if they have not seen the formula applied in code (Exercise 1) or the MSE computed in code (Exercise 2). The exercise is technically completable from the lesson knowledge alone, but the code patterns (like `torch.sqrt(alpha_bar[t])`) are demonstrated in Exercise 1 and would help orient the student.
+**Suggested fix:** Either: (a) Add a brief note in the Exercise 3 markdown cell: "This exercise builds on the patterns from Exercises 1 and 2. If you skipped them, make sure to run the Shared Setup cells first and review the closed-form formula code in Exercise 1." Or (b) Change the lesson component text from "Each exercise is independent" to "Each exercise builds on the patterns before it, but you can skip ahead if you are comfortable with the code patterns."
+
+---
+
+#### [POLISH] — Aside reference to "alpha-bar widget" could be more specific
+
+**Location:** Section 10, aside TipBlock "The Signal-to-Noise Dial" (lines 693-700)
+**Issue:** The aside says "Remember the alpha-bar widget?" but does not name it or connect it to a specific lesson. The student interacted with the AlphaBarCurveWidget in "The Forward Process" lesson. A more specific reference would reinforce the connection.
+**Student impact:** Minor. The student will likely remember the widget from the previous lesson. But "the alpha-bar curve you explored in The Forward Process" is slightly more grounding than "the alpha-bar widget."
+**Suggested fix:** Change "Remember the alpha-bar widget?" to "Remember the alpha-bar curve from The Forward Process?" — one word change.
+
+---
+
+#### [POLISH] — Mermaid diagram uses "epsilon-hat" (ε̂) which may render inconsistently
+
+**Location:** Section 8, Mermaid flow diagram (line 492)
+**Issue:** The node label `EP["ε̂ (predicted noise)"]` uses a Unicode combining character (epsilon + combining circumflex accent, U+0302). Mermaid rendering of Unicode combining characters can be inconsistent across browsers and may display as a malformed character or two separate characters rather than a proper epsilon-hat.
+**Student impact:** If the rendering fails, the student sees a garbled character in the flow diagram — a visual distraction rather than a conceptual problem. The label text "(predicted noise)" still communicates the meaning.
+**Suggested fix:** Use the lesson text's convention of writing epsilon_theta or use the precomposed form if available. Alternatively, use plain text: `EP["predicted noise ε_θ"]` or simply `EP["ε_θ (predicted)"]` to match the rest of the lesson's notation.
+
+---
+
+#### [POLISH] — Section comment numbering drifts from actual section order
+
+**Location:** Throughout the lesson component (section comments)
+**Issue:** The HTML comments label sections as "Section 1" through "Section 18" but there is a numbering inconsistency: the last NextStepBlock section (line 1094) is labeled "Section 17" instead of "Section 19" (duplicating the Practice section's number). Additionally, several comments reference "Outline item X" numbers that no longer exactly match the outline in the planning document after the additions (mini-batch example, widget section, practice section).
+**Student impact:** None — these are developer comments invisible to the student.
+**Suggested fix:** Re-number the section comments sequentially. Low priority since this is purely internal.
+
+### Review Notes
+
+**What works well (reinforced from Iteration 1):**
+- The narrative arc continues to be the lesson's strongest feature. The BUILD intent is fully delivered — the student experiences genuine cognitive relief after the STRETCH of the-forward-process.
+- The Iteration 1 fixes are all effective. The early MSE comparison in the hook is a clear improvement over the original placement. The open-book exam analogy threading through the PhaseCards gives the training algorithm walkthrough a unifying metaphor. The mini-batch example drives home the batch-level randomness at exactly the right moment.
+- The TrainingStepSimulator widget is well-built. The signal-vs-noise bar, live coefficient display, and noise image comparison give the student a tangible way to explore. The preset buttons for key timesteps lower the activation energy for exploration.
+- The notebook is thorough and well-scaffolded. The predict-before-run prompts in Exercises 1 and 2 are genuinely engaging. Exercise 4's "predict the loss landscape" is a strong independent exercise that tests reasoning rather than code.
+- The five misconceptions are all addressed at appropriate locations. No misconception is introduced too late or left unaddressed.
+
+**Verdict rationale:**
+The two IMPROVEMENT findings are both about placement and framing rather than missing or incorrect content. The widget relocation (IMPROVEMENT 1) would strengthen the lesson's interactive flow. The notebook framing fix (IMPROVEMENT 2) is a small text change. Neither finding indicates a fundamental problem — the lesson is pedagogically sound and delivers on all its design goals. After these fixes, the lesson should PASS.
+
+---
+
+## Review — 2026-02-10 (Iteration 3/3)
+
+### Summary
+- Critical: 0
+- Improvement: 0
+- Polish: 2
+
+### Verdict: PASS
+
+All findings from Iterations 1 and 2 have been resolved effectively. The lesson is pedagogically sound, delivers on its BUILD intent, and is ready for the Record phase.
+
+### Evaluation of Iteration 2 Fixes
+
+1. **Widget moved earlier** (was IMPROVEMENT): Fully resolved. The TrainingStepSimulator now appears in Section 11, between the concrete example (Section 10) and the "Trace a Training Step" check (Section 12). This is the ideal placement — the student has just traced one training step with specific values and is primed to explore other timesteps interactively. The check that follows then tests both the text walkthrough and the interactive exploration.
+
+2. **Notebook Exercise 3 independence claim** (was IMPROVEMENT): Resolved. The lesson component text now reads "Each exercise builds on the patterns before it, but you can skip ahead if you are comfortable with the code patterns." The notebook's Exercise 3 markdown cell includes a note: "This exercise builds on the code patterns from Exercises 1 and 2. If you skipped them, make sure to run the Shared Setup cells first and review how the closed-form formula is applied in Exercise 1 and how MSE is computed in Exercise 2." Both changes accurately describe the cumulative pattern.
+
+3. **Alpha-bar widget reference made more specific** (was POLISH): Resolved. The aside now reads "Remember the alpha-bar curve from The Forward Process?" with a specific reference to what the widget showed at t=500. Grounding is better.
+
+4. **Mermaid diagram Unicode fixed** (was POLISH): Resolved. The node now reads `EP["predicted noise ε_θ"]` using plain text notation, avoiding the combining character rendering issue.
+
+5. **Section comment numbering corrected** (was POLISH): Resolved. The section comments now run sequentially from Section 1 through Section 19 without duplication.
+
+### Findings
+
+#### [POLISH] — Lesson description header contains straight apostrophe-like curly quote inconsistency
+
+**Location:** Section 1, LessonHeader description prop (line 57)
+**Issue:** The header description uses `&mdash;` correctly but the prose style uses contractions sparingly. Throughout the lesson body, the student sees `\u2019` (right single quotation mark) via `&rsquo;` for possessives (e.g., "network's" in line 328, "network\u2019s" in line 164). This is consistent and correct. No actual inconsistency found on closer inspection — this is a non-finding.
+**Student impact:** None.
+**Suggested fix:** None needed. Withdrawn.
+
+#### [POLISH] — TrainingStepSimulator noise visualization could label axes
+
+**Location:** TrainingStepSimulator widget, noise image panels
+**Issue:** The "predicted noise" and "actual noise" images in the widget are rendered as grayscale pixel grids. The mapping is noise values [-3, 3] to grayscale [0, 255], centered at 128. There is no explicit legend or axis label explaining that mid-gray = zero noise, brighter = positive noise, darker = negative noise. The student is expected to intuit this mapping.
+**Student impact:** Minor. The primary purpose of the noise images is comparative — the student is looking at whether predicted and actual noise images look similar. The absolute meaning of pixel brightness in noise space is secondary. The labels ("predicted" and "actual") communicate the comparison intent.
+**Suggested fix:** A brief caption under the noise images like "mid-gray = 0, brighter = positive, darker = negative" would help, but this is cosmetic and does not affect learning outcomes.
+
+### Review Notes
+
+**What works well:**
+- The narrative arc is the lesson's strongest feature, confirmed across all three iterations. The cognitive relief after the STRETCH of the-forward-process is genuine and well-paced.
+- The Iteration 2 widget relocation was the most impactful change. The TrainingStepSimulator now appears at the moment of highest curiosity, directly extending the concrete example. The student reads about t=500, sees the coefficients, then immediately gets to explore other timesteps. The check that follows tests both text comprehension and interactive exploration.
+- The "open-book exam" analogy threads through the entire training algorithm walkthrough via the PhaseCards, giving the seven steps a unifying metaphor rather than a list of disconnected operations.
+- The early MSE side-by-side comparison (added in Iteration 2) lands the "same formula, different letters" insight at the right moment. The fuller "Three Faces of MSE" table later adds the autoencoder context as a synthesis moment without feeling redundant.
+- All five misconceptions are addressed at appropriate locations. The placement is well-calibrated — misconceptions are addressed before or exactly when the student would form them.
+- The notebook is thorough and well-scaffolded. The predict-before-run prompts are genuinely engaging. Exercise 4's "predict the loss landscape" is a strong independent exercise that tests reasoning, not just code translation.
+- Scope boundaries are impeccable. The lesson does not drift into architecture, sampling, or implementation despite multiple natural temptation points.
+
+**Verdict rationale:**
+No critical or improvement findings remain. The two polish findings are minor — one was withdrawn on closer inspection, and the other is a cosmetic widget enhancement that does not affect learning outcomes. The lesson is ready for the Record phase.
+
+---
+
 ## Checklists
 
 ### Prerequisite Audit

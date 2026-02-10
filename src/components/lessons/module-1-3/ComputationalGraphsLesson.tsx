@@ -101,11 +101,11 @@ export function ComputationalGraphsLesson() {
                 title: 'Step-by-step list',
                 color: 'amber',
                 items: [
-                  'Step 1: dL/dy\u0302 = -2(y - y\u0302)',
-                  'Step 2: dL/dw\u2082 = dL/dy\u0302 \u00D7 a\u2081',
-                  'Step 3: dL/db\u2082 = dL/dy\u0302 \u00D7 1',
-                  'Step 4: dL/da\u2081 = dL/dy\u0302 \u00D7 w\u2082',
-                  '\u2026 (3 more steps)',
+                  'Step 1: dL/dŷ = -2(y - ŷ)',
+                  'Step 2: dL/dw₂ = dL/dŷ × a₁',
+                  'Step 3: dL/db₂ = dL/dŷ × 1',
+                  'Step 4: dL/da₁ = dL/dŷ × w₂',
+                  '… (3 more steps)',
                 ],
               }}
               right={{
@@ -113,9 +113,9 @@ export function ComputationalGraphsLesson() {
                 color: 'blue',
                 items: [
                   'Each operation is a node',
-                  'Values flow left \u2192 right',
-                  'Gradients flow right \u2192 left',
-                  'Every node: incoming \u00D7 local',
+                  'Values flow left → right',
+                  'Gradients flow right → left',
+                  'Every node: incoming × local',
                   'The same math—visible at a glance',
                 ],
               }}
@@ -302,11 +302,11 @@ export function ComputationalGraphsLesson() {
             <div className="grid grid-cols-3 gap-2 sm:grid-cols-6 text-center text-xs">
               {[
                 { label: 'x', val: '2' },
-                { label: '\u00D7w\u2081', val: '1.0' },
-                { label: '+b\u2081', val: '1.1' },
+                { label: '×w₁', val: '1.0' },
+                { label: '+b₁', val: '1.1' },
                 { label: 'ReLU', val: '1.1' },
-                { label: '\u00D7w\u2082', val: '-0.33' },
-                { label: '+b\u2082', val: '-0.13' },
+                { label: '×w₂', val: '-0.33' },
+                { label: '+b₂', val: '-0.13' },
               ].map(item => (
                 <div key={item.label} className="rounded-md bg-blue-500/10 border border-blue-500/20 p-2">
                   <div className="text-muted-foreground">{item.label}</div>
@@ -692,7 +692,7 @@ export function ComputationalGraphsLesson() {
               },
               {
                 headline: 'Backward: right to left',
-                description: 'At every node: incoming gradient \u00D7 local derivative = outgoing gradient.',
+                description: 'At every node: incoming gradient × local derivative = outgoing gradient.',
               },
               {
                 headline: 'Fan-out: sum the gradients',

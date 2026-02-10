@@ -16,6 +16,7 @@ import {
   GradientCard,
   ComparisonRow,
   PhaseCard,
+  ReferencesBlock,
 } from '@/components/lessons'
 import { MermaidDiagram } from '@/components/widgets/MermaidDiagram'
 import { ExercisePanel } from '@/components/widgets/ExercisePanel'
@@ -90,9 +91,9 @@ export function LearningToDenoiseLesson() {
               'Why predicting noise is preferred over predicting the clean image',
               'The complete training algorithm at pseudocode level',
               'Connecting MSE loss from Series 1 to the diffusion context',
-              'NOT: the reverse/sampling process (how to use the trained model to generate)\u2014that is next',
+              'NOT: the reverse/sampling process (how to use the trained model to generate)—that is next',
               'NOT: the U-Net architecture or how the network receives the timestep',
-              'NOT: code implementation\u2014that comes in the capstone lesson',
+              'NOT: code implementation—that comes in the capstone lesson',
               'NOT: score matching, SDEs, or the full variational lower bound derivation',
             ]}
           />
@@ -217,20 +218,20 @@ export function LearningToDenoiseLesson() {
           </div>
           <ComparisonRow
             left={{
-              title: 'Option A: Predict x\u2080',
+              title: 'Option A: Predict x₀',
               color: 'amber',
               items: [
                 'Predict the clean image directly',
-                'Seems intuitive\u2014denoising means recovering the original',
+                'Seems intuitive—denoising means recovering the original',
                 'The target varies wildly: cats, dogs, landscapes, shoes...',
               ],
             }}
             right={{
-              title: 'Option B: Predict \u03B5',
+              title: 'Option B: Predict ε',
               color: 'emerald',
               items: [
                 'Predict the noise that was added',
-                'Seems backwards\u2014why predict what you want to remove?',
+                'Seems backwards—why predict what you want to remove?',
                 'The target is always from the same distribution: N(0, 1)',
               ],
             }}
@@ -488,7 +489,7 @@ export function LearningToDenoiseLesson() {
                 CF --> XT["x_t (noisy image)"]
                 XT --> NN["Neural network"]
                 T --> NN
-                NN --> EP["ε̂ (predicted noise)"]
+                NN --> EP["predicted noise ε_θ"]
                 EP --> MSE["MSE Loss"]
                 E --> MSE
                 MSE --> BP["Backprop + Update"]
@@ -691,7 +692,7 @@ export function LearningToDenoiseLesson() {
         </Row.Content>
         <Row.Aside>
           <TipBlock title="The Signal-to-Noise Dial">
-            Remember the alpha-bar widget? The coefficients 0.224 and 0.975 are
+            Remember the alpha-bar curve from The Forward Process? The coefficients 0.224 and 0.975 are
             exactly what the widget showed at{' '}
             <InlineMath math="t = 500" />. The training algorithm uses the
             same formula at every iteration&mdash;just with a different random
@@ -701,7 +702,53 @@ export function LearningToDenoiseLesson() {
       </Row>
 
       {/* ================================================================
-          Section 11: Check (Outline item 7)
+          Section 11: Interactive Widget — Training Step Simulator
+          ================================================================ */}
+      <Row>
+        <Row.Content>
+          <SectionHeader
+            title="Explore: One Training Step"
+            subtitle="Pick a timestep and trace the algorithm"
+          />
+          <div className="space-y-4">
+            <p className="text-muted-foreground">
+              Drag the slider to choose a timestep. Watch the noisy image change,
+              see what the network would predict, and observe how MSE loss varies
+              with noise level.
+            </p>
+          </div>
+          <ExercisePanel
+            title="Training Step Simulator"
+            subtitle="Pick a timestep and see the complete training step"
+          >
+            <TrainingStepSimulator />
+          </ExercisePanel>
+        </Row.Content>
+        <Row.Aside>
+          <TryThisBlock title="Experiment">
+            <ul className="space-y-2 text-sm">
+              <li>
+                &bull; Try <strong>t&nbsp;=&nbsp;50</strong>: the image is barely noisy.
+                How easy is it for the network to predict the noise?
+              </li>
+              <li>
+                &bull; Try <strong>t&nbsp;=&nbsp;950</strong>: nearly pure static.
+                The network must hallucinate structure.
+              </li>
+              <li>
+                &bull; Watch the MSE loss: it rises as the task gets harder.
+              </li>
+              <li>
+                &bull; Compare the predicted vs actual noise images&mdash;at low
+                timesteps they look nearly identical.
+              </li>
+            </ul>
+          </TryThisBlock>
+        </Row.Aside>
+      </Row>
+
+      {/* ================================================================
+          Section 12: Check — Trace a Training Step (Outline item 7)
           ================================================================ */}
       <Row>
         <Row.Content>
@@ -746,7 +793,7 @@ export function LearningToDenoiseLesson() {
       </Row>
 
       {/* ================================================================
-          Section 12: Three Faces of MSE (Outline item 8)
+          Section 13: Three Faces of MSE (Outline item 8)
           ================================================================ */}
       <Row>
         <Row.Content>
@@ -841,7 +888,7 @@ export function LearningToDenoiseLesson() {
       </Row>
 
       {/* ================================================================
-          Section 13: One Network, All Timesteps (Outline item 8 cont.)
+          Section 14: One Network, All Timesteps (Outline item 8 cont.)
           ================================================================ */}
       <Row>
         <Row.Content>
@@ -883,7 +930,7 @@ export function LearningToDenoiseLesson() {
       </Row>
 
       {/* ================================================================
-          Section 14: Simplified vs Full Loss (Outline item 8 cont.)
+          Section 15: Simplified vs Full Loss (Outline item 8 cont.)
           ================================================================ */}
       <Row>
         <Row.Content>
@@ -909,7 +956,7 @@ export function LearningToDenoiseLesson() {
       </Row>
 
       {/* ================================================================
-          Section 15: Transfer Check (Outline item 9)
+          Section 16: Transfer Check (Outline item 9)
           ================================================================ */}
       <Row>
         <Row.Content>
@@ -947,53 +994,7 @@ export function LearningToDenoiseLesson() {
       </Row>
 
       {/* ================================================================
-          Section 16: Interactive Widget — Training Step Simulator
-          ================================================================ */}
-      <Row>
-        <Row.Content>
-          <SectionHeader
-            title="Explore: One Training Step"
-            subtitle="Pick a timestep and trace the algorithm"
-          />
-          <div className="space-y-4">
-            <p className="text-muted-foreground">
-              Drag the slider to choose a timestep. Watch the noisy image change,
-              see what the network would predict, and observe how MSE loss varies
-              with noise level.
-            </p>
-          </div>
-          <ExercisePanel
-            title="Training Step Simulator"
-            subtitle="Pick a timestep and see the complete training step"
-          >
-            <TrainingStepSimulator />
-          </ExercisePanel>
-        </Row.Content>
-        <Row.Aside>
-          <TryThisBlock title="Experiment">
-            <ul className="space-y-2 text-sm">
-              <li>
-                &bull; Try <strong>t&nbsp;=&nbsp;50</strong>: the image is barely noisy.
-                How easy is it for the network to predict the noise?
-              </li>
-              <li>
-                &bull; Try <strong>t&nbsp;=&nbsp;950</strong>: nearly pure static.
-                The network must hallucinate structure.
-              </li>
-              <li>
-                &bull; Watch the MSE loss: it rises as the task gets harder.
-              </li>
-              <li>
-                &bull; Compare the predicted vs actual noise images&mdash;at low
-                timesteps they look nearly identical.
-              </li>
-            </ul>
-          </TryThisBlock>
-        </Row.Aside>
-      </Row>
-
-      {/* ================================================================
-          Section 17: Practice — Notebook Exercises
+          Section 17: Practice — Notebook Exercises (Outline item 10)
           ================================================================ */}
       <Row>
         <Row.Content>
@@ -1011,8 +1012,8 @@ export function LearningToDenoiseLesson() {
               <div className="space-y-4">
                 <p className="text-muted-foreground">
                   Open the notebook and work through the exercises at your own
-                  pace. Each exercise is independent&mdash;skip to whichever
-                  interests you most.
+                  pace. Each exercise builds on the patterns before it, but you
+                  can skip ahead if you are comfortable with the code patterns.
                 </p>
                 <a
                   href="https://colab.research.google.com/github/brennancheung/CourseAI/blob/main/notebooks/6-2-3-learning-to-denoise.ipynb"
@@ -1042,6 +1043,7 @@ export function LearningToDenoiseLesson() {
 
       {/* ================================================================
           Section 18: Summary (Outline item 11)
+
           ================================================================ */}
       <Row>
         <Row.Content>
@@ -1056,9 +1058,9 @@ export function LearningToDenoiseLesson() {
               },
               {
                 headline:
-                  'The model predicts noise (\u03B5), not the clean image.',
+                  'The model predicts noise (ε), not the clean image.',
                 description:
-                  'Noise is a consistent target (always from N(0,1)) regardless of image content. You can recover x\u2080 algebraically\u2014nothing is lost.',
+                  'Noise is a consistent target (always from N(0,1)) regardless of image content. You can recover x₀ algebraically—nothing is lost.',
               },
               {
                 headline:
@@ -1070,7 +1072,7 @@ export function LearningToDenoiseLesson() {
                 headline:
                   'The training loop is the standard loop with diffusion-specific data preparation.',
                 description:
-                  'Steps 1\u20134 prepare the data (sample image, timestep, noise, create noisy image). Steps 5\u20137 are the familiar forward-loss-backward-update cycle.',
+                  'Steps 1–4 prepare the data (sample image, timestep, noise, create noisy image). Steps 5–7 are the familiar forward-loss-backward-update cycle.',
               },
             ]}
           />
@@ -1091,7 +1093,7 @@ export function LearningToDenoiseLesson() {
       </Row>
 
       {/* ================================================================
-          Section 17: Next Step (Outline item 12)
+          Section 19: Next Step (Outline item 12)
           ================================================================ */}
       <Row>
         <Row.Content>
@@ -1103,6 +1105,21 @@ export function LearningToDenoiseLesson() {
               sampling algorithm&mdash;and it is the next lesson.
             </p>
           </div>
+        </Row.Content>
+      </Row>
+
+      <Row>
+        <Row.Content>
+          <ReferencesBlock
+            references={[
+              {
+                title: 'Denoising Diffusion Probabilistic Models',
+                authors: 'Ho, Jain & Abbeel, 2020',
+                url: 'https://arxiv.org/abs/2006.11239',
+                note: 'Sections 3-4 derive the simplified noise-prediction objective, showing it produces better results than predicting x₀ directly.',
+              },
+            ]}
+          />
         </Row.Content>
       </Row>
 

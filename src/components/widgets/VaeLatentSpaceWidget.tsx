@@ -67,13 +67,13 @@ function getModeLabel(mode: Mode): string {
 
 function getInsightText(mode: Mode, beta: number): string {
   if (mode === 'ae') {
-    return 'Autoencoder mode: encoded images are scattered points. Sampling from gaps produces garbage\u2014the decoder has never seen these regions.'
+    return 'Autoencoder mode: encoded images are scattered points. Sampling from gaps produces garbage—the decoder has never seen these regions.'
   }
   if (beta < 0.2) {
-    return 'With \u03B2 near zero, the KL regularizer is off. The VAE behaves like an autoencoder\u2014gaps remain.'
+    return 'With β near zero, the KL regularizer is off. The VAE behaves like an autoencoder—gaps remain.'
   }
   if (beta > 3.0) {
-    return 'With \u03B2 too high, the KL term dominates. All distributions collapse toward N(0,1)\u2014the space is smooth but reconstructions are very blurry.'
+    return 'With β too high, the KL term dominates. All distributions collapse toward N(0,1)—the space is smooth but reconstructions are very blurry.'
   }
   return 'VAE mode: each encoded image is a small cloud (distribution), not a point. The clouds overlap, filling gaps. Sample anywhere and get a plausible image.'
 }

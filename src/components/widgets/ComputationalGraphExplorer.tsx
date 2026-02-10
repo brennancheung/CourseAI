@@ -51,7 +51,7 @@ const SIMPLE_GRAPH: GraphDef = {
   nodes: [
     { id: 'x', label: 'x', kind: 'input', col: 0, row: 0 },
     { id: 'add', label: '+ 1', kind: 'op', col: 1, row: 0 },
-    { id: 'sq', label: 'x\u00B2', kind: 'op', col: 2, row: 0 },
+    { id: 'sq', label: 'x²', kind: 'op', col: 2, row: 0 },
     { id: 'f', label: 'f', kind: 'output', col: 3, row: 0 },
   ],
   edges: [
@@ -64,14 +64,14 @@ const SIMPLE_GRAPH: GraphDef = {
 const NETWORK_GRAPH: GraphDef = {
   nodes: [
     { id: 'x', label: 'x', kind: 'input', col: 0, row: 1 },
-    { id: 'w1', label: 'w\u2081', kind: 'param', col: 0, row: 0 },
-    { id: 'b1', label: 'b\u2081', kind: 'param', col: 0, row: 2 },
-    { id: 'mul1', label: '\u00D7', kind: 'op', col: 1, row: 0 },
+    { id: 'w1', label: 'w₁', kind: 'param', col: 0, row: 0 },
+    { id: 'b1', label: 'b₁', kind: 'param', col: 0, row: 2 },
+    { id: 'mul1', label: '×', kind: 'op', col: 1, row: 0 },
     { id: 'add1', label: '+', kind: 'op', col: 2, row: 0 },
     { id: 'relu', label: 'ReLU', kind: 'op', col: 3, row: 0 },
-    { id: 'w2', label: 'w\u2082', kind: 'param', col: 3, row: 2 },
-    { id: 'mul2', label: '\u00D7', kind: 'op', col: 4, row: 0 },
-    { id: 'b2', label: 'b\u2082', kind: 'param', col: 4, row: 2 },
+    { id: 'w2', label: 'w₂', kind: 'param', col: 3, row: 2 },
+    { id: 'mul2', label: '×', kind: 'op', col: 4, row: 0 },
+    { id: 'b2', label: 'b₂', kind: 'param', col: 4, row: 2 },
     { id: 'add2', label: '+', kind: 'op', col: 5, row: 0 },
     { id: 'y', label: 'y', kind: 'param', col: 6, row: 2 },
     { id: 'mse', label: 'MSE', kind: 'op', col: 6, row: 0 },
@@ -97,7 +97,7 @@ const FANOUT_GRAPH: GraphDef = {
   nodes: [
     { id: 'x', label: 'x', kind: 'input', col: 0, row: 1 },
     { id: 'add', label: '+ 1', kind: 'op', col: 1, row: 2 },
-    { id: 'mul', label: '\u00D7', kind: 'op', col: 2, row: 1 },
+    { id: 'mul', label: '×', kind: 'op', col: 2, row: 1 },
     { id: 'f', label: 'f', kind: 'output', col: 3, row: 1 },
   ],
   edges: [
@@ -136,11 +136,11 @@ function computeSimple(xVal: number): { nodes: Record<string, ComputedNode>; ste
 
   const steps: StepItem[] = [
     { label: 'Forward: add', formula: `x + 1 = ${fmt(xVal)} + 1`, result: fmt(addOut) },
-    { label: 'Forward: square', formula: `(${fmt(addOut)})\u00B2`, result: fmt(sqOut) },
+    { label: 'Forward: square', formula: `(${fmt(addOut)})²`, result: fmt(sqOut) },
     { label: 'Backward: df/dsq', formula: '1 (output seed)', result: '1' },
-    { label: 'Backward: df/dadd', formula: `1 \u00D7 2\u00B7(${fmt(addOut)})`, result: fmt(gradAdd) },
-    { label: 'Backward: df/dx', formula: `${fmt(gradAdd)} \u00D7 1`, result: fmt(gradX) },
-    { label: 'Verify', formula: `d/dx (x+1)\u00B2 = 2(x+1) = 2\u00B7${fmt(addOut)}`, result: fmt(gradX) },
+    { label: 'Backward: df/dadd', formula: `1 × 2·(${fmt(addOut)})`, result: fmt(gradAdd) },
+    { label: 'Backward: df/dx', formula: `${fmt(gradAdd)} × 1`, result: fmt(gradX) },
+    { label: 'Verify', formula: `d/dx (x+1)² = 2(x+1) = 2·${fmt(addOut)}`, result: fmt(gradX) },
   ]
 
   return { nodes, steps }
@@ -195,19 +195,19 @@ function computeNetwork(
   }
 
   const steps: StepItem[] = [
-    { label: 'Forward: w\u2081\u00D7x', formula: `${fmt(w1)} \u00D7 ${fmt(xVal)}`, result: fmt(mul1Out) },
-    { label: 'Forward: +b\u2081', formula: `${fmt(mul1Out)} + ${fmt(b1)}`, result: fmt(add1Out) },
+    { label: 'Forward: w₁×x', formula: `${fmt(w1)} × ${fmt(xVal)}`, result: fmt(mul1Out) },
+    { label: 'Forward: +b₁', formula: `${fmt(mul1Out)} + ${fmt(b1)}`, result: fmt(add1Out) },
     { label: 'Forward: ReLU', formula: `max(0, ${fmt(add1Out)})`, result: fmt(reluOut) },
-    { label: 'Forward: w\u2082\u00D7a\u2081', formula: `${fmt(w2)} \u00D7 ${fmt(reluOut)}`, result: fmt(mul2Out) },
-    { label: 'Forward: +b\u2082', formula: `${fmt(mul2Out)} + ${fmt(b2)}`, result: fmt(add2Out) },
-    { label: 'Forward: MSE', formula: `(${fmt(yVal)} - ${fmt(yHat)})\u00B2`, result: fmt(loss) },
-    { label: 'Backward: dL/dy\u0302', formula: `-2(${fmt(yVal)} - ${fmt(yHat)})`, result: fmt(dMse) },
-    { label: 'Backward: dL/dw\u2082', formula: `${fmt(dMse)} \u00D7 ${fmt(reluOut)}`, result: fmt(gradW2) },
-    { label: 'Backward: dL/db\u2082', formula: `${fmt(dMse)} \u00D7 1`, result: fmt(gradB2) },
-    { label: 'Backward: dL/da\u2081', formula: `${fmt(dMse)} \u00D7 ${fmt(w2)}`, result: fmt(gradRelu) },
-    { label: 'Backward: through ReLU', formula: `${fmt(gradRelu)} \u00D7 ${reluDeriv}`, result: fmt(gradAdd1) },
-    { label: 'Backward: dL/dw\u2081', formula: `${fmt(gradAdd1)} \u00D7 ${fmt(xVal)}`, result: fmt(gradW1) },
-    { label: 'Backward: dL/db\u2081', formula: `${fmt(gradAdd1)} \u00D7 1`, result: fmt(gradB1) },
+    { label: 'Forward: w₂×a₁', formula: `${fmt(w2)} × ${fmt(reluOut)}`, result: fmt(mul2Out) },
+    { label: 'Forward: +b₂', formula: `${fmt(mul2Out)} + ${fmt(b2)}`, result: fmt(add2Out) },
+    { label: 'Forward: MSE', formula: `(${fmt(yVal)} - ${fmt(yHat)})²`, result: fmt(loss) },
+    { label: 'Backward: dL/dŷ', formula: `-2(${fmt(yVal)} - ${fmt(yHat)})`, result: fmt(dMse) },
+    { label: 'Backward: dL/dw₂', formula: `${fmt(dMse)} × ${fmt(reluOut)}`, result: fmt(gradW2) },
+    { label: 'Backward: dL/db₂', formula: `${fmt(dMse)} × 1`, result: fmt(gradB2) },
+    { label: 'Backward: dL/da₁', formula: `${fmt(dMse)} × ${fmt(w2)}`, result: fmt(gradRelu) },
+    { label: 'Backward: through ReLU', formula: `${fmt(gradRelu)} × ${reluDeriv}`, result: fmt(gradAdd1) },
+    { label: 'Backward: dL/dw₁', formula: `${fmt(gradAdd1)} × ${fmt(xVal)}`, result: fmt(gradW1) },
+    { label: 'Backward: dL/db₁', formula: `${fmt(gradAdd1)} × 1`, result: fmt(gradB1) },
   ]
 
   return { nodes, steps }
@@ -239,13 +239,13 @@ function computeFanout(xVal: number): { nodes: Record<string, ComputedNode>; ste
 
   const steps: StepItem[] = [
     { label: 'Forward: x + 1', formula: `${fmt(xVal)} + 1`, result: fmt(addOut) },
-    { label: 'Forward: x \u00D7 (x+1)', formula: `${fmt(xVal)} \u00D7 ${fmt(addOut)}`, result: fmt(mulOut) },
+    { label: 'Forward: x × (x+1)', formula: `${fmt(xVal)} × ${fmt(addOut)}`, result: fmt(mulOut) },
     { label: 'Backward: df/dmul', formula: '1 (output seed)', result: '1' },
-    { label: 'Backward: \u00D7 node \u2192 top (x)', formula: `1 \u00D7 ${fmt(addOut)} (value of other input)`, result: fmt(gradFromMulToX) },
-    { label: 'Backward: \u00D7 node \u2192 bottom (add)', formula: `1 \u00D7 ${fmt(xVal)} (value of other input)`, result: fmt(gradFromMulToAdd) },
-    { label: 'Backward: add \u2192 x', formula: `${fmt(gradFromMulToAdd)} \u00D7 1`, result: fmt(gradFromAddToX) },
+    { label: 'Backward: × node → top (x)', formula: `1 × ${fmt(addOut)} (value of other input)`, result: fmt(gradFromMulToX) },
+    { label: 'Backward: × node → bottom (add)', formula: `1 × ${fmt(xVal)} (value of other input)`, result: fmt(gradFromMulToAdd) },
+    { label: 'Backward: add → x', formula: `${fmt(gradFromMulToAdd)} × 1`, result: fmt(gradFromAddToX) },
     { label: 'Fan-out sum at x', formula: `${fmt(gradFromMulToX)} + ${fmt(gradFromAddToX)}`, result: fmt(gradX) },
-    { label: 'Verify', formula: `d/dx(x\u00B2 + x) = 2x + 1 = 2\u00B7${fmt(xVal)} + 1`, result: fmt(2 * xVal + 1) },
+    { label: 'Verify', formula: `d/dx(x² + x) = 2x + 1 = 2·${fmt(xVal)} + 1`, result: fmt(2 * xVal + 1) },
   ]
 
   return { nodes, steps }
@@ -268,9 +268,9 @@ type StepItem = {
 
 function getGraphModeLabel(mode: GraphMode): string {
   const labels: Record<GraphMode, string> = {
-    simple: 'f(x) = (x+1)\u00B2',
+    simple: 'f(x) = (x+1)²',
     network: '2-Layer Network',
-    fanout: 'f(x) = x\u00B7(x+1)',
+    fanout: 'f(x) = x·(x+1)',
   }
   return labels[mode]
 }

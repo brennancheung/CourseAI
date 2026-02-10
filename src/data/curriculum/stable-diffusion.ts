@@ -303,6 +303,145 @@ const diffusion: CurriculumNode = {
         ],
       },
     },
+    {
+      slug: 'sampling-and-generation',
+      title: 'Sampling and Generation',
+      description:
+        'The DDPM reverse process\u2014start from pure noise, iteratively denoise, and generate an image that has never existed. Trace the sampling algorithm step by step.',
+      duration: '25 min',
+      category: 'Diffusion',
+      objectives: [
+        'Explain why one-shot denoising fails and iterative denoising is necessary',
+        'Trace the reverse step formula term by term and explain what each part does',
+        'Connect stochastic noise injection to temperature in language models',
+        'Walk through the complete sampling algorithm from t=T to t=0',
+        'Visualize the coarse-to-fine denoising trajectory and explain why early steps matter most',
+      ],
+      skills: [
+        'ddpm-reverse-step-formula',
+        'stochastic-sampling',
+        'sampling-algorithm',
+        'coarse-to-fine-generation',
+        'sampling-computational-cost',
+      ],
+      prerequisites: ['learning-to-denoise'],
+      exercise: {
+        constraints: [
+          'Understand the sampling algorithm\u2014no code implementation',
+          'No DDIM or accelerated samplers\u2014those come later',
+          'No classifier-free guidance or conditional generation',
+          'No U-Net architecture internals',
+          'No score matching, SDEs, or continuous-time formulations',
+        ],
+        steps: [
+          'See why one-shot denoising produces blurry results (negative example)',
+          'Learn the reverse step formula and break it down term by term',
+          'Connect the formula to the forward process and reparameterization trick',
+          'Understand why noise is added back during sampling (temperature analogy)',
+          'Explore the interactive denoising trajectory widget',
+          'Trace the full sampling algorithm as pseudocode',
+          'Walk through a concrete numerical example at t=500',
+        ],
+      },
+    },
+    {
+      slug: 'build-a-diffusion-model',
+      title: 'Build a Diffusion Model',
+      description:
+        'Implement the complete DDPM pipeline from scratch\u2014forward process, training loop, and sampling\u2014on real image data. Generate images from pure noise and experience the cost of pixel-space diffusion.',
+      duration: '90 min',
+      category: 'Diffusion',
+      objectives: [
+        'Implement the forward process (noise schedule, alpha-bar, closed-form formula) in PyTorch',
+        'Build a minimal denoising network with skip connections and timestep conditioning',
+        'Write the full DDPM training loop and train on MNIST',
+        'Implement the sampling algorithm and generate images from pure noise',
+        'Experience the computational cost of 1,000-step pixel-space sampling firsthand',
+      ],
+      skills: [
+        'forward-process-implementation',
+        'simple-unet-architecture',
+        'ddpm-training-implementation',
+        'ddpm-sampling-implementation',
+        'pixel-space-diffusion-limitations',
+      ],
+      prerequisites: ['sampling-and-generation'],
+      exercise: {
+        constraints: [
+          'Minimal architecture only\u2014no attention, group norm, or sinusoidal embeddings',
+          'MNIST (28\u00d728) only\u2014no high-resolution images',
+          'No conditional generation or classifier-free guidance',
+          'No DDIM or accelerated samplers',
+          'No new theoretical concepts\u2014pure implementation of existing knowledge',
+        ],
+        steps: [
+          'Implement the noise schedule and compute alpha-bar',
+          'Implement the forward process as a q_sample() function',
+          'Read and understand the minimal U-Net architecture',
+          'Fill in the DDPM training loop with diffusion-specific steps',
+          'Train on MNIST and observe the loss curve',
+          'Implement the sampling loop with the reverse step formula',
+          'Generate a grid of images and measure the sampling time',
+          'Compare VAE vs diffusion generation quality and speed',
+        ],
+      },
+    },
+  ],
+}
+
+/**
+ * Architecture & Conditioning
+ *
+ * Module 6.3: Architecture & Conditioning
+ * 1. U-Net Architecture
+ * (more lessons to follow: Timestep Conditioning, Self-Attention, Cross-Attention, Classifier-Free Guidance)
+ */
+const architectureAndConditioning: CurriculumNode = {
+  slug: 'architecture-and-conditioning',
+  title: 'Architecture & Conditioning',
+  children: [
+    {
+      slug: 'unet-architecture',
+      title: 'The U-Net Architecture',
+      description:
+        'Why the denoising network is shaped like an hourglass with side doors\u2014and why every piece of that shape is essential for multi-scale denoising.',
+      duration: '25 min',
+      category: 'Architecture & Conditioning',
+      objectives: [
+        'Explain why a stack of same-resolution conv layers fails at heavy noise (limited receptive field)',
+        'Trace the encoder-decoder architecture with tensor dimensions at each level',
+        'Articulate why skip connections are essential (not optional) for pixel-precise denoising',
+        'Connect the multi-resolution structure to the coarse-to-fine denoising progression',
+        'Distinguish the U-Net from a plain autoencoder and explain why both paths are needed',
+      ],
+      skills: [
+        'unet-encoder-decoder',
+        'unet-skip-connections',
+        'multi-resolution-denoising',
+        'bottleneck-global-context',
+        'residual-blocks-in-unet',
+      ],
+      prerequisites: ['build-a-diffusion-model'],
+      exercise: {
+        constraints: [
+          'Spatial architecture only\u2014no timestep conditioning',
+          'No attention layers (self-attention, cross-attention)\u2014mentioned only',
+          'No text conditioning or guided generation',
+          'No implementation\u2014conceptual/theoretical only',
+          'No group normalization details\u2014mentioned as a component',
+        ],
+        steps: [
+          'See why same-resolution conv stacks fail at heavy noise',
+          'Trace the encoder path as a CNN feature hierarchy with specific dimensions',
+          'Understand the bottleneck as global context (same principle as autoencoders)',
+          'See what happens without skip connections (blurry autoencoder problem)',
+          'Understand skip connections as essential information bypass',
+          'Map multi-resolution processing to coarse-to-fine denoising',
+          'Read pseudocode for the U-Net forward pass',
+          'Predict the effect of removing skip connections at different noise levels',
+        ],
+      },
+    },
   ],
 }
 
@@ -318,5 +457,5 @@ export const stableDiffusion: CurriculumNode = {
   icon: 'Image',
   description:
     'Generative foundations, diffusion models, and Stable Diffusion\u2014from autoencoders to text-to-image generation',
-  children: [generativeFoundations, diffusion],
+  children: [generativeFoundations, diffusion, architectureAndConditioning],
 }

@@ -15,6 +15,7 @@ import {
   NextStepBlock,
   GradientCard,
   ComparisonRow,
+  ReferencesBlock,
 } from '@/components/lessons'
 import { VaeLatentSpaceWidget } from '@/components/widgets/VaeLatentSpaceWidget'
 import { ExercisePanel } from '@/components/widgets/ExercisePanel'
@@ -92,7 +93,7 @@ export function VariationalAutoencodersLesson() {
           <ConstraintBlock
             title="Scope for This Lesson"
             items={[
-              'Why the autoencoder\u2019s latent space has gaps (the problem)',
+              `Why the autoencoder’s latent space has gaps (the problem)`,
               'Encoding to a distribution (mean + variance) instead of a point (the fix, part 1)',
               'KL divergence as a regularizer that keeps the latent space organized (the fix, part 2)',
               'The reparameterization trick at intuition level only',
@@ -101,7 +102,7 @@ export function VariationalAutoencodersLesson() {
               'NOT: full ELBO derivation or variational inference theory',
               'NOT: conditional VAEs, beta-VAE theory, or disentangled representations',
               'NOT: comparing VAEs to GANs or other generative architectures',
-              'NOT: latent space interpolation, arithmetic, or generation experiments\u2014that is the next lesson',
+              'NOT: latent space interpolation, arithmetic, or generation experiments—that is the next lesson',
             ]}
           />
         </Row.Content>
@@ -146,7 +147,7 @@ export function VariationalAutoencodersLesson() {
         <Row.Content>
           <SectionHeader
             title="Same Decoder, Different Result"
-            subtitle="The autoencoder\u2019s failure, fixed"
+            subtitle="The autoencoder’s failure, fixed"
           />
           <ComparisonRow
             left={{
@@ -428,7 +429,7 @@ export function VariationalAutoencodersLesson() {
               does:
             </p>
             <div className="grid gap-4 md:grid-cols-2 mt-2">
-              <GradientCard title="Don\u2019t hide in a corner" color="violet">
+              <GradientCard title="Don’t hide in a corner" color="violet">
                 <p className="text-sm">
                   KL penalizes means far from zero. If the encoder pushes all
                   T-shirts to <InlineMath math="\mu = [50, 80]" />, far from
@@ -437,7 +438,7 @@ export function VariationalAutoencodersLesson() {
                 </p>
               </GradientCard>
               <GradientCard
-                title="Don\u2019t make clouds too small"
+                title="Don’t make clouds too small"
                 color="orange"
               >
                 <p className="text-sm">
@@ -555,7 +556,7 @@ kl_loss = -0.5 * torch.sum(1 + logvar - mu.pow(2) - logvar.exp())`}
           ================================================================ */}
       <Row>
         <Row.Content>
-          <GradientCard title="Misconception Check: \u201cVAE = Autoencoder + Noise\u201d" color="rose">
+          <GradientCard title="Misconception Check: “VAE = Autoencoder + Noise”" color="rose">
             <div className="space-y-3 text-sm">
               <p>
                 It is tempting to think the VAE works because we add noise to
@@ -665,23 +666,23 @@ kl_loss = -0.5 * torch.sum(1 + logvar - mu.pow(2) - logvar.exp())`}
           <TryThisBlock title="Experiments">
             <ul className="space-y-2 text-sm">
               <li>
-                {'\u2022'} In <strong>Autoencoder</strong> mode, click on the
+                {'•'} In <strong>Autoencoder</strong> mode, click on the
                 gaps between clusters. See the garbage output.
               </li>
               <li>
-                {'\u2022'} Switch to <strong>VAE</strong> mode. Click the same
+                {'•'} Switch to <strong>VAE</strong> mode. Click the same
                 regions. What changed?
               </li>
               <li>
-                {'\u2022'} Set <strong>&beta; to 0</strong>. Does VAE mode still
+                {'•'} Set <strong>&beta; to 0</strong>. Does VAE mode still
                 look different from Autoencoder mode?
               </li>
               <li>
-                {'\u2022'} Set <strong>&beta; to 5.0</strong>. What happens to
+                {'•'} Set <strong>&beta; to 5.0</strong>. What happens to
                 the decoded images? Are they sharper or blurrier?
               </li>
               <li>
-                {'\u2022'} Find the <strong>sweet spot</strong> for &beta;
+                {'•'} Find the <strong>sweet spot</strong> for &beta;
                 &mdash;smooth enough to generate, sharp enough to recognize.
               </li>
             </ul>
@@ -1013,9 +1014,9 @@ for epoch in range(num_epochs):
             items={[
               {
                 headline:
-                  'The autoencoder\u2019s latent space has gaps because each image maps to one point.',
+                  `The autoencoder’s latent space has gaps because each image maps to one point.`,
                 description:
-                  'Random points in the gaps produce garbage\u2014the decoder has no training signal for those regions. Generation requires the entire space to be meaningful.',
+                  'Random points in the gaps produce garbage—the decoder has no training signal for those regions. Generation requires the entire space to be meaningful.',
               },
               {
                 headline:
@@ -1025,19 +1026,19 @@ for epoch in range(num_epochs):
               },
               {
                 headline:
-                  'KL divergence is a regularizer that keeps the distributions organized\u2014near the center, not collapsed.',
+                  'KL divergence is a regularizer that keeps the distributions organized—near the center, not collapsed.',
                 description:
-                  'Two intuitions: don\u2019t hide your codes in a corner (penalizes large means), and don\u2019t make your clouds so tiny they\u2019re basically points (penalizes small variance).',
+                  `Two intuitions: don’t hide your codes in a corner (penalizes large means), and don’t make your clouds so tiny they’re basically points (penalizes small variance).`,
               },
               {
                 headline:
                   'The VAE loss = reconstruction + KL, and the two terms compete.',
                 description:
-                  'Reconstruction wants sharp, specialized codes. KL wants organized, overlapping distributions. The balance is a tradeoff\u2014VAE reconstructions are blurrier than autoencoder reconstructions, but the latent space is smooth and sampleable.',
+                  'Reconstruction wants sharp, specialized codes. KL wants organized, overlapping distributions. The balance is a tradeoff—VAE reconstructions are blurrier than autoencoder reconstructions, but the latent space is smooth and sampleable.',
               },
               {
                 headline:
-                  'The result: a smooth latent space you can sample from. The autoencoder\u2019s failure is fixed.',
+                  `The result: a smooth latent space you can sample from. The autoencoder’s failure is fixed.`,
                 description:
                   'Sample any point from N(0,1), decode it, and you get a plausible image. You have built your first true generative model.',
               },
@@ -1067,6 +1068,21 @@ for epoch in range(num_epochs):
         </Row.Content>
       </Row>
 
+      <Row>
+        <Row.Content>
+          <ReferencesBlock
+            references={[
+              {
+                title: 'Auto-Encoding Variational Bayes',
+                authors: 'Kingma & Welling, 2013',
+                url: 'https://arxiv.org/abs/1312.6114',
+                note: 'The original VAE paper introducing the reparameterization trick, KL divergence regularization, and ELBO objective.',
+              },
+            ]}
+          />
+        </Row.Content>
+      </Row>
+
       {/* ================================================================
           Section 15: Next Step
           ================================================================ */}
@@ -1075,7 +1091,7 @@ for epoch in range(num_epochs):
           <NextStepBlock
             href="/app/lesson/exploring-latent-spaces"
             title="Exploring Latent Spaces"
-            description="You have a smooth latent space and you can generate images by sampling from it. But you have only sampled randomly. In the next lesson, you will explore what this space actually looks like\u2014interpolate between two images, discover that similar items cluster together, and do latent space arithmetic. The real fun starts now."
+            description="You have a smooth latent space and you can generate images by sampling from it. But you have only sampled randomly. In the next lesson, you will explore what this space actually looks like—interpolate between two images, discover that similar items cluster together, and do latent space arithmetic. The real fun starts now."
             buttonText="Continue to Exploring Latent Spaces"
           />
         </Row.Content>

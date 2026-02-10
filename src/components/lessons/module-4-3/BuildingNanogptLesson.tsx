@@ -13,6 +13,7 @@ import {
   SummaryBlock,
   GradientCard,
   NextStepBlock,
+  ReferencesBlock,
 } from '@/components/lessons'
 import { CodeBlock } from '@/components/common/CodeBlock'
 import { ExternalLink } from 'lucide-react'
@@ -99,11 +100,11 @@ export function BuildingNanogptLesson() {
               'Weight initialization for transformers (brief, practical)',
               'Generate text from the assembled (untrained) model',
               'GPT-2 small configuration (124M parameters)',
-              'NOT: training the model\u2014that\u2019s the next lesson',
-              'NOT: dataset preparation or data loading\u2014next lesson',
-              'NOT: optimization, learning rate scheduling\u2014next lesson',
-              'NOT: GPU utilization, mixed precision, flash attention\u2014Lesson 3',
-              'NOT: loading pretrained weights\u2014Lesson 4',
+              'NOT: training the model—that\u2019s the next lesson',
+              'NOT: dataset preparation or data loading—next lesson',
+              'NOT: optimization, learning rate scheduling—next lesson',
+              'NOT: GPU utilization, mixed precision, flash attention—Lesson 3',
+              'NOT: loading pretrained weights—Lesson 4',
             ]}
           />
         </Row.Content>
@@ -233,7 +234,7 @@ export function BuildingNanogptLesson() {
                 {/* ==== Block class boundary ==== */}
                 <rect x="75" y="220" width="250" height="270" rx="8" fill="none" stroke="#fb923c" strokeWidth={1.5} strokeDasharray="6,3" opacity={0.6} />
                 <text x="90" y="240" fill="#fb923c" fontSize="10" fontWeight="600" fontFamily="monospace">Block</text>
-                <text x="310" y="240" fill="#6b7280" fontSize="8" fontFamily="monospace">{'\u00d7'}12</text>
+                <text x="310" y="240" fill="#6b7280" fontSize="8" fontFamily="monospace">{'×'}12</text>
 
                 {/* ---- Pre-LN 1 ---- */}
                 <rect x="145" y="458" width="110" height="22" rx="4" fill="#34d399" opacity={0.1} stroke="#34d399" strokeWidth={0.8} />
@@ -303,7 +304,7 @@ export function BuildingNanogptLesson() {
                 <polygon points="196,227 200,220 204,227" fill="#a78bfa" />
 
                 {/* ---- Dots (repeated blocks) ---- */}
-                <text x="200" y="218" textAnchor="middle" fill="#6b7280" fontSize="14" fontWeight="bold">{'\u22ee'}</text>
+                <text x="200" y="218" textAnchor="middle" fill="#6b7280" fontSize="14" fontWeight="bold">{'⋮'}</text>
 
                 {/* Arrow up */}
                 <line x1="200" y1="202" x2="200" y2="186" stroke="#a78bfa" strokeWidth={1.5} />
@@ -338,7 +339,7 @@ export function BuildingNanogptLesson() {
           </div>
         </Row.Content>
         <Row.Aside>
-          <InsightBlock title="Diagram {'\u2192'} Code">
+          <InsightBlock title="Diagram {'→'} Code">
             Every colored region becomes a Python class. The build order
             goes bottom-up: start with the smallest piece (Head), compose
             into larger pieces (CausalSelfAttention, FeedForward, Block),
@@ -930,8 +931,8 @@ assert block(x).shape == x.shape, "Block must preserve shape!"
           <InsightBlock title="Weight Tying">
             <code className="text-xs">self.transformer.wte.weight = self.lm_head.weight</code>{' '}
             makes the embedding and output projection share the same matrix.
-            Embedding maps token ID {'\u2192'} vector. Output projection maps
-            vector {'\u2192'} token scores. Same mapping, opposite direction.
+            Embedding maps token ID {'→'} vector. Output projection maps
+            vector {'→'} token scores. Same mapping, opposite direction.
             This saves ~38M parameters.
           </InsightBlock>
         </Row.Aside>
@@ -1213,9 +1214,9 @@ def generate(self, idx, max_new_tokens, temperature=1.0):
               The <code className="text-xs">temperature</code> parameter is
               the same concept from the TemperatureExplorer in
               What is a Language Model?&mdash;now it is a single line of code.
-              Higher temperature {'\u2192'} flatter distribution {'\u2192'}{' '}
-              more random text. Lower temperature {'\u2192'} sharper
-              distribution {'\u2192'} more predictable.
+              Higher temperature {'→'} flatter distribution {'→'}{' '}
+              more random text. Lower temperature {'→'} sharper
+              distribution {'→'} more predictable.
             </p>
           </div>
         </Row.Content>
@@ -1353,9 +1354,9 @@ print(enc.decode(output[0].tolist()))
               },
               {
                 headline:
-                  'Bottom-up assembly: Head \u2192 MHA \u2192 FFN \u2192 Block \u2192 GPT.',
+                  'Bottom-up assembly: Head → MHA → FFN → Block → GPT.',
                 description:
-                  'Each class is small (5\u201315 lines), testable independently, and maps 1:1 to a concept from Module 4.2. The build order mirrors the learning order.',
+                  'Each class is small (5–15 lines), testable independently, and maps 1:1 to a concept from Module 4.2. The build order mirrors the learning order.',
               },
               {
                 headline:
@@ -1367,7 +1368,7 @@ print(enc.decode(output[0].tolist()))
                 headline:
                   'An untrained model generating gibberish is a success.',
                 description:
-                  'It means the architecture, shapes, masking, and generation loop all work. The model is correct\u2014it just needs to learn from data.',
+                  'It means the architecture, shapes, masking, and generation loop all work. The model is correct—it just needs to learn from data.',
               },
             ]}
           />
@@ -1400,6 +1401,20 @@ print(enc.decode(output[0].tolist()))
             href="/app"
             title="When you're done"
             description="Complete the notebook, verify your parameter count matches ~124M, and generate some gibberish. Then review your session."
+          />
+        </Row.Content>
+      </Row>
+      <Row>
+        <Row.Content>
+          <ReferencesBlock
+            references={[
+              {
+                title: 'Language Models are Unsupervised Multitask Learners',
+                authors: 'Radford et al., 2019',
+                url: 'https://cdn.openai.com/better-language-models/language_models_are_unsupervised_multitask_learners.pdf',
+                note: 'The GPT-2 paper — the architecture this lesson implements from scratch.',
+              },
+            ]}
           />
         </Row.Content>
       </Row>

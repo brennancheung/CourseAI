@@ -14,6 +14,7 @@ import {
   GradientCard,
   ComparisonRow,
   ModuleCompleteBlock,
+  ReferencesBlock,
 } from '@/components/lessons'
 import 'katex/dist/katex.min.css'
 import { InlineMath, BlockMath } from 'react-katex'
@@ -152,7 +153,7 @@ function CausalMaskDiagram() {
               fontSize="12"
               opacity={0.5}
             >
-              {'\u00d7'}
+              {'×'}
             </text>,
           )
         }
@@ -385,7 +386,7 @@ function GptArchitectureDiagram() {
         <rect x="110" y="508" width="70" height="16" rx="3" fill="#38bdf8" opacity={0.15} stroke="#38bdf8" strokeWidth={0.8} />
         <text x="145" y="520" textAnchor="middle" fill="#38bdf8" fontSize="8">MHA + mask</text>
         <rect x="190" y="508" width="100" height="16" rx="3" fill="#f59e0b" opacity={0.15} stroke="#f59e0b" strokeWidth={0.8} />
-        <text x="240" y="520" textAnchor="middle" fill="#f59e0b" fontSize="8">FFN (768{'\u2192'}3072{'\u2192'}768)</text>
+        <text x="240" y="520" textAnchor="middle" fill="#f59e0b" fontSize="8">FFN (768{'→'}3072{'→'}768)</text>
         <rect x="110" y="530" width="70" height="12" rx="2" fill="#34d399" opacity={0.1} stroke="#34d399" strokeWidth={0.5} />
         <text x="145" y="539" textAnchor="middle" fill="#34d399" fontSize="7">LN</text>
         <rect x="190" y="530" width="100" height="12" rx="2" fill="#34d399" opacity={0.1} stroke="#34d399" strokeWidth={0.5} />
@@ -645,8 +646,8 @@ export function DecoderOnlyTransformersLesson() {
             Understand how <strong>causal masking</strong> prevents tokens from
             attending to future positions, then assemble the complete GPT
             architecture end-to-end: token embedding + positional encoding{' '}
-            {'\u2192'} N transformer blocks with causal masking {'\u2192'}{' '}
-            output projection {'\u2192'} next-token probabilities.
+            {'→'} N transformer blocks with causal masking {'→'}{' '}
+            output projection {'→'} next-token probabilities.
           </ObjectiveBlock>
         </Row.Content>
         <Row.Aside>
@@ -669,10 +670,10 @@ export function DecoderOnlyTransformersLesson() {
               'Total parameter counting for GPT-2 (~124M verified)',
               'Why decoder-only won for LLMs (brief)',
               'Encoder-decoder contrast for naming context',
-              'NOT: implementing in PyTorch\u2014that\u2019s Module 4.3',
-              'NOT: training, loss curves, or learning rate scheduling\u2014Module 4.3',
-              'NOT: KV caching, flash attention, or efficient inference\u2014Module 4.3',
-              'NOT: finetuning, instruction tuning, or RLHF\u2014Module 4.4',
+              'NOT: implementing in PyTorch—that&apos;s Module 4.3',
+              'NOT: training, loss curves, or learning rate scheduling—Module 4.3',
+              'NOT: KV caching, flash attention, or efficient inference—Module 4.3',
+              'NOT: finetuning, instruction tuning, or RLHF—Module 4.4',
             ]}
           />
         </Row.Content>
@@ -959,7 +960,7 @@ export function DecoderOnlyTransformersLesson() {
                 items: [
                   'Tokens generated one at a time',
                   'Each new token appended to context',
-                  'No mask needed\u2014future tokens don\u2019t exist',
+                  'No mask needed—future tokens don’t exist',
                   'Autoregressive loop from Module 4.1',
                 ],
               }}
@@ -1005,7 +1006,7 @@ export function DecoderOnlyTransformersLesson() {
                 </summary>
                 <div className="mt-2 space-y-2">
                   <p>
-                    <strong>1.</strong> 4{'\u00d7'}4 lower-triangular matrix.
+                    <strong>1.</strong> 4{'×'}4 lower-triangular matrix.
                     The 6 entries above the diagonal are{' '}
                     <InlineMath math="-\infty" />. Row 1 has one entry (which
                     must be 1.0 after softmax). Row 4 has four entries (which
@@ -1038,9 +1039,9 @@ export function DecoderOnlyTransformersLesson() {
           <div className="space-y-4">
             <p className="text-muted-foreground">
               In Embeddings &amp; Positional Encoding, you saw a brief aside:
-              embedding maps vocabulary {'\u2192'}{' '}
+              embedding maps vocabulary {'→'}{' '}
               <InlineMath math="d_{\text{model}}" />, and the output layer maps{' '}
-              <InlineMath math="d_{\text{model}}" /> {'\u2192'} vocabulary. Now
+              <InlineMath math="d_{\text{model}}" /> {'→'} vocabulary. Now
               we make that concrete.
             </p>
 
@@ -1143,7 +1144,7 @@ export function DecoderOnlyTransformersLesson() {
                 <InlineMath math="\text{nn.Linear}(768, 50257)" />
               </div>
               <div className="px-4 py-2 bg-muted/30 rounded-lg text-sm text-muted-foreground">
-                <strong>7.</strong> Softmax {'\u2192'} probability distribution
+                <strong>7.</strong> Softmax {'→'} probability distribution
                 over next token
               </div>
             </div>
@@ -1575,7 +1576,7 @@ export function DecoderOnlyTransformersLesson() {
             items={[
               {
                 headline:
-                  'Causal masking: set future positions to -\u221e before softmax.',
+                  'Causal masking: set future positions to -∞ before softmax.',
                 description:
                   'Each position can only attend to past and present. This prevents data leakage during parallel training and mirrors the inference reality where future tokens do not exist.',
               },
@@ -1583,13 +1584,13 @@ export function DecoderOnlyTransformersLesson() {
                 headline:
                   'The full GPT architecture is assembly, not invention.',
                 description:
-                  'Token embedding + positional encoding \u2192 N transformer blocks (with causal masking) \u2192 final layer norm \u2192 output projection \u2192 softmax. Every piece is something you already know.',
+                  'Token embedding + positional encoding → N transformer blocks (with causal masking) → final layer norm → output projection → softmax. Every piece is something you already know.',
               },
               {
                 headline:
                   'GPT-2: ~124M parameters. GPT-3: ~175B. Same architecture.',
                 description:
-                  'The decoder-only transformer you just learned IS the architecture behind modern LLMs. What changes between versions is the scale\u2014layers, d_model, heads\u2014not the blueprint.',
+                  'The decoder-only transformer you just learned IS the architecture behind modern LLMs. What changes between versions is the scale—layers, d_model, heads—not the blueprint.',
               },
               {
                 headline:
@@ -1664,6 +1665,20 @@ export function DecoderOnlyTransformersLesson() {
               is the blueprint. Next, you build the house.
             </p>
           </div>
+        </Row.Content>
+      </Row>
+      <Row>
+        <Row.Content>
+          <ReferencesBlock
+            references={[
+              {
+                title: 'Language Models are Unsupervised Multitask Learners',
+                authors: 'Radford et al., 2019',
+                url: 'https://cdn.openai.com/better-language-models/language_models_are_unsupervised_multitask_learners.pdf',
+                note: 'The GPT-2 paper describing the decoder-only transformer architecture with the exact configuration analyzed in this lesson.',
+              },
+            ]}
+          />
         </Row.Content>
       </Row>
     </LessonLayout>

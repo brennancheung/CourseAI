@@ -102,10 +102,10 @@ export function PretrainingLesson() {
               'Build the complete training loop with LR scheduling and gradient clipping',
               'Cross-entropy loss for next-token prediction across all positions',
               'Interpret loss curves and generated text quality',
-              'NOT: GPU optimization, mixed precision, flash attention\u2014that\u2019s Lesson 3',
-              'NOT: hyperparameter search\u2014use known-good values from nanoGPT',
+              'NOT: GPU optimization, mixed precision, flash attention—that\u2019s Lesson 3',
+              'NOT: hyperparameter search—use known-good values from nanoGPT',
               'NOT: evaluation beyond loss and qualitative text inspection',
-              'NOT: fine-tuning or transfer learning\u2014Module 4.4',
+              'NOT: fine-tuning or transfer learning—Module 4.4',
             ]}
           />
         </Row.Content>
@@ -249,11 +249,11 @@ data = torch.tensor(tokens, dtype=torch.long)`}
               <div className="text-sm text-muted-foreground font-mono space-y-1">
                 <p>Tokens: [&ldquo;The&rdquo;, &ldquo;cat&rdquo;, &ldquo;sat&rdquo;, &ldquo;on&rdquo;, &ldquo;the&rdquo;, &ldquo;mat&rdquo;]</p>
                 <p className="mt-2 font-sans font-medium text-foreground">Training examples from ONE sequence:</p>
-                <p>Position 0: input &ldquo;The&rdquo; {'\u2192'} predict &ldquo;cat&rdquo;</p>
-                <p>Position 1: input &ldquo;The cat&rdquo; {'\u2192'} predict &ldquo;sat&rdquo;</p>
-                <p>Position 2: input &ldquo;The cat sat&rdquo; {'\u2192'} predict &ldquo;on&rdquo;</p>
-                <p>Position 3: input &ldquo;The cat sat on&rdquo; {'\u2192'} predict &ldquo;the&rdquo;</p>
-                <p>Position 4: input &ldquo;The cat sat on the&rdquo; {'\u2192'} predict &ldquo;mat&rdquo;</p>
+                <p>Position 0: input &ldquo;The&rdquo; {'→'} predict &ldquo;cat&rdquo;</p>
+                <p>Position 1: input &ldquo;The cat&rdquo; {'→'} predict &ldquo;sat&rdquo;</p>
+                <p>Position 2: input &ldquo;The cat sat&rdquo; {'→'} predict &ldquo;on&rdquo;</p>
+                <p>Position 3: input &ldquo;The cat sat on&rdquo; {'→'} predict &ldquo;the&rdquo;</p>
+                <p>Position 4: input &ldquo;The cat sat on the&rdquo; {'→'} predict &ldquo;mat&rdquo;</p>
               </div>
               <p className="text-xs text-muted-foreground/80 font-sans">
                 One sequence of length 6 produces 5 training examples.
@@ -393,7 +393,7 @@ loss = F.cross_entropy(
                 tokens, what should the cross-entropy loss be?
               </p>
               <div className="py-2 px-4 bg-black/20 rounded font-mono text-xs">
-                -ln(1/50257) = ln(50257) {'\u2248'} 10.82
+                -ln(1/50257) = ln(50257) {'≈'} 10.82
               </div>
               <p>
                 Run it and check. If the initial loss is close to 10.82, the
@@ -527,7 +527,7 @@ optimizer = torch.optim.AdamW(
                 <div className="space-y-1">
                   <p className="font-sans font-medium text-rose-400 text-sm">Constant LR = 6e-4</p>
                   <p>Step 100: loss 8.2</p>
-                  <p>Step 300: loss NaN {'\u2620\uFE0F'}</p>
+                  <p>Step 300: loss NaN {'☠️'}</p>
                   <p className="text-muted-foreground/60 font-sans">Exploded. Training over.</p>
                 </div>
                 <div className="space-y-1">
@@ -733,11 +733,11 @@ torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=1.0)`}
             <div className="px-4 py-3 bg-muted/50 rounded-lg space-y-2">
               <p className="text-sm font-medium">What this looks like in practice:</p>
               <div className="text-sm text-muted-foreground font-mono space-y-1">
-                <p>Step 1200: grad_norm = 0.83 {'\u2192'} no clip</p>
-                <p>Step 1201: grad_norm = 0.61 {'\u2192'} no clip</p>
-                <p>Step 1202: grad_norm = 0.92 {'\u2192'} no clip</p>
-                <p className="text-rose-400 font-semibold">Step 1203: grad_norm = 12.3 {'\u2192'} clipped to 1.0</p>
-                <p>Step 1204: grad_norm = 0.74 {'\u2192'} no clip</p>
+                <p>Step 1200: grad_norm = 0.83 {'→'} no clip</p>
+                <p>Step 1201: grad_norm = 0.61 {'→'} no clip</p>
+                <p>Step 1202: grad_norm = 0.92 {'→'} no clip</p>
+                <p className="text-rose-400 font-semibold">Step 1203: grad_norm = 12.3 {'→'} clipped to 1.0</p>
+                <p>Step 1204: grad_norm = 0.74 {'→'} no clip</p>
               </div>
               <p className="text-xs text-muted-foreground/80">
                 That 12.3 is a batch with an unusual sequence that produces

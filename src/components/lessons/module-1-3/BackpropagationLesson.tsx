@@ -14,6 +14,7 @@ import {
   SummaryBlock,
   NextStepBlock,
   PhaseCard,
+  ReferencesBlock,
 } from '@/components/lessons'
 import { ExercisePanel } from '@/components/widgets/ExercisePanel'
 import { BackpropFlowExplorer } from '@/components/widgets/BackpropFlowExplorer'
@@ -402,6 +403,22 @@ export function BackpropagationLesson() {
                 headline: 'This enables deep learning.',
                 description:
                   'Without backprop, training networks with millions of parameters would be impractical.',
+              },
+            ]}
+          />
+        </Row.Content>
+      </Row>
+
+      {/* References */}
+      <Row>
+        <Row.Content>
+          <ReferencesBlock
+            references={[
+              {
+                title: 'Learning representations by back-propagating errors',
+                authors: 'Rumelhart, Hinton & Williams, 1986',
+                url: 'https://www.nature.com/articles/323533a0',
+                note: 'The 1986 Nature paper that formalized backpropagation for training multi-layer neural networks.',
               },
             ]}
           />

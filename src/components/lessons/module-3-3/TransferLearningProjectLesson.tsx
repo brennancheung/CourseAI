@@ -88,7 +88,7 @@ export function TransferLearningProjectLesson() {
               'NOT: hyperparameter tuning, architecture search, or advanced augmentation',
               'NOT: deployment, multi-GPU training, or production optimization',
               'NOT: fixing or iterating on a broken model (diagnose, not debug)',
-              'Estimated time: 30\u201345 minutes on a Colab GPU',
+              'Estimated time: 30–45 minutes on a Colab GPU',
             ]}
           />
         </Row.Content>
@@ -576,7 +576,7 @@ export function TransferLearningProjectLesson() {
               {
                 headline: 'Train with the simplest strategy first',
                 description:
-                  'Feature extraction\u2014freeze the backbone, train the head. Start simple and measure before adding complexity.',
+                  'Feature extraction—freeze the backbone, train the head. Start simple and measure before adding complexity.',
               },
               {
                 headline:
@@ -587,7 +587,7 @@ export function TransferLearningProjectLesson() {
               {
                 headline: 'Fine-tune only when the data justifies it',
                 description:
-                  'On small datasets, feature extraction may match or beat fine-tuning. The comparison is not about which is "better"\u2014it is about which is appropriate for your data.',
+                  'On small datasets, feature extraction may match or beat fine-tuning. The comparison is not about which is "better"—it is about which is appropriate for your data.',
               },
               {
                 headline:

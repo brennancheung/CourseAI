@@ -14,6 +14,7 @@ import {
   ConstraintBlock,
   GradientCard,
   ComparisonRow,
+  ReferencesBlock,
 } from '@/components/lessons'
 import { CodeBlock } from '@/components/common/CodeBlock'
 import { ExternalLink } from 'lucide-react'
@@ -1245,6 +1246,22 @@ plt.show()`}
               goes sideways.
             </p>
           </div>
+        </Row.Content>
+      </Row>
+
+      {/* References */}
+      <Row>
+        <Row.Content>
+          <ReferencesBlock
+            references={[
+              {
+                title: 'The MNIST Database of Handwritten Digits',
+                authors: 'LeCun, Cortes & Burges',
+                url: 'http://yann.lecun.com/exdb/mnist/',
+                note: 'The original MNIST dataset — the benchmark that this project uses.',
+              },
+            ]}
+          />
         </Row.Content>
       </Row>
     </LessonLayout>

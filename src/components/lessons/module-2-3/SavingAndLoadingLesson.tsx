@@ -163,7 +163,7 @@ export function SavingAndLoadingLesson() {
         <Row.Content>
           <LessonHeader
             title="Saving, Loading, and Checkpoints"
-            description="Make your trained models durable\u2014save state, resume interrupted training, and never lose progress."
+            description="Make your trained models durable—save state, resume interrupted training, and never lose progress."
             category="Practical Patterns"
           />
         </Row.Content>
@@ -199,7 +199,7 @@ export function SavingAndLoadingLesson() {
               'No distributed checkpointing or multi-GPU saving',
               'No experiment management tools (MLflow, Weights & Biases)',
               'No model versioning or production deployment',
-              'GPU-specific loading covered briefly (map_location)\u2014full GPU training is next lesson',
+              'GPU-specific loading covered briefly (map_location)—full GPU training is next lesson',
             ]}
           />
         </Row.Content>
@@ -256,7 +256,7 @@ export function SavingAndLoadingLesson() {
         <Row.Content>
           <SectionHeader
             title="What Is a state_dict?"
-            subtitle="Just a dictionary of tensors\u2014nothing hidden"
+            subtitle="Just a dictionary of tensors—nothing hidden"
           />
           <div className="space-y-4">
             <p className="text-muted-foreground">
@@ -929,7 +929,7 @@ model.to(device)`}
                 headline:
                   'state_dict = a snapshot of all the knobs',
                 description:
-                  'model.state_dict() returns a dictionary mapping layer names to tensors. Nothing opaque, nothing hidden\u2014just the learned parameter values.',
+                  'model.state_dict() returns a dictionary mapping layer names to tensors. Nothing opaque, nothing hidden—just the learned parameter values.',
               },
               {
                 headline: 'Always save state_dict, not the model object',
@@ -944,7 +944,7 @@ model.to(device)`}
               },
               {
                 headline:
-                  'Optimizer state matters\u2014without it, Adam forgets',
+                  'Optimizer state matters—without it, Adam forgets',
                 description:
                   "Restoring model weights alone causes a loss spike on resume. Adam's momentum buffers and adaptive rates need saving too.",
               },

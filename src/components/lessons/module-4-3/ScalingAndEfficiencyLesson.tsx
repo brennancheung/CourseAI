@@ -14,6 +14,7 @@ import {
   GradientCard,
   ComparisonRow,
   NextStepBlock,
+  ReferencesBlock,
 } from '@/components/lessons'
 import 'katex/dist/katex.min.css'
 import { InlineMath, BlockMath } from 'react-katex'
@@ -221,7 +222,7 @@ function KvCacheDiagram() {
               fill="#34d399"
               fontSize="9"
             >
-              {'\u2190'} compute only this
+              {'←'} compute only this
             </text>,
           )
 
@@ -279,7 +280,7 @@ function FlashAttentionDiagram() {
           fill="#ef4444"
           fontSize="9"
         >
-          Full n{'\u00d7'}n matrix in GPU memory
+          Full n{'×'}n matrix in GPU memory
         </text>
 
         {/* Full matrix (all cells filled = red/hot) */}
@@ -306,7 +307,7 @@ function FlashAttentionDiagram() {
           fill="#ef4444"
           fontSize="9"
         >
-          O(n{'\u00b2'}) memory
+          O(n{'²'}) memory
         </text>
 
         {/* Arrow between */}
@@ -317,7 +318,7 @@ function FlashAttentionDiagram() {
           fill="#9ca3af"
           fontSize="16"
         >
-          {'\u2192'}
+          {'→'}
         </text>
 
         {/* Flash Attention */}
@@ -369,7 +370,7 @@ function FlashAttentionDiagram() {
           fill="#34d399"
           fontSize="8"
         >
-          {'\u2190'} current tile
+          {'←'} current tile
         </text>
 
         <text
@@ -454,7 +455,7 @@ function ScalingLawsDiagram() {
           fill="#9ca3af"
           fontSize="10"
         >
-          Compute (FLOPs) {'\u2192'}
+          Compute (FLOPs) {'→'}
         </text>
         <text
           x={15}
@@ -464,7 +465,7 @@ function ScalingLawsDiagram() {
           fontSize="10"
           transform={`rotate(-90, 15, ${plotY + plotH / 2})`}
         >
-          {'\u2190'} Loss
+          {'←'} Loss
         </text>
 
         {/* Y-axis tick labels for orientation */}
@@ -624,11 +625,11 @@ export function ScalingAndEfficiencyLesson() {
               'Compute-bound vs memory-bound operations (the fundamental framework)',
               'Mixed precision with bfloat16 (extending float16/GradScaler from Series 2)',
               'KV caching for autoregressive inference (mechanism and why it\u2019s essential)',
-              'Flash attention (the insight\u2014tiled computation\u2014not the implementation)',
+              'Flash attention (the insight—tiled computation—not the implementation)',
               'Scaling laws (Chinchilla: how to allocate compute between model size and data)',
               'NOT: implementing any of these optimizations (no notebook)',
               'NOT: multi-GPU or distributed training',
-              'NOT: quantization\u2014deferred to Module 4.4',
+              'NOT: quantization—deferred to Module 4.4',
               'NOT: specific GPU hardware details beyond the basic insight',
             ]}
           />
@@ -768,7 +769,7 @@ export function ScalingAndEfficiencyLesson() {
                   </p>
                   <p>
                     Compute:{' '}
-                    <InlineMath math="O(n^3)" /> FLOPs for n{'\u00d7'}n
+                    <InlineMath math="O(n^3)" /> FLOPs for n{'×'}n
                     matrices
                   </p>
                   <p>
@@ -867,21 +868,21 @@ export function ScalingAndEfficiencyLesson() {
                       <td className="text-right py-1.5 px-3 font-mono text-xs">32</td>
                       <td className="text-right py-1.5 px-3 font-mono text-xs">8</td>
                       <td className="text-right py-1.5 px-3 font-mono text-xs">23</td>
-                      <td className="text-right py-1.5 px-3 font-mono text-xs">{'\u00b1'}3.4e38</td>
+                      <td className="text-right py-1.5 px-3 font-mono text-xs">{'±'}3.4e38</td>
                     </tr>
                     <tr className="border-b border-border/30">
                       <td className="py-1.5 pr-4 text-amber-400">float16</td>
                       <td className="text-right py-1.5 px-3 font-mono text-xs">16</td>
                       <td className="text-right py-1.5 px-3 font-mono text-xs">5</td>
                       <td className="text-right py-1.5 px-3 font-mono text-xs">10</td>
-                      <td className="text-right py-1.5 px-3 font-mono text-xs">{'\u00b1'}6.5e4</td>
+                      <td className="text-right py-1.5 px-3 font-mono text-xs">{'±'}6.5e4</td>
                     </tr>
                     <tr>
                       <td className="py-1.5 pr-4 text-emerald-400 font-medium">bfloat16</td>
                       <td className="text-right py-1.5 px-3 font-mono text-xs">16</td>
                       <td className="text-right py-1.5 px-3 font-mono text-xs">8</td>
                       <td className="text-right py-1.5 px-3 font-mono text-xs">7</td>
-                      <td className="text-right py-1.5 px-3 font-mono text-xs">{'\u00b1'}3.4e38</td>
+                      <td className="text-right py-1.5 px-3 font-mono text-xs">{'±'}3.4e38</td>
                     </tr>
                   </tbody>
                 </table>
@@ -947,19 +948,19 @@ export function ScalingAndEfficiencyLesson() {
                   <span className="font-mono">
                     1.0000 + 0.0001 = 1.0001
                   </span>{' '}
-                  {'\u2714'} correct
+                  {'✔'} correct
                 </p>
                 <p>
                   <strong className="text-amber-400">float16:</strong>{' '}
                   <span className="font-mono">1.0 + 0.0001 = 1.0</span>{' '}
-                  {'\u2718'} gradient lost
+                  {'✘'} gradient lost
                 </p>
                 <p>
                   <strong className="text-emerald-400">bfloat16:</strong>{' '}
                   <span className="font-mono">
                     1.0 + 0.0001 = 1.0
                   </span>{' '}
-                  {'\u2718'} also lost (same 16-bit storage)
+                  {'✘'} also lost (same 16-bit storage)
                 </p>
               </div>
               <p className="text-xs text-muted-foreground/80">
@@ -1180,9 +1181,9 @@ export function ScalingAndEfficiencyLesson() {
                 </summary>
                 <div className="mt-2 space-y-2">
                   <p>
-                    12 layers {'\u00d7'} 2 tensors (K and V) {'\u00d7'} 12
-                    heads {'\u00d7'} 1024 positions {'\u00d7'} 64{' '}
-                    {'\u00d7'} 2 bytes (float16) ={' '}
+                    12 layers {'×'} 2 tensors (K and V) {'×'} 12
+                    heads {'×'} 1024 positions {'×'} 64{' '}
+                    {'×'} 2 bytes (float16) ={' '}
                     <strong>~37.7 MB per sequence</strong>.
                   </p>
                   <p>
@@ -1267,7 +1268,7 @@ export function ScalingAndEfficiencyLesson() {
                 <div className="space-y-1">
                   <p className="font-medium text-rose-400">Standard attention</p>
                   <p>
-                    12 heads {'\u00d7'} 4096{'\u00b2'} {'\u00d7'} 2 bytes
+                    12 heads {'×'} 4096{'²'} {'×'} 2 bytes
                   </p>
                   <p>
                     = <strong>~384 MB</strong> of attention matrices
@@ -1279,7 +1280,7 @@ export function ScalingAndEfficiencyLesson() {
                 <div className="space-y-1">
                   <p className="font-medium text-emerald-400">Flash attention (tile size 128)</p>
                   <p>
-                    12 heads {'\u00d7'} 128{'\u00b2'} {'\u00d7'} 2 bytes
+                    12 heads {'×'} 128{'²'} {'×'} 2 bytes
                   </p>
                   <p>
                     = <strong>~384 KB</strong> working memory
@@ -1295,22 +1296,22 @@ export function ScalingAndEfficiencyLesson() {
               <p className="text-sm font-medium">Result</p>
               <ul className="text-sm text-muted-foreground space-y-1">
                 <li>
-                  {'\u2022'} 2&ndash;4x faster than standard attention
+                  {'•'} 2&ndash;4x faster than standard attention
                 </li>
                 <li>
-                  {'\u2022'}{' '}
+                  {'•'}{' '}
                   <InlineMath math="O(n)" /> memory instead of{' '}
                   <InlineMath math="O(n^2)" /> for the attention matrix
                 </li>
                 <li>
-                  {'\u2022'} Fuses the causal mask into the tiled
+                  {'•'} Fuses the causal mask into the tiled
                   computation (remember the concern from Decoder-Only
                   Transformers about computing the full{' '}
                   <InlineMath math="QK^T" /> and zeroing the upper triangle?
                   Flash attention skips those tiles entirely)
                 </li>
                 <li>
-                  {'\u2022'} Built into PyTorch:{' '}
+                  {'•'} Built into PyTorch:{' '}
                   <code className="text-xs">
                     torch.nn.functional.scaled_dot_product_attention
                   </code>{' '}
@@ -1445,7 +1446,7 @@ export function ScalingAndEfficiencyLesson() {
             <p className="text-muted-foreground">
               Both model size and data should scale together with the square
               root of compute. Doubling your compute budget? Increase model
-              size by ~{'\u221a'}2 and data by ~{'\u221a'}2.
+              size by ~{'√'}2 and data by ~{'√'}2.
             </p>
 
             <div className="px-4 py-4 bg-muted/50 rounded-lg space-y-3">
@@ -1572,33 +1573,33 @@ export function ScalingAndEfficiencyLesson() {
             items={[
               {
                 headline:
-                  '"The GPU is waiting for data" \u2192 compute-bound vs memory-bound.',
+                  '"The GPU is waiting for data" → compute-bound vs memory-bound.',
                 description:
                   'Not all operations benefit from faster GPUs. Memory-bound operations (layer norm, softmax) are limited by memory bandwidth, not compute. Arithmetic intensity tells you which regime you\u2019re in.',
               },
               {
                 headline:
-                  '"Half the bits, but gradients vanish" \u2192 mixed precision with bfloat16.',
+                  '"Half the bits, but gradients vanish" → mixed precision with bfloat16.',
                 description:
                   'bfloat16 preserves float32\u2019s range while using 16 bits. The master weights pattern: float32 for accumulation, bfloat16 for forward/backward. The "mixed" is the essential part.',
               },
               {
                 headline:
-                  '"Generation recomputes everything" \u2192 KV caching.',
+                  '"Generation recomputes everything" → KV caching.',
                 description:
-                  'Cache K and V from previous generation steps. Only compute Q for the new token. Reduces generation cost from O(n\u00b2) to O(n). Not optional at production scale.',
+                  'Cache K and V from previous generation steps. Only compute Q for the new token. Reduces generation cost from O(n²) to O(n). Not optional at production scale.',
               },
               {
                 headline:
-                  '"The attention matrix doesn\u2019t fit in fast memory" \u2192 flash attention.',
+                  '"The attention matrix doesn\u2019t fit in fast memory" → flash attention.',
                 description:
-                  'Tile the attention computation so the full n\u00d7n matrix is never materialized. Same result, O(n) memory instead of O(n\u00b2). Built into PyTorch.',
+                  'Tile the attention computation so the full n×n matrix is never materialized. Same result, O(n) memory instead of O(n²). Built into PyTorch.',
               },
               {
                 headline:
-                  '"How big should the model be?" \u2192 scaling laws.',
+                  '"How big should the model be?" → scaling laws.',
                 description:
-                  'Chinchilla: scale model size and data together. N_opt and D_opt both grow with \u221AC. Most early LLMs were undertrained\u2014too many parameters, not enough data.',
+                  'Chinchilla: scale model size and data together. N_opt and D_opt both grow with √C. Most early LLMs were undertrained—too many parameters, not enough data.',
               },
             ]}
           />
@@ -1651,6 +1652,26 @@ export function ScalingAndEfficiencyLesson() {
             href="/app"
             title="When you're done"
             description="Review the five engineering techniques and how each solves a specific bottleneck. This is conceptual&mdash;no notebook to complete. Reflect on which insights surprised you most."
+          />
+        </Row.Content>
+      </Row>
+      <Row>
+        <Row.Content>
+          <ReferencesBlock
+            references={[
+              {
+                title: 'FlashAttention: Fast and Memory-Efficient Exact Attention with IO-Awareness',
+                authors: 'Dao, Fu, Ermon, Rudra & Ré, 2022',
+                url: 'https://arxiv.org/abs/2205.14135',
+                note: 'Introduced tiled attention computation that reduces memory from O(n²) to O(n), a key optimization covered in this lesson.',
+              },
+              {
+                title: 'Training Compute-Optimal Large Language Models',
+                authors: 'Hoffmann et al., 2022',
+                url: 'https://arxiv.org/abs/2203.15556',
+                note: 'The Chinchilla paper establishing scaling laws showing model size and data should scale together.',
+              },
+            ]}
           />
         </Row.Content>
       </Row>

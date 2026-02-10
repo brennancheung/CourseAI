@@ -15,6 +15,7 @@ import {
   NextStepBlock,
   ComparisonRow,
   GradientCard,
+  ReferencesBlock,
 } from '@/components/lessons'
 import { ActivationFunctionExplorer } from '@/components/widgets/ActivationFunctionExplorer'
 import { XORTransformationWidget } from '@/components/widgets/XORTransformationWidget'
@@ -443,6 +444,22 @@ export function ActivationFunctionsLesson() {
                 headline: 'That\'s how XOR is solved.',
                 description:
                   'Positive weight on h₁ (at least one is 1), negative weight on h₂ (both are 1). The network uses selective silence—h₂ being zero—to separate the cases.',
+              },
+            ]}
+          />
+        </Row.Content>
+      </Row>
+
+      {/* References */}
+      <Row>
+        <Row.Content>
+          <ReferencesBlock
+            references={[
+              {
+                title: 'Rectified Linear Units Improve Restricted Boltzmann Machines',
+                authors: 'Nair & Hinton, 2010',
+                url: 'https://www.cs.toronto.edu/~fritz/absps/reluICML.pdf',
+                note: 'Introduced ReLU and demonstrated its advantages over sigmoid for training deep networks.',
               },
             ]}
           />

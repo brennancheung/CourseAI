@@ -142,7 +142,7 @@ export function TheProblemAttentionSolvesLesson() {
               'The mechanics: similarity scores, softmax normalization, weighted averaging',
               'The limitation: one vector per token for both "seeking" and "offering"',
               'Has notebook: compute raw attention from scratch in PyTorch',
-              'NOT: Learned projection matrices that fix the limitation you\u2019ll discover\u2014that\u2019s the next lesson\u2019s answer',
+              'NOT: Learned projection matrices that fix the limitation you’ll discover—that’s the next lesson’s answer',
               'NOT: multi-head attention, transformer architecture, or causal masking',
               'NOT: scaled dot-product attention (the scaling factor is tied to the next lesson)',
             ]}
@@ -1110,19 +1110,19 @@ export function TheProblemAttentionSolvesLesson() {
                   'Unlike convolution filters (which are the same for every input), attention weights are freshly computed from each new sentence. Different inputs produce different weight matrices.',
               },
               {
-                headline: 'The formula: Attention(X) = softmax(XX\u1D40) X',
+                headline: 'The formula: Attention(X) = softmax(XXᵀ) X',
                 description:
-                  'Three matrix operations: compute pairwise similarity (XX\u1D40), normalize rows (softmax), and take weighted averages (multiply by X).',
+                  'Three matrix operations: compute pairwise similarity (XXᵀ), normalize rows (softmax), and take weighted averages (multiply by X).',
               },
               {
                 headline: 'Raw dot-product attention has a fundamental limitation.',
                 description:
-                  'Each token has one embedding for both "what I\u2019m looking for" and "what I\u2019m advertising." The score matrix is symmetric, but real linguistic relationships are asymmetric.',
+                  'Each token has one embedding for both "what I’m looking for" and "what I’m advertising." The score matrix is symmetric, but real linguistic relationships are asymmetric.',
               },
               {
                 headline: 'Similarity is not the same as relevance.',
                 description:
-                  'Dot products measure how similar two embeddings are. But relevance\u2014"does this word help me understand the other?"\u2014is a different question that requires more than raw embedding similarity.',
+                  'Dot products measure how similar two embeddings are. But relevance—"does this word help me understand the other?"—is a different question that requires more than raw embedding similarity.',
               },
             ]}
           />

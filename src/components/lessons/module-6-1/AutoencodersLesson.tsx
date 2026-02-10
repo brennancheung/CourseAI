@@ -15,6 +15,7 @@ import {
   NextStepBlock,
   GradientCard,
   ComparisonRow,
+  ReferencesBlock,
 } from '@/components/lessons'
 import { AutoencoderBottleneckWidget } from '@/components/widgets/AutoencoderBottleneckWidget'
 import { ExercisePanel } from '@/components/widgets/ExercisePanel'
@@ -90,10 +91,10 @@ export function AutoencodersLesson() {
               'Reconstruction loss (MSE on pixels) as the training objective',
               'What the bottleneck forces the network to learn (and lose)',
               'Why the autoencoder is NOT a generative model (yet)',
-              'NOT: variational autoencoders, KL divergence, or probabilistic encoding\u2014that is the next lesson',
+              'NOT: variational autoencoders, KL divergence, or probabilistic encoding—that is the next lesson',
               'NOT: sampling from the latent space to generate novel images (the autoencoder cannot do this)',
               'NOT: denoising autoencoders, sparse autoencoders, or other variants',
-              'NOT: latent space interpolation or arithmetic\u2014that comes later',
+              'NOT: latent space interpolation or arithmetic—that comes later',
             ]}
           />
         </Row.Content>
@@ -542,13 +543,13 @@ export function AutoencodersLesson() {
         <Row.Aside>
           <TryThisBlock title="Experiments">
             <ul className="space-y-2 text-sm">
-              <li>{'\u2022'} Start at <strong>4 dimensions</strong>. What survives the
+              <li>{'•'} Start at <strong>4 dimensions</strong>. What survives the
                 compression? Can you still tell which category the item belongs to?</li>
-              <li>{'\u2022'} Slide to <strong>32</strong>. What details appear that
+              <li>{'•'} Slide to <strong>32</strong>. What details appear that
                 were missing at 4?</li>
-              <li>{'\u2022'} Try <strong>256</strong>. Is there a point where more
+              <li>{'•'} Try <strong>256</strong>. Is there a point where more
                 dimensions stop helping noticeably?</li>
-              <li>{'\u2022'} Switch between items. Does the T-shirt compress
+              <li>{'•'} Switch between items. Does the T-shirt compress
                 differently than the sneaker? Why might that be?</li>
             </ul>
           </TryThisBlock>
@@ -701,7 +702,7 @@ for epoch in range(num_epochs):
               items: [
                 'Feed a T-shirt through the encoder',
                 'Get a 32-number latent code',
-                'Decode it \u2192 recognizable T-shirt',
+                'Decode it → recognizable T-shirt',
                 'The latent code is meaningful',
               ],
             }}
@@ -711,7 +712,7 @@ for epoch in range(num_epochs):
               items: [
                 'Generate 32 random numbers',
                 'Feed them to the decoder',
-                'Decode it \u2192 unrecognizable noise',
+                'Decode it → unrecognizable noise',
                 'The random point is in a gap',
               ],
             }}
@@ -865,7 +866,7 @@ for epoch in range(num_epochs):
               },
               {
                 headline:
-                  'The bottleneck creates a latent representation\u2014a compressed code of what matters.',
+                  'The bottleneck creates a latent representation—a compressed code of what matters.',
                 description:
                   'The smaller the bottleneck, the more the network must discover what is essential. Too large, and it can just copy pixels (the overcomplete trap).',
               },
@@ -873,7 +874,7 @@ for epoch in range(num_epochs):
                 headline:
                   'The autoencoder is NOT a generative model.',
                 description:
-                  'Random latent codes produce garbage. The latent space has gaps\u2014only points near real encoded images are meaningful. We need to organize the latent space to enable generation.',
+                  'Random latent codes produce garbage. The latent space has gaps—only points near real encoded images are meaningful. We need to organize the latent space to enable generation.',
               },
             ]}
           />
@@ -895,6 +896,21 @@ for epoch in range(num_epochs):
         </Row.Content>
       </Row>
 
+      <Row>
+        <Row.Content>
+          <ReferencesBlock
+            references={[
+              {
+                title: 'Reducing the Dimensionality of Data with Neural Networks',
+                authors: 'Hinton & Salakhutdinov, 2006',
+                url: 'https://www.science.org/doi/10.1126/science.1127647',
+                note: 'The seminal paper that reintroduced autoencoders using deep learning, establishing the encoder-decoder architecture with reconstruction loss.',
+              },
+            ]}
+          />
+        </Row.Content>
+      </Row>
+
       {/* ================================================================
           Section 14: Next step
           ================================================================ */}
@@ -903,7 +919,7 @@ for epoch in range(num_epochs):
           <NextStepBlock
             href="/app/lesson/variational-autoencoders"
             title="Variational Autoencoders"
-            description="The autoencoder gives us a latent representation, but we cannot generate from it\u2014random points in latent space produce garbage. What if we could make the latent space smooth and organized, so that every point corresponds to a plausible image? The next lesson makes the autoencoder generative by encoding not to a single point, but to a distribution."
+            description="The autoencoder gives us a latent representation, but we cannot generate from it—random points in latent space produce garbage. What if we could make the latent space smooth and organized, so that every point corresponds to a plausible image? The next lesson makes the autoencoder generative by encoding not to a single point, but to a distribution."
             buttonText="Continue to Variational Autoencoders"
           />
         </Row.Content>

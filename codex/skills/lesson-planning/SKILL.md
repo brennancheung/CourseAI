@@ -80,6 +80,7 @@ Should be split into focused lessons:
 - Is there a formula or code? (symbolic)
 - Is there a diagram or visualization? (visual)
 - Can the learner manipulate something? (kinesthetic)
+- Is there a foundational paper or key resource to go deeper? (reference)
 
 **Example - Teaching "What is a Neuron":**
 - ❌ **Weak:** Only shows formula `y = w₁x₁ + w₂x₂ + b` with text explanation
@@ -254,6 +255,66 @@ import { InlineMath, BlockMath } from 'react-katex'
   <li><InlineMath math="\frac{1}{n}" /> — divide by count</li>
 </ul>
 ```
+
+### External References & Further Reading
+
+Lessons should include curated external references — especially foundational papers and key resources that deepen understanding beyond what the lesson covers.
+
+**Why this matters:** Many AI/ML concepts trace back to seminal papers. Linking to these gives the learner a path from "I get the intuition" to "I can read the original source." It also builds the habit of engaging with primary sources, which is essential for staying current in a fast-moving field.
+
+**What to include:**
+
+| Type | When | Example |
+|------|------|---------|
+| **Foundational papers** | The concept has a canonical paper | "Attention Is All You Need" for transformers |
+| **Clear explanations** | A blog post or video explains it better than you can in a sidebar | Karpathy's "Let's build GPT" |
+| **Implementation references** | Official docs or tutorials for hands-on follow-up | PyTorch docs for `nn.MultiheadAttention` |
+| **Deep dives** | For the learner who wants to go further | Survey papers, advanced tutorials |
+
+**How to include them:**
+
+References go in a dedicated section near the end of the lesson — after the SummaryBlock, before the NextStepBlock. Use the shared `ReferencesBlock` component from `@/components/lessons`.
+
+```tsx
+import { ReferencesBlock } from '@/components/lessons'
+
+<Row>
+  <Row.Content>
+    <ReferencesBlock
+      references={[
+        {
+          title: 'Attention Is All You Need',
+          authors: 'Vaswani et al., 2017',
+          url: 'https://arxiv.org/abs/1706.03762',
+          note: 'The paper that started it all. Read sections 3.1-3.2 for the attention mechanism — skip the experiments for now.',
+        },
+        {
+          title: 'The Illustrated Transformer',
+          authors: 'Jay Alammar',
+          url: 'https://jalammar.github.io/illustrated-transformer/',
+          note: 'Best visual walkthrough of the architecture. Great complement to this lesson.',
+        },
+      ]}
+    />
+  </Row.Content>
+  <Row.Aside>
+    <TipBlock title="Reading Order">
+      Start with the Illustrated Transformer, then skim the original paper.
+      Don't try to understand everything on the first read.
+    </TipBlock>
+  </Row.Aside>
+</Row>
+```
+
+**Props:**
+- `references` — Array of `{ title, authors, url, note? }`. The `note` field is for reading guidance (what to focus on, what to skip).
+- `title` — Optional override, defaults to "References & Further Reading"
+
+**ADHD-friendly reference principles:**
+- **Curate ruthlessly** — 2-4 references max per lesson, not a bibliography
+- **Add context via `note`** — Tell them *what to read* and *what to skip* (e.g., "Read sections 3.1-3.2, skip the experiments")
+- **Distinguish required vs optional** — Use the note to mark foundational papers as essential, deep dives as "if you're curious"
+- **Lower activation energy** — Direct links, specific section pointers, not "go Google this"
 
 ### Exercise Metadata
 
@@ -607,6 +668,7 @@ Before finalizing any lesson, verify:
 - [ ] **Scope boundaries explicit** — What you're NOT doing is stated
 - [ ] **No guilt hooks** — No streaks, no "you should have..."
 - [ ] **Working memory friendly** — All info in the lesson, nothing to remember
+- [ ] **Curated references** — 2-4 external links (foundational papers, key explanations) with reading guidance
 
 ---
 
@@ -617,3 +679,4 @@ Before finalizing any lesson, verify:
 - [ ] **Feedback available** — Can test/verify if it's working
 - [ ] **Repeatable** — Can do it again with variation
 - [ ] **Builds mental model** — Develops internal representation
+- [ ] **Primary sources linked** — Foundational papers referenced with specific reading pointers

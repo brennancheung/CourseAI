@@ -4,3 +4,5 @@
 export { TheDiffusionIdeaLesson } from './TheDiffusionIdeaLesson'
 export { TheForwardProcessLesson } from './TheForwardProcessLesson'
 export { LearningToDenoiseLesson } from './LearningToDenoiseLesson'
+export { SamplingAndGenerationLesson } from './SamplingAndGenerationLesson'
+export { BuildADiffusionModelLesson } from './BuildADiffusionModelLesson'

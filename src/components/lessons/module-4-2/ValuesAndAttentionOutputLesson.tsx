@@ -244,12 +244,12 @@ export function ValuesAndAttentionOutputLesson() {
             title="Scope for This Lesson"
             items={[
               'Why V exists (separating matching from contributing)',
-              'What V computes (V = W_V \u00D7 embedding, a third learned projection)',
-              'The full single-head attention formula: output = softmax(QK\u1D40/\u221Ad_k) V',
+              'What V computes (V = W_V × embedding, a third learned projection)',
+              'The full single-head attention formula: output = softmax(QKᵀ/√d_k) V',
               'The residual stream: attention output is ADDED to the input, not substituted',
               'Hand-tracing the full computation with the same 4 tokens from the last two lessons',
               'Has notebook: implement single-head attention end-to-end',
-              'NOT: multi-head attention (multiple Q/K/V sets in parallel)\u2014that\u2019s next lesson',
+              'NOT: multi-head attention (multiple Q/K/V sets in parallel)—that’s next lesson',
               'NOT: the transformer block, layer normalization, or causal masking',
             ]}
           />
@@ -1104,9 +1104,9 @@ export function ValuesAndAttentionOutputLesson() {
               },
               {
                 headline:
-                  'The full single-head attention formula: output = softmax(QK\u1D40/\u221Ad_k) V.',
+                  'The full single-head attention formula: output = softmax(QKᵀ/√d_k) V.',
                 description:
-                  'Each step in this formula exists because the version without it was insufficient. Raw X for scoring \u2192 Q/K. Raw X for contributing \u2192 V. Unscaled scores \u2192 \u221Ad_k scaling. Three targeted improvements over three lessons.',
+                  'Each step in this formula exists because the version without it was insufficient. Raw X for scoring → Q/K. Raw X for contributing → V. Unscaled scores → √d_k scaling. Three targeted improvements over three lessons.',
               },
               {
                 headline:

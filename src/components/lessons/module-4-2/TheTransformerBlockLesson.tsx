@@ -14,6 +14,7 @@ import {
   NextStepBlock,
   GradientCard,
   ComparisonRow,
+  ReferencesBlock,
 } from '@/components/lessons'
 import 'katex/dist/katex.min.css'
 import { InlineMath, BlockMath } from 'react-katex'
@@ -362,7 +363,7 @@ function TransformerBlockDiagram() {
           fontSize="9"
           opacity={0.7}
         >
-          768 {'\u2192'} 3072 {'\u2192'} 768
+          768 {'→'} 3072 {'→'} 768
         </text>
 
         {/* ---- Second Add (residual merge) ---- */}
@@ -689,12 +690,12 @@ export function TheTransformerBlockLesson() {
               'The transformer block: MHA + FFN + residual connections + layer norm',
               '"Attention reads, FFN writes" as the organizing mental model',
               'Layer normalization introduced by contrast with batch norm',
-              'The FFN\u2019s 4x expansion factor and parameter dominance',
-              'Pre-norm vs post-norm (brief\u2014know the distinction and standard choice)',
+              'The FFN’s 4x expansion factor and parameter dominance',
+              'Pre-norm vs post-norm (brief—know the distinction and standard choice)',
               'Why this block can stack (shape preservation)',
-              'NOT: implementing in PyTorch\u2014that\u2019s Module 4.3',
-              'NOT: causal masking\u2014that\u2019s the next lesson',
-              'NOT: the full decoder-only architecture\u2014next lesson',
+              'NOT: implementing in PyTorch—that’s Module 4.3',
+              'NOT: causal masking—that’s the next lesson',
+              'NOT: the full decoder-only architecture—next lesson',
             ]}
           />
         </Row.Content>
@@ -1472,9 +1473,9 @@ export function TheTransformerBlockLesson() {
               },
               {
                 headline:
-                  '~1/3 of parameters in attention, ~2/3 in FFN. The FFN is not plumbing\u2014it\u2019s where knowledge lives.',
+                  '~1/3 of parameters in attention, ~2/3 in FFN. The FFN is not plumbing—it’s where knowledge lives.',
                 description:
-                  'The FFN\u2019s 4x expansion creates a higher-dimensional workspace for complex computations. Research suggests FFN neurons store factual knowledge as key-value memories.',
+                  'The FFN’s 4x expansion creates a higher-dimensional workspace for complex computations. Research suggests FFN neurons store factual knowledge as key-value memories.',
               },
             ]}
           />
@@ -1497,6 +1498,27 @@ export function TheTransformerBlockLesson() {
               writing back what it discovers.
             </p>
           </div>
+        </Row.Content>
+      </Row>
+
+      <Row>
+        <Row.Content>
+          <ReferencesBlock
+            references={[
+              {
+                title: 'Layer Normalization',
+                authors: 'Ba, Kiros & Hinton, 2016',
+                url: 'https://arxiv.org/abs/1607.06450',
+                note: 'Introduces layer normalization, the normalization technique used in every transformer block.',
+              },
+              {
+                title: 'On Layer Normalization in the Transformer Architecture',
+                authors: 'Xiong et al., 2020',
+                url: 'https://arxiv.org/abs/2002.04745',
+                note: 'Analyzes pre-norm vs post-norm placement and why pre-norm is more stable for deep transformers.',
+              },
+            ]}
+          />
         </Row.Content>
       </Row>
 

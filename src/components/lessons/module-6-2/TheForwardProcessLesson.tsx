@@ -15,6 +15,7 @@ import {
   NextStepBlock,
   GradientCard,
   ComparisonRow,
+  ReferencesBlock,
 } from '@/components/lessons'
 import { ExercisePanel } from '@/components/widgets/ExercisePanel'
 import { AlphaBarCurveWidget } from '@/components/widgets/AlphaBarCurveWidget'
@@ -206,7 +207,7 @@ export function TheForwardProcessLesson() {
               'Gaussian properties needed for the derivation (addition, variance scaling)',
               'The noise schedule beta_t and the variance-preserving formulation',
               'Alpha-bar notation and the closed-form shortcut',
-              'NOT: the reverse process, denoising, or the training loss\u2014those come next',
+              'NOT: the reverse process, denoising, or the training loss—those come next',
               'NOT: the sampling algorithm or code implementation',
               'NOT: U-Net architecture or any neural network details',
               'NOT: score matching, SDEs, or continuous-time formulations',
@@ -359,7 +360,7 @@ export function TheForwardProcessLesson() {
               The naive approach would be to just add noise directly:
             </p>
             <div className="py-3 px-4 bg-rose-500/5 border border-rose-500/20 rounded-lg">
-              <BlockMath math="x_t = x_{t-1} + \sqrt{\beta_t} \cdot \epsilon \quad \text{(naive\u2014don't do this)}" />
+              <BlockMath math="x_t = x_{t-1} + \sqrt{\beta_t} \cdot \epsilon \quad \text{(naive—don't do this)}" />
             </div>
           </div>
         </Row.Content>
@@ -1131,11 +1132,11 @@ export function TheForwardProcessLesson() {
                 headline:
                   'Each forward step blends signal and noise with variance-preserving coefficients.',
                 description:
-                  'The formula x_t = \u221A(1\u2212\u03B2_t) \u00B7 x_{t-1} + \u221A\u03B2_t \u00B7 \u03B5 scales the signal down before adding noise, keeping total variance at 1. The noise amount at each step is controlled by the schedule \u03B2_t.',
+                  'The formula x_t = √(1−β_t) · x_{t-1} + √β_t · ε scales the signal down before adding noise, keeping total variance at 1. The noise amount at each step is controlled by the schedule β_t.',
               },
               {
                 headline:
-                  '\u03B1\u0305_t is the one number that tells you everything about noise level t.',
+                  'ᾱ_t is the one number that tells you everything about noise level t.',
                 description:
                   'The cumulative product of signal fractions. Starts near 1 (clean) and drops to near 0 (pure noise). It encodes the entire history of the noise schedule.',
               },
@@ -1143,7 +1144,7 @@ export function TheForwardProcessLesson() {
                 headline:
                   'The closed-form formula lets you jump to ANY timestep in one step.',
                 description:
-                  'q(x_t|x_0) = \u221A\u03B1\u0305_t \u00B7 x_0 + \u221A(1\u2212\u03B1\u0305_t) \u00B7 \u03B5. No iteration needed. This is what makes training practical\u2014sample a random t and jump straight there.',
+                  'q(x_t|x_0) = √ᾱ_t · x_0 + √(1−ᾱ_t) · ε. No iteration needed. This is what makes training practical—sample a random t and jump straight there.',
               },
               {
                 headline:
@@ -1190,10 +1191,31 @@ export function TheForwardProcessLesson() {
 
       <Row>
         <Row.Content>
+          <ReferencesBlock
+            references={[
+              {
+                title: 'Denoising Diffusion Probabilistic Models',
+                authors: 'Ho, Jain & Abbeel, 2020',
+                url: 'https://arxiv.org/abs/2006.11239',
+                note: 'The original DDPM paper. Sections 2 and 3 define the forward process and noise schedule used in this lesson.',
+              },
+              {
+                title: 'Improved Denoising Diffusion Probabilistic Models',
+                authors: 'Nichol & Dhariwal, 2021',
+                url: 'https://arxiv.org/abs/2102.09672',
+                note: 'Introduces the cosine noise schedule. Section 3.2 explains why it outperforms the linear schedule.',
+              },
+            ]}
+          />
+        </Row.Content>
+      </Row>
+
+      <Row>
+        <Row.Content>
           <NextStepBlock
             href="/app"
             title="Up Next: The Training Objective"
-            description="What the denoising network actually learns\u2014predict the noise, compare with MSE loss, update weights. The same training loop you already know."
+            description="What the denoising network actually learns—predict the noise, compare with MSE loss, update weights. The same training loop you already know."
           />
         </Row.Content>
       </Row>

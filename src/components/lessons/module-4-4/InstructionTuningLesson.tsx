@@ -14,6 +14,7 @@ import {
   GradientCard,
   ComparisonRow,
   NextStepBlock,
+  ReferencesBlock,
 } from '@/components/lessons'
 import { CodeBlock } from '@/components/common/CodeBlock'
 import { ExternalLink } from 'lucide-react'
@@ -427,8 +428,8 @@ export function InstructionTuningLesson() {
               'Chat templates and special tokens as structural delimiters',
               'SFT mechanics: same training loop, same loss, different data',
               'Hands-on SFT in the notebook',
-              'NOT: RLHF, DPO, or alignment\u2014that\u2019s the next lesson',
-              'NOT: LoRA or parameter-efficient finetuning\u2014Lesson 4',
+              'NOT: RLHF, DPO, or alignment—that’s the next lesson',
+              'NOT: LoRA or parameter-efficient finetuning—Lesson 4',
               'NOT: building production-quality instruction datasets',
               'NOT: evaluation beyond qualitative observation',
             ]}
@@ -947,13 +948,13 @@ Wisdom without soul<|im_end|>`}
                       Correct template (ChatML):
                     </p>
                     <p className="text-muted-foreground whitespace-pre-wrap">{'<|im_start|>user\nExplain gravity briefly.<|im_end|>\n<|im_start|>assistant'}</p>
-                    <p className="text-emerald-400 whitespace-pre-wrap">{'\u2192 "Gravity is the force that attracts objects with mass toward each other..."'}</p>
+                    <p className="text-emerald-400 whitespace-pre-wrap">{'→ "Gravity is the force that attracts objects with mass toward each other..."'}</p>
 
                     <p className="font-sans text-xs font-semibold text-rose-400 pt-2 border-t border-border">
                       Wrong template (Llama format on ChatML-trained model):
                     </p>
                     <p className="text-muted-foreground whitespace-pre-wrap">{'[INST] Explain gravity briefly. [/INST]'}</p>
-                    <p className="text-rose-400 whitespace-pre-wrap">{'\u2192 "[INST] Explain gravity briefly. [/INST] [INST] What is the meaning of life? [/INST] [INST]..."'}</p>
+                    <p className="text-rose-400 whitespace-pre-wrap">{'→ "[INST] Explain gravity briefly. [/INST] [INST] What is the meaning of life? [/INST] [INST]..."'}</p>
                   </div>
 
                   <p>
@@ -1026,12 +1027,12 @@ Wisdom without soul<|im_end|>`}
         <Row.Aside>
           <TipBlock title="Notebook Exercises">
             <ul className="space-y-2 text-sm">
-              <li>{'\u2022'} Explore an instruction dataset (examine entries)</li>
-              <li>{'\u2022'} Implement chat template formatting</li>
-              <li>{'\u2022'} Tokenize with special tokens and inspect token IDs</li>
-              <li>{'\u2022'} Implement loss masking (labels = -100 for prompt)</li>
-              <li>{'\u2022'} Run SFT training</li>
-              <li>{'\u2022'} Compare base vs SFT model on several prompts</li>
+              <li>{'•'} Explore an instruction dataset (examine entries)</li>
+              <li>{'•'} Implement chat template formatting</li>
+              <li>{'•'} Tokenize with special tokens and inspect token IDs</li>
+              <li>{'•'} Implement loss masking (labels = -100 for prompt)</li>
+              <li>{'•'} Run SFT training</li>
+              <li>{'•'} Compare base vs SFT model on several prompts</li>
             </ul>
           </TipBlock>
         </Row.Aside>
@@ -1186,7 +1187,7 @@ Wisdom without soul<|im_end|>`}
               {
                 headline: 'No new architecture, no new loss function.',
                 description:
-                  'Same cross-entropy on next-token prediction. Same training loop. The only change is the data\u2014formatted instruction-response pairs instead of web text.',
+                  'Same cross-entropy on next-token prediction. Same training loop. The only change is the data—formatted instruction-response pairs instead of web text.',
               },
               {
                 headline: 'Loss masking focuses training on responses.',
@@ -1236,6 +1237,26 @@ Wisdom without soul<|im_end|>`}
             href="/app"
             title="When you're done"
             description="Complete the notebook: explore the instruction dataset, implement chat templates and loss masking, run SFT, and compare base vs instruction-tuned outputs. Then review your session."
+          />
+        </Row.Content>
+      </Row>
+      <Row>
+        <Row.Content>
+          <ReferencesBlock
+            references={[
+              {
+                title: 'Finetuned Language Models Are Zero-Shot Learners',
+                authors: 'Wei et al., 2021',
+                url: 'https://arxiv.org/abs/2109.01652',
+                note: 'The FLAN paper showing that instruction tuning on diverse tasks enables zero-shot generalization to new tasks.',
+              },
+              {
+                title: 'Training language models to follow instructions with human feedback',
+                authors: 'Ouyang et al., 2022',
+                url: 'https://arxiv.org/abs/2203.02155',
+                note: 'The InstructGPT paper describing the SFT → RLHF pipeline that led to ChatGPT.',
+              },
+            ]}
           />
         </Row.Content>
       </Row>

@@ -13,6 +13,7 @@ import {
   SummaryBlock,
   NextStepBlock,
   ComparisonRow,
+  ReferencesBlock,
 } from '@/components/lessons'
 import { XORClassifierExplorer } from '@/components/widgets/XORClassifierExplorer'
 import { ExercisePanel } from '@/components/widgets/ExercisePanel'
@@ -381,6 +382,22 @@ export function LimitsOfLinearityLesson() {
                 headline: 'We need nonlinearity.',
                 description:
                   'Adding a nonlinear activation function after each neuron unlocks the full power of neural networks.',
+              },
+            ]}
+          />
+        </Row.Content>
+      </Row>
+
+      {/* References */}
+      <Row>
+        <Row.Content>
+          <ReferencesBlock
+            references={[
+              {
+                title: 'Learning representations by back-propagating errors',
+                authors: 'Rumelhart, Hinton & Williams, 1986',
+                url: 'https://www.nature.com/articles/323533a0',
+                note: 'The seminal paper that demonstrated XOR as the canonical example of why neural networks need nonlinear hidden layers.',
               },
             ]}
           />

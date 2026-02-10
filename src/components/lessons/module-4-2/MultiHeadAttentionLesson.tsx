@@ -333,15 +333,15 @@ export function MultiHeadAttentionLesson() {
           <ConstraintBlock
             title="Scope for This Lesson"
             items={[
-              'Why one attention head isn\u2019t enough (different relationship types)',
-              'Multiple heads with independent W_Q, W_K, W_V\u2014each in a d_k = d_model/h dimensional subspace',
+              'Why one attention head isn’t enough (different relationship types)',
+              'Multiple heads with independent W_Q, W_K, W_V—each in a d_k = d_model/h dimensional subspace',
               'Dimension splitting as budget allocation (same total compute, not multiplied)',
               'Concatenation of head outputs + output projection W_O as learned cross-head mixing',
               'Hand-traced worked example: 4 tokens, d_model=6, h=2, d_k=3',
               'What heads actually learn in trained models (messy, emergent)',
               'Has notebook: implement multi-head attention from scratch',
-              'NOT: the transformer block, layer norm, or feed-forward network\u2014that\u2019s next lesson',
-              'NOT: causal masking\u2014Lesson 6',
+              'NOT: the transformer block, layer norm, or feed-forward network—that’s next lesson',
+              'NOT: causal masking—Lesson 6',
             ]}
           />
         </Row.Content>
@@ -420,7 +420,7 @@ export function MultiHeadAttentionLesson() {
                 title: 'Coreference',
                 color: 'orange',
                 items: [
-                  '"it" \u2192 "mat"',
+                  '"it" → "mat"',
                   'What does "it" refer to?',
                   'Requires a Q/K projection sensitive to noun-pronoun links',
                 ],
@@ -429,7 +429,7 @@ export function MultiHeadAttentionLesson() {
                 title: 'Property Attribution',
                 color: 'emerald',
                 items: [
-                  '"it" \u2192 "soft"',
+                  '"it" → "soft"',
                   'What property is being described?',
                   'Requires a Q/K projection sensitive to adjective-subject links',
                 ],
@@ -1397,25 +1397,25 @@ export function MultiHeadAttentionLesson() {
                 headline:
                   'Multi-head attention runs h independent attention heads in parallel, each in a d_k = d_model/h dimensional subspace.',
                 description:
-                  'Each head has its own W_Q, W_K, W_V\u2014completely independent learned projections. Different heads capture different types of relationships from the same input.',
+                  'Each head has its own W_Q, W_K, W_V—completely independent learned projections. Different heads capture different types of relationships from the same input.',
               },
               {
                 headline:
                   'Dimension splitting is budget allocation, not compute multiplication.',
                 description:
-                  'The total compute across all heads equals one large attention operation. You gain diversity of attention patterns for free\u2014the same d_model budget, partitioned differently.',
+                  'The total compute across all heads equals one large attention operation. You gain diversity of attention patterns for free—the same d_model budget, partitioned differently.',
               },
               {
                 headline:
                   'W_O is a learned cross-head mixing layer, not just reshaping.',
                 description:
-                  'After concatenating head outputs, W_O (a d_model \u00D7 d_model matrix) lets information from any head influence any dimension of the final output. It\u2019s how the model synthesizes what different heads learned.',
+                  'After concatenating head outputs, W_O (a d_model × d_model matrix) lets information from any head influence any dimension of the final output. It’s how the model synthesizes what different heads learned.',
               },
               {
                 headline:
                   'Head specialization is emergent and messy, not designed and clean.',
                 description:
-                  'The architecture provides capacity for diverse attention patterns. What each head actually learns is determined by training\u2014some heads are interpretable, many are not, and 20\u201340% can often be pruned with minimal loss.',
+                  'The architecture provides capacity for diverse attention patterns. What each head actually learns is determined by training—some heads are interpretable, many are not, and 20–40% can often be pruned with minimal loss.',
               },
             ]}
           />

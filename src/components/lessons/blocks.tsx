@@ -361,6 +361,66 @@ export function SummaryBlock({
 }
 
 // =============================================================================
+// REFERENCES BLOCK
+// External references and further reading - papers, blog posts, docs
+// =============================================================================
+
+interface ReferenceItemData {
+  /** Title of the paper, post, or resource */
+  title: string
+  /** Author(s) or source (e.g., "Vaswani et al., 2017") */
+  authors: string
+  /** URL to the resource */
+  url: string
+  /** Reading guidance — what to focus on, what to skip */
+  note?: string
+}
+
+interface ReferencesBlockProps {
+  references: ReferenceItemData[]
+  title?: string
+}
+
+export function ReferencesBlock({
+  references,
+  title = 'References & Further Reading',
+}: ReferencesBlockProps) {
+  return (
+    <div className="rounded-lg border bg-card/50 p-6">
+      <div className="flex items-center gap-2 mb-4">
+        <BookOpen className="w-5 h-5 text-muted-foreground" />
+        <h3 className="font-semibold text-sm">{title}</h3>
+      </div>
+      <ul className="space-y-4">
+        {references.map((ref, i) => (
+          <li key={i} className="flex gap-3">
+            <span className="text-muted-foreground/50 text-xs font-mono mt-0.5 flex-shrink-0 w-4 text-right">
+              {i + 1}
+            </span>
+            <div className="space-y-0.5">
+              <a
+                href={ref.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-sm font-medium text-primary hover:underline"
+              >
+                {ref.title}
+              </a>
+              <p className="text-xs text-muted-foreground">{ref.authors}</p>
+              {ref.note && (
+                <p className="text-xs text-muted-foreground/80 italic">
+                  {ref.note}
+                </p>
+              )}
+            </div>
+          </li>
+        ))}
+      </ul>
+    </div>
+  )
+}
+
+// =============================================================================
 // SECTION HEADER
 // Section titles within lessons
 // =============================================================================

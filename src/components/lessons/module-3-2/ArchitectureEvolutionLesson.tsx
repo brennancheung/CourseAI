@@ -16,6 +16,7 @@ import {
   NextStepBlock,
   GradientCard,
   ComparisonRow,
+  ReferencesBlock,
 } from '@/components/lessons'
 import { ArchitectureComparisonExplorer } from '@/components/widgets/ArchitectureComparisonExplorer'
 import { ExercisePanel } from '@/components/widgets/ExercisePanel'
@@ -300,8 +301,8 @@ function Vgg16BlockDiagram() {
         })}
       </div>
       <div className="flex justify-between text-[9px] text-muted-foreground/50 pt-1">
-        <span>{'\u2190'} Spatial wide, few channels</span>
-        <span>Spatial narrow, many channels {'\u2192'}</span>
+        <span>{'←'} Spatial wide, few channels</span>
+        <span>Spatial narrow, many channels {'→'}</span>
       </div>
     </div>
   )
@@ -1237,6 +1238,34 @@ export function ArchitectureEvolutionLesson() {
             title="ResNets"
             description="We know deeper is better but deeper eventually breaks. The next lesson tackles the degradation problem head-on and introduces the residual connection&mdash;the innovation that took networks from 19 layers to 152."
             buttonText="Continue to ResNets"
+          />
+        </Row.Content>
+      </Row>
+
+      {/* References */}
+      <Row>
+        <Row.Content>
+          <ReferencesBlock
+            references={[
+              {
+                title: 'Gradient-Based Learning Applied to Document Recognition',
+                authors: 'LeCun, Bottou, Bengio & Haffner, 1998',
+                url: 'http://yann.lecun.com/exdb/publis/pdf/lecun-01a.pdf',
+                note: 'The LeNet-5 paper that established the conv-pool-fc pattern foundational to all CNNs.',
+              },
+              {
+                title: 'ImageNet Classification with Deep Convolutional Neural Networks',
+                authors: 'Krizhevsky, Sutskever & Hinton, 2012',
+                url: 'https://papers.nips.cc/paper/4824-imagenet-classification-with-deep-convolutional-neural-networks.pdf',
+                note: 'AlexNet — introduced ReLU, dropout, and GPU training, making deep CNNs practical at scale.',
+              },
+              {
+                title: 'Very Deep Convolutional Networks for Large-Scale Image Recognition',
+                authors: 'Simonyan & Zisserman, 2014',
+                url: 'https://arxiv.org/abs/1409.1556',
+                note: 'VGG proved that stacking small 3x3 filters is more parameter-efficient than large filters.',
+              },
+            ]}
           />
         </Row.Content>
       </Row>

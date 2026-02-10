@@ -15,6 +15,7 @@ import {
   ComparisonRow,
   GradientCard,
   ModuleCompleteBlock,
+  ReferencesBlock,
 } from '@/components/lessons'
 import { ActivationFunctionExplorer } from '@/components/widgets/ActivationFunctionExplorer'
 import { ExercisePanel } from '@/components/widgets/ExercisePanel'
@@ -417,6 +418,28 @@ export function ActivationFunctionsDeepDiveLesson() {
                 headline: 'Why some work better than others?',
                 description:
                   'That requires understanding backpropagation—coming in Module 1.3!',
+              },
+            ]}
+          />
+        </Row.Content>
+      </Row>
+
+      {/* References */}
+      <Row>
+        <Row.Content>
+          <ReferencesBlock
+            references={[
+              {
+                title: 'Delving Deep into Rectifiers: Surpassing Human-Level Performance on ImageNet Classification',
+                authors: 'He, Zhang, Ren & Sun, 2015',
+                url: 'https://arxiv.org/abs/1502.01852',
+                note: 'Introduced Parametric ReLU (PReLU) and provided empirical analysis of ReLU variants for deep networks.',
+              },
+              {
+                title: 'Gaussian Error Linear Units (GELUs)',
+                authors: 'Hendrycks & Gimpel, 2016',
+                url: 'https://arxiv.org/abs/1606.08415',
+                note: 'Introduced GELU, now the standard activation in transformers (GPT, BERT) due to its smooth approximation of ReLU.',
               },
             ]}
           />

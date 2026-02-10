@@ -15,6 +15,7 @@ import {
   GradientCard,
   ComparisonRow,
   PhaseCard,
+  ReferencesBlock,
 } from '@/components/lessons'
 import { CodeBlock } from '@/components/common/CodeBlock'
 import { ExternalLink } from 'lucide-react'
@@ -1196,13 +1197,13 @@ bhook.remove()`}
                 headline:
                   'Filter visualization: "What does this layer look for?"',
                 description:
-                  'Display the learned weights as images. Works for conv1 (RGB input). Shows edge detectors, color gradients, and frequency patterns\u2014universal features that confirm why transfer learning works.',
+                  'Display the learned weights as images. Works for conv1 (RGB input). Shows edge detectors, color gradients, and frequency patterns—universal features that confirm why transfer learning works.',
               },
               {
                 headline:
                   'Activation maps: "What did this layer find in this image?"',
                 description:
-                  'Capture intermediate outputs using hooks. Input-specific but class-agnostic. Shows the feature hierarchy in action\u2014from concrete edges to abstract distributed patterns.',
+                  'Capture intermediate outputs using hooks. Input-specific but class-agnostic. Shows the feature hierarchy in action—from concrete edges to abstract distributed patterns.',
               },
               {
                 headline:
@@ -1214,7 +1215,7 @@ bhook.remove()`}
                 headline:
                   'Visualization is a debugging tool, not just a pretty picture.',
                 description:
-                  'Correct predictions can hide broken reasoning. Shortcut learning is real and common. Grad-CAM reveals whether the model learned what you intended\u2014or found a shortcut.',
+                  'Correct predictions can hide broken reasoning. Shortcut learning is real and common. Grad-CAM reveals whether the model learned what you intended—or found a shortcut.',
               },
             ]}
           />
@@ -1247,6 +1248,22 @@ bhook.remove()`}
               tool for your own models.
             </p>
           </GradientCard>
+        </Row.Content>
+      </Row>
+
+      {/* References */}
+      <Row>
+        <Row.Content>
+          <ReferencesBlock
+            references={[
+              {
+                title: 'Grad-CAM: Visual Explanations from Deep Networks via Gradient-based Localization',
+                authors: 'Selvaraju, Cogswell, Das, Vedantam, Parikh & Batra, 2017',
+                url: 'https://arxiv.org/abs/1610.02391',
+                note: 'Introduced gradient-weighted class activation mapping, the visualization technique taught in this lesson.',
+              },
+            ]}
+          />
         </Row.Content>
       </Row>
     </LessonLayout>

@@ -15,6 +15,7 @@ import {
   NextStepBlock,
   GradientCard,
   ComparisonRow,
+  ReferencesBlock,
 } from '@/components/lessons'
 import { ExternalLink } from 'lucide-react'
 import 'katex/dist/katex.min.css'
@@ -202,11 +203,11 @@ export function QueriesAndKeysLesson() {
             items={[
               'Why Q and K exist (resolving the dual-role limitation)',
               'What Q and K compute (learned linear projections of the same embedding)',
-              'How QK\u1D40 produces an asymmetric relevance matrix',
-              'Why scaling by \u221Ad_k is essential (softmax saturation, vanishing gradients)',
+              'How QKᵀ produces an asymmetric relevance matrix',
+              'Why scaling by √d_k is essential (softmax saturation, vanishing gradients)',
               'Hand-tracing the full computation with the same 4 tokens from last lesson',
               'Has notebook: implement Q, K projections and verify asymmetry',
-              'NOT: V projection (what a token contributes when attended to)\u2014that\u2019s next lesson',
+              'NOT: V projection (what a token contributes when attended to)—that’s next lesson',
               'NOT: multi-head attention, transformer block, or causal masking',
             ]}
           />
@@ -666,7 +667,7 @@ export function QueriesAndKeysLesson() {
               <strong>
                 {QK_SCORES[1][2] === QK_SCORES[2][1]
                   ? 'They happen to be equal in this case.'
-                  : 'No\u2014they\u2019re different.'}
+                  : 'No—they’re different.'}
               </strong>{' '}
               This matrix is <strong>not symmetric</strong>. The cliffhanger from last lesson
               is resolved.
@@ -1191,15 +1192,15 @@ export function QueriesAndKeysLesson() {
               },
               {
                 headline:
-                  'QK\u1D40 computes a learned relevance function, not raw embedding similarity.',
+                  'QKᵀ computes a learned relevance function, not raw embedding similarity.',
                 description:
-                  'Entry (i, j) is q_i \u00B7 k_j\u2014how much does token i\u2019s query match token j\u2019s key? The projections can learn that "steep" is relevant to "bank" even when their raw embeddings aren\u2019t similar.',
+                  'Entry (i, j) is q_i · k_j—how much does token i’s query match token j’s key? The projections can learn that "steep" is relevant to "bank" even when their raw embeddings aren’t similar.',
               },
               {
                 headline:
-                  'Scaling by \u221Ad_k prevents softmax saturation as dimensions grow.',
+                  'Scaling by √d_k prevents softmax saturation as dimensions grow.',
                 description:
-                  'Dot product variance grows with d_k. Without scaling, high-dimensional scores push softmax toward one-hot, killing gradients. Dividing by \u221Ad_k normalizes variance to 1, keeping the model trainable.',
+                  'Dot product variance grows with d_k. Without scaling, high-dimensional scores push softmax toward one-hot, killing gradients. Dividing by √d_k normalizes variance to 1, keeping the model trainable.',
               },
             ]}
           />
@@ -1234,6 +1235,21 @@ export function QueriesAndKeysLesson() {
               </p>
             </div>
           </div>
+        </Row.Content>
+      </Row>
+
+      <Row>
+        <Row.Content>
+          <ReferencesBlock
+            references={[
+              {
+                title: 'Attention Is All You Need',
+                authors: 'Vaswani et al., 2017',
+                url: 'https://arxiv.org/abs/1706.03762',
+                note: 'The original transformer paper -- Section 3.2 defines the Q, K, V projections and scaled dot-product attention formula.',
+              },
+            ]}
+          />
         </Row.Content>
       </Row>
 

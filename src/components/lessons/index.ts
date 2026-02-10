@@ -20,4 +20,6 @@ export {
   PhaseCard,
   // Module completion
   ModuleCompleteBlock,
+  // References
+  ReferencesBlock,
 } from './blocks'

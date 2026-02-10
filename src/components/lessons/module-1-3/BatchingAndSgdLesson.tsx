@@ -787,7 +787,7 @@ export function BatchingAndSgdLesson() {
               {
                 headline: 'Epochs: one full pass through the dataset',
                 description:
-                  'Total updates = (N / B) \u00D7 num_epochs. More epochs = more refinement.',
+                  'Total updates = (N / B) × num_epochs. More epochs = more refinement.',
               },
               {
                 headline: 'Gradient noise helps escape bad minima',
@@ -797,7 +797,7 @@ export function BatchingAndSgdLesson() {
               {
                 headline: 'Shuffle before every epoch',
                 description:
-                  'Without shuffling, batches aren\u2019t representative. Sorted data causes oscillation instead of convergence.',
+                  "Without shuffling, batches aren’t representative. Sorted data causes oscillation instead of convergence.",
               },
             ]}
           />

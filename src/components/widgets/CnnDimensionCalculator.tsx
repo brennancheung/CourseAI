@@ -313,7 +313,7 @@ function LayerEditor({
       {shapeResult && (
         <div className="flex items-center gap-2 text-xs pt-1 border-t border-border/50">
           <span className="text-muted-foreground">
-            {shapeLabel(inputShape)} {'\u2192'}
+            {shapeLabel(inputShape)} {'→'}
           </span>
           <span className={cn('font-mono font-medium', isInvalid ? 'text-rose-400' : 'text-foreground')}>
             {isInvalid ? 'invalid' : shapeLabel(shapeResult.shape)}
@@ -422,7 +422,7 @@ function PipelineVisualization({
           return (
             <div key={i} className="flex items-end gap-1">
               {i > 0 && (
-                <div className="text-muted-foreground/40 text-xs px-0.5 pb-4">{'\u2192'}</div>
+                <div className="text-muted-foreground/40 text-xs px-0.5 pb-4">{'→'}</div>
               )}
               <div className="flex flex-col items-center gap-0.5">
                 <div
@@ -436,7 +436,7 @@ function PipelineVisualization({
                     'text-[9px] font-mono font-semibold',
                     !item.valid && 'text-rose-400',
                   )}>
-                    {item.valid ? shapeLabel(item.shape) : '\u2716'}
+                    {item.valid ? shapeLabel(item.shape) : '✖'}
                   </div>
                 </div>
                 <div className="text-[8px] text-muted-foreground truncate max-w-[80px] text-center">

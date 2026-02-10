@@ -15,6 +15,7 @@ import {
   NextStepBlock,
   GradientCard,
   ComparisonRow,
+  ReferencesBlock,
 } from '@/components/lessons'
 import { BpeVisualizer } from '@/components/widgets/BpeVisualizer'
 import { ExercisePanel } from '@/components/widgets/ExercisePanel'
@@ -103,10 +104,10 @@ export function TokenizationLesson() {
               'The BPE algorithm: training (learning merges) and encoding (applying merges)',
               'Implementing BPE from scratch in a Colab notebook',
               'How tokenization affects model behavior',
-              'NOT: other subword algorithms in detail (WordPiece, SentencePiece)\u2014mentioned only',
-              'NOT: how embeddings work\u2014that\u2019s the next lesson',
-              'NOT: training a language model\u2014Module 4.3',
-              'NOT: production tokenizer implementation\u2014we build a minimal, correct BPE',
+              'NOT: other subword algorithms in detail (WordPiece, SentencePiece)—mentioned only',
+              'NOT: how embeddings work—that’s the next lesson',
+              'NOT: training a language model—Module 4.3',
+              'NOT: production tokenizer implementation—we build a minimal, correct BPE',
             ]}
           />
         </Row.Content>
@@ -185,7 +186,7 @@ export function TokenizationLesson() {
                     key={i}
                     className="inline-flex items-center px-1.5 py-0.5 rounded bg-sky-500/20 text-sky-300 border border-sky-500/30 text-sm font-mono"
                   >
-                    {ch === ' ' ? '\u2423' : ch}
+                    {ch === ' ' ? '␣' : ch}
                   </span>
                 ))}
               </div>
@@ -250,7 +251,7 @@ export function TokenizationLesson() {
                 What happens when the model encounters &ldquo;ChatGPT&rdquo;?
               </p>
               <div className="px-3 py-2 bg-background/30 rounded font-mono text-xs">
-                &ldquo;ChatGPT is amazing&rdquo; {'\u2192'} [<span className="text-rose-300 font-bold">[UNK]</span>, &ldquo;is&rdquo;, &ldquo;amazing&rdquo;]
+                &ldquo;ChatGPT is amazing&rdquo; {'→'} [<span className="text-rose-300 font-bold">[UNK]</span>, &ldquo;is&rdquo;, &ldquo;amazing&rdquo;]
               </div>
               <p>
                 The word is mapped to a generic <code>[UNK]</code> token. All information
@@ -319,7 +320,7 @@ export function TokenizationLesson() {
             </p>
             <div className="px-4 py-3 bg-violet-500/10 border border-violet-500/20 rounded-lg">
               <p className="text-sm text-muted-foreground font-mono">
-                &ldquo;tokenization&rdquo; {'\u2192'} [&ldquo;token&rdquo;, &ldquo;ization&rdquo;]
+                &ldquo;tokenization&rdquo; {'→'} [&ldquo;token&rdquo;, &ldquo;ization&rdquo;]
               </p>
               <p className="text-xs text-muted-foreground/70 mt-1">
                 The model has never seen &ldquo;tokenization&rdquo; as a whole, but it knows
@@ -342,7 +343,7 @@ export function TokenizationLesson() {
                     key={i}
                     className="inline-flex items-center px-2 py-0.5 rounded bg-violet-500/20 text-violet-300 border border-violet-500/30 text-sm font-mono"
                   >
-                    {tok.replace(/ /g, '\u2423')}
+                    {tok.replace(/ /g, '␣')}
                   </span>
                 ))}
               </div>
@@ -508,7 +509,7 @@ export function TokenizationLesson() {
               Once you have the merge table, <strong>encoding</strong> new text follows the same
               merges in priority order. Given the text &ldquo;lowest&rdquo; and the merge table
               above, you start with characters [l, o, w, e, s, t], apply merge #1
-              (l+o {'\u2192'} lo), then merge #2 (lo+w {'\u2192'} low), then check for further applicable
+              (l+o {'→'} lo), then merge #2 (lo+w {'→'} low), then check for further applicable
               merges. The merge table IS the tokenizer. The notebook walks through this in detail.
             </p>
           </div>
@@ -551,11 +552,11 @@ export function TokenizationLesson() {
         <Row.Aside>
           <TryThisBlock title="Experiments">
             <ul className="space-y-2 text-sm">
-              <li>{'\u2022'} Try &ldquo;unhappiness&rdquo;&mdash;watch how common suffixes merge first.</li>
-              <li>{'\u2022'} Try &ldquo;ChatGPT&rdquo;&mdash;notice it gets split into recognizable pieces, not [UNK].</li>
-              <li>{'\u2022'} Try repeating a word many times. More repetitions = faster merges.</li>
-              <li>{'\u2022'} Try <code className="text-xs">print(&quot;hello&quot;)</code>&mdash;code tokens are different from prose.</li>
-              <li>{'\u2022'} Watch the compression percentage. How much shorter does the token sequence get?</li>
+              <li>{'•'} Try &ldquo;unhappiness&rdquo;&mdash;watch how common suffixes merge first.</li>
+              <li>{'•'} Try &ldquo;ChatGPT&rdquo;&mdash;notice it gets split into recognizable pieces, not [UNK].</li>
+              <li>{'•'} Try repeating a word many times. More repetitions = faster merges.</li>
+              <li>{'•'} Try <code className="text-xs">print(&quot;hello&quot;)</code>&mdash;code tokens are different from prose.</li>
+              <li>{'•'} Watch the compression percentage. How much shorter does the token sequence get?</li>
             </ul>
           </TryThisBlock>
         </Row.Aside>
@@ -645,7 +646,7 @@ export function TokenizationLesson() {
                 Ask an LLM: &ldquo;How many r&rsquo;s in strawberry?&rdquo; Many get it wrong. Why?
               </p>
               <div className="px-3 py-2 bg-background/30 rounded font-mono text-xs">
-                &ldquo;strawberry&rdquo; {'\u2192'} [&ldquo;straw&rdquo;, &ldquo;berry&rdquo;]
+                &ldquo;strawberry&rdquo; {'→'} [&ldquo;straw&rdquo;, &ldquo;berry&rdquo;]
               </div>
               <p>
                 The model never sees the individual letters r-r-r. It sees two tokens:
@@ -788,7 +789,7 @@ export function TokenizationLesson() {
             <ul className="list-disc list-inside text-muted-foreground space-y-1 ml-4">
               <li>
                 <strong>Bigger vocabulary:</strong> shorter sequences (more compression), but
-                the model&rsquo;s output layer has more classes (remember MNIST 10 {'\u2192'} LM
+                the model&rsquo;s output layer has more classes (remember MNIST 10 {'→'} LM
                 50K?), and each vocabulary entry needs its own learned representation. More
                 entries = more parameters. Rare tokens barely appear in training data, so
                 their representations are poorly learned.
@@ -875,7 +876,7 @@ export function TokenizationLesson() {
                   'Every language model has a tokenizer that maps text to a sequence of integer token IDs and back again.',
               },
               {
-                headline: 'Character-level: tiny vocabulary, long sequences. Word-level: short sequences, can\u2019t handle novel words.',
+                headline: 'Character-level: tiny vocabulary, long sequences. Word-level: short sequences, can’t handle novel words.',
                 description:
                   'Both extremes have fundamental problems. Subword tokenization is the middle ground that every modern LLM uses.',
               },
@@ -887,7 +888,7 @@ export function TokenizationLesson() {
               {
                 headline: 'You built a BPE tokenizer from scratch.',
                 description:
-                  'get_pair_counts, merge_pair, train_bpe, encode, decode\u2014five functions that implement the algorithm behind GPT\u2019s tokenizer.',
+                  'get_pair_counts, merge_pair, train_bpe, encode, decode—five functions that implement the algorithm behind GPT’s tokenizer.',
               },
               {
                 headline: 'Tokenization defines the vocabulary. The vocabulary defines what the model can see.',
@@ -909,6 +910,27 @@ export function TokenizationLesson() {
             should learn. <strong>Architecture encodes assumptions about data</strong>&mdash;and
             the tokenizer is the first architectural decision.
           </InsightBlock>
+        </Row.Content>
+      </Row>
+
+      <Row>
+        <Row.Content>
+          <ReferencesBlock
+            references={[
+              {
+                title: 'Neural Machine Translation of Rare Words with Subword Units',
+                authors: 'Sennrich, Haddow & Birch, 2016',
+                url: 'https://arxiv.org/abs/1508.07909',
+                note: 'The original BPE-for-NLP paper that introduced byte pair encoding for neural machine translation.',
+              },
+              {
+                title: 'Language Models are Unsupervised Multitask Learners',
+                authors: 'Radford et al., 2019',
+                url: 'https://cdn.openai.com/better-language-models/language_models_are_unsupervised_multitask_learners.pdf',
+                note: 'GPT-2 introduced byte-level BPE, extending the algorithm to handle arbitrary Unicode without preprocessing.',
+              },
+            ]}
+          />
         </Row.Content>
       </Row>
 
@@ -971,7 +993,7 @@ function StepCard({
                   : 'bg-muted/50 text-muted-foreground border-border/50',
             )}
           >
-            {t === '_' ? '\u2423' : t}
+            {t === '_' ? '␣' : t}
           </span>
         ))}
       </div>

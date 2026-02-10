@@ -15,6 +15,7 @@ import {
   ComparisonRow,
   GradientCard,
   ModuleCompleteBlock,
+  ReferencesBlock,
 } from '@/components/lessons'
 import { CodeBlock } from '@/components/common/CodeBlock'
 import { ExternalLink } from 'lucide-react'
@@ -1220,6 +1221,22 @@ for epoch in range(num_epochs):
               Your training pipeline stays the same. The architecture evolves.
             </p>
           </div>
+        </Row.Content>
+      </Row>
+
+      {/* References */}
+      <Row>
+        <Row.Content>
+          <ReferencesBlock
+            references={[
+              {
+                title: 'Fashion-MNIST: a Novel Image Dataset for Benchmarking Machine Learning Algorithms',
+                authors: 'Xiao, Rasul & Vollgraf, 2017',
+                url: 'https://arxiv.org/abs/1708.07747',
+                note: 'The Fashion-MNIST paper — a harder drop-in replacement for MNIST with 10 clothing categories.',
+              },
+            ]}
+          />
         </Row.Content>
       </Row>
     </LessonLayout>

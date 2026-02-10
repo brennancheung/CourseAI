@@ -93,36 +93,36 @@ function getStepInterval(speed: Speed): number {
 }
 
 function getFormulaForStep(step: number, snap: Snapshot): string {
-  if (step <= 0) return 'Ready \u2014 press Step or Run'
+  if (step <= 0) return 'Ready — press Step or Run'
   if (step === 1) return `x = ${fmt(snap.x)}`
-  if (step === 2) return `z\u2081 = w\u2081\u00B7x + b\u2081 = ${fmt(snap.w1)}\u00D7${fmt(snap.x)} + ${fmt(snap.b1)} = ${fmt(snap.z1)}`
-  if (step === 3) return `a\u2081 = ReLU(${fmt(snap.z1)}) = ${fmt(snap.a1)}`
-  if (step === 4) return `\u0177 = w\u2082\u00B7a\u2081 + b\u2082 = ${fmt(snap.w2)}\u00D7${fmt(snap.a1)} + ${fmt(snap.b2)} = ${fmt(snap.yPred)}`
-  if (step === 5) return `L = (\u0177 - target)\u00B2 = (${fmt(snap.yPred)} - ${fmt(snap.target)})\u00B2 = ${fmt(snap.loss, 4)}`
-  if (step === 6) return `\u2202L/\u2202\u0177 = 2(\u0177 - target) = 2(${fmt(snap.yPred)} - ${fmt(snap.target)}) = ${fmt(snap.dL_dyPred)}`
-  if (step === 7) return `\u2202L/\u2202w\u2082 = \u2202L/\u2202\u0177 \u00B7 a\u2081 = ${fmt(snap.dL_dyPred)} \u00D7 ${fmt(snap.a1)} = ${fmt(snap.dL_dw2)}   |   \u2202L/\u2202b\u2082 = ${fmt(snap.dL_db2)}`
+  if (step === 2) return `z₁ = w₁·x + b₁ = ${fmt(snap.w1)}×${fmt(snap.x)} + ${fmt(snap.b1)} = ${fmt(snap.z1)}`
+  if (step === 3) return `a₁ = ReLU(${fmt(snap.z1)}) = ${fmt(snap.a1)}`
+  if (step === 4) return `ŷ = w₂·a₁ + b₂ = ${fmt(snap.w2)}×${fmt(snap.a1)} + ${fmt(snap.b2)} = ${fmt(snap.yPred)}`
+  if (step === 5) return `L = (ŷ - target)² = (${fmt(snap.yPred)} - ${fmt(snap.target)})² = ${fmt(snap.loss, 4)}`
+  if (step === 6) return `∂L/∂ŷ = 2(ŷ - target) = 2(${fmt(snap.yPred)} - ${fmt(snap.target)}) = ${fmt(snap.dL_dyPred)}`
+  if (step === 7) return `∂L/∂w₂ = ∂L/∂ŷ · a₁ = ${fmt(snap.dL_dyPred)} × ${fmt(snap.a1)} = ${fmt(snap.dL_dw2)}   |   ∂L/∂b₂ = ${fmt(snap.dL_db2)}`
   if (step === 8) {
     if (snap.reluGrad === 0) {
-      return `\u2202L/\u2202z\u2081 = \u2202L/\u2202a\u2081 \u00B7 ReLU'(z\u2081) = ${fmt(snap.dL_da1)} \u00D7 0 = 0.00  \u26A0 ReLU blocked!`
+      return `∂L/∂z₁ = ∂L/∂a₁ · ReLU'(z₁) = ${fmt(snap.dL_da1)} × 0 = 0.00  ⚠ ReLU blocked!`
     }
-    return `\u2202L/\u2202z\u2081 = \u2202L/\u2202a\u2081 \u00B7 ReLU'(z\u2081) = ${fmt(snap.dL_da1)} \u00D7 1 = ${fmt(snap.dL_dz1)}`
+    return `∂L/∂z₁ = ∂L/∂a₁ · ReLU'(z₁) = ${fmt(snap.dL_da1)} × 1 = ${fmt(snap.dL_dz1)}`
   }
-  if (step === 9) return `\u2202L/\u2202w\u2081 = \u2202L/\u2202z\u2081 \u00B7 x = ${fmt(snap.dL_dz1)} \u00D7 ${fmt(snap.x)} = ${fmt(snap.dL_dw1)}   |   \u2202L/\u2202b\u2081 = ${fmt(snap.dL_db1)}`
+  if (step === 9) return `∂L/∂w₁ = ∂L/∂z₁ · x = ${fmt(snap.dL_dz1)} × ${fmt(snap.x)} = ${fmt(snap.dL_dw1)}   |   ∂L/∂b₁ = ${fmt(snap.dL_db1)}`
   // step 10 - update
   return [
-    `w\u2081: ${fmt3(snap.w1)} \u2192 ${fmt3(snap.w1)} - \u03B1\u00D7${fmt(snap.dL_dw1)}`,
-    `b\u2081: ${fmt3(snap.b1)} \u2192 ${fmt3(snap.b1)} - \u03B1\u00D7${fmt(snap.dL_db1)}`,
-    `w\u2082: ${fmt3(snap.w2)} \u2192 ${fmt3(snap.w2)} - \u03B1\u00D7${fmt(snap.dL_dw2)}`,
-    `b\u2082: ${fmt3(snap.b2)} \u2192 ${fmt3(snap.b2)} - \u03B1\u00D7${fmt(snap.dL_db2)}`,
+    `w₁: ${fmt3(snap.w1)} → ${fmt3(snap.w1)} - α×${fmt(snap.dL_dw1)}`,
+    `b₁: ${fmt3(snap.b1)} → ${fmt3(snap.b1)} - α×${fmt(snap.dL_db1)}`,
+    `w₂: ${fmt3(snap.w2)} → ${fmt3(snap.w2)} - α×${fmt(snap.dL_dw2)}`,
+    `b₂: ${fmt3(snap.b2)} → ${fmt3(snap.b2)} - α×${fmt(snap.dL_db2)}`,
   ].join('   ')
 }
 
 function getStepLabel(step: number): string {
   if (step <= 0) return 'Idle'
   if (step === 1) return 'Forward: Input'
-  if (step === 2) return 'Forward: Linear\u2081'
+  if (step === 2) return 'Forward: Linear₁'
   if (step === 3) return 'Forward: ReLU'
-  if (step === 4) return 'Forward: Linear\u2082'
+  if (step === 4) return 'Forward: Linear₂'
   if (step === 5) return 'Forward: Loss'
   if (step === 6) return 'Backward: Loss Gradient'
   if (step === 7) return 'Backward: Layer 2 Gradients'
@@ -327,9 +327,9 @@ export function BackpropFlowExplorer({
 
   const nodeLabels: Record<string, string> = {
     x: 'x',
-    z1: 'z\u2081',
-    a1: 'a\u2081',
-    yPred: '\u0177',
+    z1: 'z₁',
+    a1: 'a₁',
+    yPred: 'ŷ',
     loss: 'L',
   }
 
@@ -350,10 +350,10 @@ export function BackpropFlowExplorer({
   }
 
   const edges = [
-    { from: 'x', to: 'z1', forwardLabel: `\u00D7${fmt(snapshot.w1)}+${fmt(snapshot.b1)}`, backLabel: `\u2202z/\u2202w\u2081=${fmt(snapshot.x)}` },
+    { from: 'x', to: 'z1', forwardLabel: `×${fmt(snapshot.w1)}+${fmt(snapshot.b1)}`, backLabel: `∂z/∂w₁=${fmt(snapshot.x)}` },
     { from: 'z1', to: 'a1', forwardLabel: 'ReLU', backLabel: `ReLU'=${snapshot.reluGrad}` },
-    { from: 'a1', to: 'yPred', forwardLabel: `\u00D7${fmt(snapshot.w2)}+${fmt(snapshot.b2)}`, backLabel: `\u2202\u0177/\u2202w\u2082=${fmt(snapshot.a1)}` },
-    { from: 'yPred', to: 'loss', forwardLabel: `(\u00B7-${fmt(snapshot.target)})\u00B2`, backLabel: `2(\u0177-t)=${fmt(snapshot.dL_dyPred)}` },
+    { from: 'a1', to: 'yPred', forwardLabel: `×${fmt(snapshot.w2)}+${fmt(snapshot.b2)}`, backLabel: `∂ŷ/∂w₂=${fmt(snapshot.a1)}` },
+    { from: 'yPred', to: 'loss', forwardLabel: `(·-${fmt(snapshot.target)})²`, backLabel: `2(ŷ-t)=${fmt(snapshot.dL_dyPred)}` },
   ]
 
   const computedNodes = getComputedNodes(currentStep)
@@ -580,7 +580,7 @@ export function BackpropFlowExplorer({
               <Text
                 x={nodePositions.a1.x - 55}
                 y={height - 50}
-                text={'\u26A0 ReLU blocked!'}
+                text={'⚠ ReLU blocked!'}
                 fontSize={12}
                 fill="#dc2626"
               />
@@ -656,7 +656,7 @@ export function BackpropFlowExplorer({
         {/* Learning rate */}
         <div className="flex items-center gap-2">
           <span className="text-sm text-muted-foreground">
-            {'Learning rate (\u03B1):'}
+            {'Learning rate (α):'}
           </span>
           <input
             type="range"
@@ -702,19 +702,19 @@ export function BackpropFlowExplorer({
           <span className="font-mono text-red-400">{fmt(snapshot.loss, 4)}</span>
         </div>
         <div className="px-3 py-1.5 rounded-md bg-violet-500/10 border border-violet-500/30">
-          <span className="text-muted-foreground">w{'\u2081'}=</span>
+          <span className="text-muted-foreground">w{'₁'}=</span>
           <span className="font-mono text-violet-400">{fmt3(weights.w1)}</span>
         </div>
         <div className="px-3 py-1.5 rounded-md bg-violet-500/10 border border-violet-500/30">
-          <span className="text-muted-foreground">b{'\u2081'}=</span>
+          <span className="text-muted-foreground">b{'₁'}=</span>
           <span className="font-mono text-violet-400">{fmt3(weights.b1)}</span>
         </div>
         <div className="px-3 py-1.5 rounded-md bg-emerald-500/10 border border-emerald-500/30">
-          <span className="text-muted-foreground">w{'\u2082'}=</span>
+          <span className="text-muted-foreground">w{'₂'}=</span>
           <span className="font-mono text-emerald-400">{fmt3(weights.w2)}</span>
         </div>
         <div className="px-3 py-1.5 rounded-md bg-emerald-500/10 border border-emerald-500/30">
-          <span className="text-muted-foreground">b{'\u2082'}=</span>
+          <span className="text-muted-foreground">b{'₂'}=</span>
           <span className="font-mono text-emerald-400">{fmt3(weights.b2)}</span>
         </div>
       </div>

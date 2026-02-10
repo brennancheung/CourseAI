@@ -90,11 +90,11 @@ const MAX_MANUAL_STEP = 5
 function getStepDescription(step: number, net: NetworkValues): string {
   const descriptions: Record<number, string> = {
     0: 'Forward pass complete. Click "Next Step" to begin the backward pass.',
-    1: `Step 1: Loss gradient. dL/d\u0177 = -2(y - \u0177) = -2(${fmtShort(net.yTrue)} - (${fmtShort(net.yHat)})) = ${fmt(net.dLdyHat)}`,
-    2: `Step 2: Layer 2 param gradients. dL/dw2 = dL/d\u0177 \u00d7 a1 = ${fmt(net.dLdyHat)} \u00d7 ${fmt(net.a1)} = ${fmt(net.dLdw2)}. dL/db2 = dL/d\u0177 \u00d7 1 = ${fmt(net.dLdb2)}`,
-    3: `Step 3: Pass gradient to Layer 1. dL/da1 = dL/d\u0177 \u00d7 w2 = ${fmt(net.dLdyHat)} \u00d7 (${fmt(net.w2)}) = ${fmt(net.dLda1)}`,
-    4: `Step 4: Through ReLU. dL/dz1 = dL/da1 \u00d7 relu'(z1) = ${fmt(net.dLda1)} \u00d7 ${net.reluGrad} = ${fmt(net.dLdz1)}${net.reluGrad === 0 ? ' (ReLU killed the gradient!)' : ''}`,
-    5: `Step 5: Layer 1 param gradients. dL/dw1 = dL/dz1 \u00d7 x = ${fmt(net.dLdz1)} \u00d7 ${fmtShort(net.x)} = ${fmt(net.dLdw1)}. dL/db1 = dL/dz1 \u00d7 1 = ${fmt(net.dLdb1)}. Done!`,
+    1: `Step 1: Loss gradient. dL/dŷ = -2(y - ŷ) = -2(${fmtShort(net.yTrue)} - (${fmtShort(net.yHat)})) = ${fmt(net.dLdyHat)}`,
+    2: `Step 2: Layer 2 param gradients. dL/dw2 = dL/dŷ × a1 = ${fmt(net.dLdyHat)} × ${fmt(net.a1)} = ${fmt(net.dLdw2)}. dL/db2 = dL/dŷ × 1 = ${fmt(net.dLdb2)}`,
+    3: `Step 3: Pass gradient to Layer 1. dL/da1 = dL/dŷ × w2 = ${fmt(net.dLdyHat)} × (${fmt(net.w2)}) = ${fmt(net.dLda1)}`,
+    4: `Step 4: Through ReLU. dL/dz1 = dL/da1 × relu'(z1) = ${fmt(net.dLda1)} × ${net.reluGrad} = ${fmt(net.dLdz1)}${net.reluGrad === 0 ? ' (ReLU killed the gradient!)' : ''}`,
+    5: `Step 5: Layer 1 param gradients. dL/dw1 = dL/dz1 × x = ${fmt(net.dLdz1)} × ${fmtShort(net.x)} = ${fmt(net.dLdw1)}. dL/db1 = dL/dz1 × 1 = ${fmt(net.dLdb1)}. Done!`,
   }
   return descriptions[step] ?? ''
 }
@@ -373,9 +373,9 @@ export function AutogradExplorer(_props: AutogradExplorerProps) {
           {/* Add: + b2 */}
           <div className="flex flex-col items-center gap-1">
             <GraphNode
-              label={'\u0177 = +b2'}
+              label={'ŷ = +b2'}
               forwardValue={fmtShort(net.yHat)}
-              gradientLabel="dL/d\u0177"
+              gradientLabel="dL/dŷ"
               gradientValue={fmt(net.dLdyHat)}
               type="operation"
               showGradient={gradsVisible.dLdyHat}

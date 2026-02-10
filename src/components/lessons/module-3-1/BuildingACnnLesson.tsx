@@ -274,7 +274,7 @@ export function BuildingACnnLesson() {
               <div className="flex flex-wrap gap-8 items-start">
                 <GridDisplay data={POOLING_INPUT} label="Input (4x4)" />
                 <div className="flex items-center self-center text-muted-foreground">
-                  {'\u2192'}
+                  {'→'}
                 </div>
                 <GridDisplay data={POOLING_MAX_OUTPUT} label="Output (2x2)" />
               </div>
@@ -328,7 +328,7 @@ export function BuildingACnnLesson() {
               <div className="flex flex-wrap gap-8 items-start">
                 <GridDisplay data={EDGE_FEATURE_MAP} label="Before (6x6)" size="sm" />
                 <div className="flex items-center self-center text-muted-foreground">
-                  {'\u2192'}
+                  {'→'}
                 </div>
                 <GridDisplay data={EDGE_POOLED} label="After (3x3)" size="sm" />
               </div>
@@ -499,8 +499,8 @@ export function BuildingACnnLesson() {
                   Stride 2 means it skips every other position.
                 </p>
                 <div className="bg-black/20 rounded p-3 font-mono text-xs space-y-1">
-                  <p>6x6 input, 3x3 filter, stride 1 {'\u2192'} 4x4 output</p>
-                  <p>6x6 input, 3x3 filter, stride 2 {'\u2192'} 2x2 output</p>
+                  <p>6x6 input, 3x3 filter, stride 1 {'→'} 4x4 output</p>
+                  <p>6x6 input, 3x3 filter, stride 2 {'→'} 2x2 output</p>
                 </div>
                 <p>
                   Fewer positions visited = smaller output. Stride 2 roughly
@@ -534,11 +534,11 @@ export function BuildingACnnLesson() {
                 The Shrinking Problem (no padding, 3x3 filter, stride 1):
               </p>
               <div className="font-mono text-sm text-muted-foreground space-y-0.5">
-                <p>Layer 1: 32x32 {'\u2192'} 30x30</p>
-                <p>Layer 2: 30x30 {'\u2192'} 28x28</p>
-                <p>Layer 3: 28x28 {'\u2192'} 26x26</p>
-                <p>Layer 4: 26x26 {'\u2192'} 24x24</p>
-                <p>Layer 5: 24x24 {'\u2192'} 22x22</p>
+                <p>Layer 1: 32x32 {'→'} 30x30</p>
+                <p>Layer 2: 30x30 {'→'} 28x28</p>
+                <p>Layer 3: 28x28 {'→'} 26x26</p>
+                <p>Layer 4: 26x26 {'→'} 24x24</p>
+                <p>Layer 5: 24x24 {'→'} 22x22</p>
               </div>
               <p className="text-sm text-rose-300 mt-2">
                 Five layers and 10 pixels are gone from each edge. Border
@@ -569,8 +569,8 @@ export function BuildingACnnLesson() {
                   input before convolving. With padding=1 on each side:
                 </p>
                 <div className="bg-black/20 rounded p-3 font-mono text-xs space-y-1">
-                  <p>7x7 input + padding=1 {'\u2192'} 9x9 (padded)</p>
-                  <p>9x9 with 3x3 filter {'\u2192'} 7x7 output</p>
+                  <p>7x7 input + padding=1 {'→'} 9x9 (padded)</p>
+                  <p>9x9 with 3x3 filter {'→'} 7x7 output</p>
                 </div>
                 <p>
                   The output is the <strong>same size</strong> as the input.
@@ -621,16 +621,16 @@ export function BuildingACnnLesson() {
             </p>
             <div className="py-3 px-5 bg-muted/30 rounded-lg text-sm text-muted-foreground space-y-1 font-mono">
               <p>
-                stride=1, no padding: (7 - 3 + 0) / 1 + 1 = 5 {'\u2713'}
+                stride=1, no padding: (7 - 3 + 0) / 1 + 1 = 5 {'✓'}
               </p>
               <p>
-                stride=2, no padding: (6 - 3 + 0) / 2 + 1 = 2 {'\u2713'}
+                stride=2, no padding: (6 - 3 + 0) / 2 + 1 = 2 {'✓'}
               </p>
               <p>
-                stride=1, padding=1: (7 - 3 + 2) / 1 + 1 = 7 {'\u2713'}
+                stride=1, padding=1: (7 - 3 + 2) / 1 + 1 = 7 {'✓'}
               </p>
               <p>
-                stride=2, padding=1: (28 - 3 + 2) / 2 + 1 = 14 {'\u2713'}
+                stride=2, padding=1: (28 - 3 + 2) / 2 + 1 = 14 {'✓'}
               </p>
             </div>
             <p className="text-sm text-muted-foreground">
@@ -678,9 +678,9 @@ export function BuildingACnnLesson() {
                     Option B: Stride=1 conv + pool
                   </p>
                   <div className="font-mono text-xs text-muted-foreground space-y-0.5">
-                    <p>Conv(32, 3x3, stride=1, pad=1) {'\u2192'} 28x28x32</p>
+                    <p>Conv(32, 3x3, stride=1, pad=1) {'→'} 28x28x32</p>
                     <p>
-                      MaxPool(2x2) {'\u2192'} <strong className="text-foreground">14x14x32</strong>
+                      MaxPool(2x2) {'→'} <strong className="text-foreground">14x14x32</strong>
                     </p>
                   </div>
                 </div>
@@ -877,8 +877,8 @@ nn.MaxPool2d(2)  # kernel_size=2, stride defaults to kernel_size`}
             </div>
             <p className="text-muted-foreground">
               Notice the pattern: <strong>spatial dimensions shrink</strong>{' '}
-              (28 {'\u2192'} 14 {'\u2192'} 7) while{' '}
-              <strong>channel count grows</strong> (1 {'\u2192'} 32 {'\u2192'}{' '}
+              (28 {'→'} 14 {'→'} 7) while{' '}
+              <strong>channel count grows</strong> (1 {'→'} 32 {'→'}{' '}
               64). Then the flatten step collapses everything into a vector, and
               the linear layers make the final decision.
             </p>
@@ -1005,8 +1005,8 @@ nn.MaxPool2d(2)  # kernel_size=2, stride defaults to kernel_size`}
                     3. 7 x 7 x 32 = <strong>1568</strong>.
                   </p>
                   <p>
-                    4. Without padding: 28{'\u2192'}24{'\u2192'}12{'\u2192'}8
-                    {'\u2192'}4. Then 4x4x32 = 512 instead of 1568. Spatial
+                    4. Without padding: 28{'→'}24{'→'}12{'→'}8
+                    {'→'}4. Then 4x4x32 = 512 instead of 1568. Spatial
                     dimensions shrink much faster and border information is lost.
                   </p>
                 </div>

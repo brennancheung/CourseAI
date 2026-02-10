@@ -137,7 +137,7 @@ function CausalAttentionDiagram() {
                     fontSize="14"
                     fontWeight="600"
                   >
-                    {'\u2713'}
+                    {'✓'}
                   </text>
                 )}
               </g>
@@ -447,9 +447,9 @@ export function FinetuningForClassificationLesson() {
               'Choose which hidden state to use as the sequence representation (and why)',
               'Train with a frozen backbone on a sentiment classification task',
               'Compare frozen vs unfrozen finetuning (introduced, not deeply developed)',
-              'NOT: instruction tuning or SFT\u2014that\u2019s the next lesson',
-              'NOT: LoRA or parameter-efficient finetuning\u2014Lesson 4',
-              'NOT: RLHF or alignment\u2014Lesson 3',
+              'NOT: instruction tuning or SFT—that’s the next lesson',
+              'NOT: LoRA or parameter-efficient finetuning—Lesson 4',
+              'NOT: RLHF or alignment—Lesson 3',
               'NOT: prompt-based classification, token classification, or HuggingFace Trainer API',
             ]}
           />
@@ -767,7 +767,7 @@ export function FinetuningForClassificationLesson() {
         </Row.Content>
         <Row.Aside>
           <TipBlock title="Parameter Count">
-            The classification head is tiny: 768 {'\u00d7'} num_classes
+            The classification head is tiny: 768 {'×'} num_classes
             parameters. For binary sentiment (2 classes), that is 1,536
             parameters. The backbone has 124 million. You are training
             0.001% of the total model.
@@ -789,33 +789,33 @@ export function FinetuningForClassificationLesson() {
               </p>
               <p>
                 <strong>Step 1:</strong> Tokenize{' '}
-                {'\u2192'}{' '}
+                {'→'}{' '}
                 <code className="text-xs">[1212, 3807, 373, 7818]</code>{' '}
                 (4 tokens)
               </p>
               <p>
                 <strong>Step 2:</strong> Forward through transformer{' '}
-                {'\u2192'}{' '}
+                {'→'}{' '}
                 hidden states of shape{' '}
                 <code className="text-xs">(1, 4, 768)</code>
               </p>
               <p>
                 <strong>Step 3:</strong> Take last token{' '}
-                {'\u2192'}{' '}
+                {'→'}{' '}
                 <code className="text-xs">hidden_states[:, -1, :]</code>{' '}
-                {'\u2192'}{' '}
+                {'→'}{' '}
                 shape <code className="text-xs">(1, 768)</code>
               </p>
               <p>
                 <strong>Step 4:</strong> Classification head{' '}
-                {'\u2192'}{' '}
+                {'→'}{' '}
                 <code className="text-xs">nn.Linear(768, 2)</code>{' '}
-                {'\u2192'}{' '}
+                {'→'}{' '}
                 logits <code className="text-xs">[1.2, -0.8]</code>
               </p>
               <p>
                 <strong>Step 5:</strong> Cross-entropy loss with label 0
-                (negative) {'\u2192'} backprop through classifier only
+                (negative) {'→'} backprop through classifier only
               </p>
             </div>
 
@@ -947,7 +947,7 @@ for epoch in range(num_epochs):
                   <p>
                     <strong>Changes:</strong>{' '}
                     <code className="text-xs">nn.Linear(768, 2)</code>{' '}
-                    {'\u2192'}{' '}
+                    {'→'}{' '}
                     <code className="text-xs">nn.Linear(768, 4)</code>{' '}
                     and the dataset/labels. That is it.
                   </p>
@@ -1030,11 +1030,11 @@ for epoch in range(num_epochs):
         <Row.Aside>
           <TipBlock title="Notebook Exercises">
             <ul className="space-y-2 text-sm">
-              <li>{'\u2022'} Load GPT-2 and tokenize SST-2 examples</li>
-              <li>{'\u2022'} Implement the classification head</li>
-              <li>{'\u2022'} Train with frozen backbone and evaluate</li>
-              <li>{'\u2022'} Unfreeze last N blocks with differential LR</li>
-              <li>{'\u2022'} Generate text before and after finetuning</li>
+              <li>{'•'} Load GPT-2 and tokenize SST-2 examples</li>
+              <li>{'•'} Implement the classification head</li>
+              <li>{'•'} Train with frozen backbone and evaluate</li>
+              <li>{'•'} Unfreeze last N blocks with differential LR</li>
+              <li>{'•'} Generate text before and after finetuning</li>
             </ul>
           </TipBlock>
         </Row.Aside>
@@ -1149,19 +1149,19 @@ for epoch in range(num_epochs):
                 headline:
                   'A pretrained transformer is a text feature extractor.',
                 description:
-                  'Add a classification head, freeze the backbone, train the head. The same pattern as CNN transfer learning\u2014only the feature extractor changed.',
+                  'Add a classification head, freeze the backbone, train the head. The same pattern as CNN transfer learning—only the feature extractor changed.',
               },
               {
                 headline:
-                  'Use the last token\u2019s hidden state.',
+                  'Use the last token’s hidden state.',
                 description:
-                  'Causal masking means the last token has attended to all previous tokens\u2014it is the only position with full sequence context. The architecture dictates this choice.',
+                  'Causal masking means the last token has attended to all previous tokens—it is the only position with full sequence context. The architecture dictates this choice.',
               },
               {
                 headline:
                   'The classification head is tiny.',
                 description:
-                  'For binary classification: 768 \u00d7 2 = 1,536 trainable parameters out of 124 million total. You are training 0.001% of the model.',
+                  'For binary classification: 768 × 2 = 1,536 trainable parameters out of 124 million total. You are training 0.001% of the model.',
               },
               {
                 headline:

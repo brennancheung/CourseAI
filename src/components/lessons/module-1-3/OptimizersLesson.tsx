@@ -16,6 +16,7 @@ import {
   ConstraintBlock,
   ComparisonRow,
   GradientCard,
+  ReferencesBlock,
 } from '@/components/lessons'
 import { ExercisePanel } from '@/components/widgets/ExercisePanel'
 import { OptimizerExplorer } from '@/components/widgets/OptimizerExplorer'
@@ -744,14 +745,30 @@ export function OptimizersLesson() {
                   'Combines both ideas with bias correction. A great default (lr=0.001, beta1=0.9, beta2=0.999), but not always the best final answer.',
               },
               {
-                headline: 'No free lunch: faster convergence \u2260 better generalization',
+                headline: 'No free lunch: faster convergence ≠ better generalization',
                 description:
                   'Adam converges faster but can settle in sharper minima. SGD + momentum with a tuned schedule often generalizes better on well-understood problems.',
               },
               {
                 headline: 'Learning rate means different things for different optimizers',
                 description:
-                  'lr=0.01 for SGD and lr=0.001 for Adam produce similar-scale updates. Don\u2019t swap one into the other.',
+                  'lr=0.01 for SGD and lr=0.001 for Adam produce similar-scale updates. Don’t swap one into the other.',
+              },
+            ]}
+          />
+        </Row.Content>
+      </Row>
+
+      {/* References */}
+      <Row>
+        <Row.Content>
+          <ReferencesBlock
+            references={[
+              {
+                title: 'Adam: A Method for Stochastic Optimization',
+                authors: 'Kingma & Ba, 2014',
+                url: 'https://arxiv.org/abs/1412.6980',
+                note: 'Introduced Adam, the most widely used optimizer in deep learning, combining momentum and adaptive learning rates.',
               },
             ]}
           />

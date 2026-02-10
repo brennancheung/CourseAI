@@ -17,6 +17,7 @@ import {
   GradientCard,
   ComparisonRow,
   PhaseCard,
+  ReferencesBlock,
 } from '@/components/lessons'
 import { ExercisePanel } from '@/components/widgets/ExercisePanel'
 import { DiffusionNoiseWidget } from '@/components/widgets/DiffusionNoiseWidget'
@@ -199,7 +200,7 @@ export function TheDiffusionIdeaLesson() {
               'The forward process conceptually (gradual noise addition)',
               'The reverse process conceptually (learned denoising, step by step)',
               'Motivating the approach from the VAE quality ceiling',
-              'NOT: mathematical formulation, noise schedules, or alpha_bar\u2014that is the next lesson',
+              'NOT: mathematical formulation, noise schedules, or alpha_bar—that is the next lesson',
               'NOT: the training objective or loss function',
               'NOT: the sampling algorithm or code',
               'NOT: U-Net or any specific architecture',
@@ -233,7 +234,7 @@ export function TheDiffusionIdeaLesson() {
               title: 'Your VAE',
               color: 'amber',
               items: [
-                '28\u00D728 grayscale',
+                '28×28 grayscale',
                 'Blurry, soft edges',
                 'Recognizable but not impressive',
                 'One-shot generation from latent space',
@@ -243,7 +244,7 @@ export function TheDiffusionIdeaLesson() {
               title: 'Stable Diffusion',
               color: 'emerald',
               items: [
-                '512\u00D7512+ full color',
+                '512×512+ full color',
                 'Sharp, detailed, photorealistic',
                 'Text-guided, arbitrary scenes',
                 'Iterative refinement from noise',
@@ -418,7 +419,7 @@ export function TheDiffusionIdeaLesson() {
               title: 'One-Shot (Impossible)',
               color: 'rose',
               items: [
-                'Pure noise \u2192 clean image in one step',
+                'Pure noise → clean image in one step',
                 'Infinitely many valid answers',
                 'No information to guide the choice',
                 'Like assembling a puzzle in a tornado',
@@ -431,7 +432,7 @@ export function TheDiffusionIdeaLesson() {
                 'Remove a little noise at each step',
                 'Most of the image is still there',
                 'The task is constrained and well-defined',
-                'Like sculpting: rough shape \u2192 details \u2192 polish',
+                'Like sculpting: rough shape → details → polish',
               ],
             }}
           />
@@ -816,19 +817,19 @@ export function TheDiffusionIdeaLesson() {
                 headline:
                   'Destruction is easy; creation from scratch is impossibly hard; but undoing a small step of destruction is learnable.',
                 description:
-                  'Adding noise to an image is trivial (forward process). Going from pure noise to a clean image in one step is underdetermined\u2014infinitely many images are consistent with noise. But removing a small amount of noise is a tractable task a neural network can learn.',
+                  'Adding noise to an image is trivial (forward process). Going from pure noise to a clean image in one step is underdetermined—infinitely many images are consistent with noise. But removing a small amount of noise is a tractable task a neural network can learn.',
               },
               {
                 headline:
                   'The forward process gradually adds Gaussian noise until the image becomes pure static. The reverse process undoes this, one step at a time.',
                 description:
-                  'The forward process is mechanical\u2014no learning required. The reverse process is where the neural network lives, learning to denoise at every noise level. Chain enough reverse steps together and you get generation.',
+                  'The forward process is mechanical—no learning required. The reverse process is where the neural network lives, learning to denoise at every noise level. Chain enough reverse steps together and you get generation.',
               },
               {
                 headline:
-                  'This is still \u201Csame building blocks, different question.\u201D',
+                  'This is still “same building blocks, different question.”',
                 description:
-                  'Conv layers from your CNN lessons. MSE loss from your first regression. The same training loop you have written many times. What\u2019s new is the question: \u201CWhat noise was added to this image?\u201D The decomposition of generation into many small denoising steps is the revolutionary idea.',
+                  `Conv layers from your CNN lessons. MSE loss from your first regression. The same training loop you have written many times. What’s new is the question: “What noise was added to this image?” The decomposition of generation into many small denoising steps is the revolutionary idea.`,
               },
             ]}
           />
@@ -866,10 +867,25 @@ export function TheDiffusionIdeaLesson() {
 
       <Row>
         <Row.Content>
+          <ReferencesBlock
+            references={[
+              {
+                title: 'Denoising Diffusion Probabilistic Models',
+                authors: 'Ho, Jain & Abbeel, 2020',
+                url: 'https://arxiv.org/abs/2006.11239',
+                note: 'The foundational DDPM paper that established gradual noise addition and learned iterative denoising for generation.',
+              },
+            ]}
+          />
+        </Row.Content>
+      </Row>
+
+      <Row>
+        <Row.Content>
           <NextStepBlock
             href="/app"
             title="Up Next: The Forward Process"
-            description="The mathematical formulation of noise addition\u2014noise schedules, alpha_bar, and a closed-form formula that lets you jump to any timestep directly."
+            description="The mathematical formulation of noise addition—noise schedules, alpha_bar, and a closed-form formula that lets you jump to any timestep directly."
           />
         </Row.Content>
       </Row>

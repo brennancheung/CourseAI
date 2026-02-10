@@ -511,7 +511,7 @@ export function RegularizationExplorer({
                 onChange={(e) => setWeightDecayLambda(Math.pow(10, parseFloat(e.target.value)))}
                 className="w-16 cursor-pointer"
               />
-              <span className="text-xs font-mono w-14">{'\u03BB'}={weightDecayLambda.toFixed(4)}</span>
+              <span className="text-xs font-mono w-14">{'λ'}={weightDecayLambda.toFixed(4)}</span>
             </div>
           )}
         </div>

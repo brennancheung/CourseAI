@@ -275,7 +275,7 @@ function LayerTable({ arch }: { arch: ArchitectureDef }) {
                   )}
                 </td>
                 <td className="text-right py-1.5 px-2 font-mono text-muted-foreground">
-                  {cumParams > 0 ? formatParams(cumParams) : '\u2014'}
+                  {cumParams > 0 ? formatParams(cumParams) : '—'}
                 </td>
                 <td className="text-right py-1.5 px-2 font-mono text-muted-foreground">{layer.receptiveField}</td>
                 <td className="py-1.5 px-2 text-muted-foreground/70 hidden md:table-cell">{layer.note ?? ''}</td>

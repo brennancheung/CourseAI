@@ -457,7 +457,7 @@ export function TrainingDynamicsExplorer({
                   fill="#888"
                   fontSize="9"
                 >
-                  10{logVal < 0 ? '\u207B' : ''}{Math.abs(logVal).toString().split('').map(d => String.fromCharCode(0x2070 + parseInt(d))).join('')}
+                  10{logVal < 0 ? '⁻' : ''}{Math.abs(logVal).toString().split('').map(d => String.fromCharCode(0x2070 + parseInt(d))).join('')}
                 </text>
                 <line
                   x1={chartPadding.left}

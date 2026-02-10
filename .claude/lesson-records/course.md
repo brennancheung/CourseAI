@@ -33,7 +33,7 @@ Take a software engineer from "uses AI tools" to "understands how models actuall
 | 4.3 | Building & Training GPT | 4 of 4 | complete |
 | 4.4 | Beyond Pretraining | 2 of 5 | in progress |
 | 6.1 | Generative Foundations | 4 of 4 | complete |
-| 6.2 | Diffusion | 2 of 5 | in progress |
+| 6.2 | Diffusion | 5 of 5 | complete |
 
 ## Progression
 Series 1 (Foundations) establishes the complete path from "what is learning?" through linear models, neural networks, and training. Series 2 (PyTorch) bridges theory to practice — hands-on implementation right after the concepts. Series 3 (CNNs) covers convolutional architectures with PyTorch in hand, needed for understanding U-Net in Stable Diffusion. Series 4-7 cover the target domains: LLMs and generative models.

@@ -371,7 +371,7 @@ export function TrainingStepSimulator({
           pixels={basePixels}
           scale={imgScale}
           borderColor="border-emerald-500/40"
-          label="x\u2080 (clean)"
+          label="x₀ (clean)"
         />
         <div className="flex flex-col items-center justify-center self-center text-muted-foreground/50 text-lg">
           &rarr;
@@ -380,7 +380,7 @@ export function TrainingStepSimulator({
           pixels={noisyPixels}
           scale={imgScale}
           borderColor="border-violet-500/40"
-          label={`x\u209C at t=${step}`}
+          label={`xₜ at t=${step}`}
         />
         <div className="flex flex-col items-center justify-center self-center text-muted-foreground/50 text-lg">
           &rarr;
@@ -389,7 +389,7 @@ export function TrainingStepSimulator({
           pixels={predictedNoisePixels}
           scale={imgScale}
           borderColor="border-sky-500/40"
-          label="\u03B5\u0302 (predicted)"
+          label="ε̂ (predicted)"
         />
         <div className="flex flex-col items-center justify-center self-center text-muted-foreground/30 text-sm font-mono">
           vs
@@ -398,7 +398,7 @@ export function TrainingStepSimulator({
           pixels={realNoisePixels}
           scale={imgScale}
           borderColor="border-rose-500/40"
-          label="\u03B5 (actual)"
+          label="ε (actual)"
         />
       </div>
 
