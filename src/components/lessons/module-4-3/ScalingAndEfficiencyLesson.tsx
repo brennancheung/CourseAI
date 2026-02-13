@@ -624,7 +624,7 @@ export function ScalingAndEfficiencyLesson() {
               'Why transformer training and inference are slow (concrete bottlenecks)',
               'Compute-bound vs memory-bound operations (the fundamental framework)',
               'Mixed precision with bfloat16 (extending float16/GradScaler from Series 2)',
-              'KV caching for autoregressive inference (mechanism and why it\u2019s essential)',
+              `KV caching for autoregressive inference (mechanism and why it's essential)`,
               'Flash attention (the insight—tiled computation—not the implementation)',
               'Scaling laws (Chinchilla: how to allocate compute between model size and data)',
               'NOT: implementing any of these optimizations (no notebook)',
@@ -1575,13 +1575,13 @@ export function ScalingAndEfficiencyLesson() {
                 headline:
                   '"The GPU is waiting for data" → compute-bound vs memory-bound.',
                 description:
-                  'Not all operations benefit from faster GPUs. Memory-bound operations (layer norm, softmax) are limited by memory bandwidth, not compute. Arithmetic intensity tells you which regime you\u2019re in.',
+                  `Not all operations benefit from faster GPUs. Memory-bound operations (layer norm, softmax) are limited by memory bandwidth, not compute. Arithmetic intensity tells you which regime you're in.`,
               },
               {
                 headline:
                   '"Half the bits, but gradients vanish" → mixed precision with bfloat16.',
                 description:
-                  'bfloat16 preserves float32\u2019s range while using 16 bits. The master weights pattern: float32 for accumulation, bfloat16 for forward/backward. The "mixed" is the essential part.',
+                  `bfloat16 preserves float32's range while using 16 bits. The master weights pattern: float32 for accumulation, bfloat16 for forward/backward. The "mixed" is the essential part.`,
               },
               {
                 headline:
@@ -1591,7 +1591,7 @@ export function ScalingAndEfficiencyLesson() {
               },
               {
                 headline:
-                  '"The attention matrix doesn\u2019t fit in fast memory" → flash attention.',
+                  `"The attention matrix doesn't fit in fast memory" → flash attention.`,
                 description:
                   'Tile the attention computation so the full n×n matrix is never materialized. Same result, O(n) memory instead of O(n²). Built into PyTorch.',
               },

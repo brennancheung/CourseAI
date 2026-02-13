@@ -2,7 +2,6 @@
 
 import {
   useState,
-  useCallback,
   useEffect,
   useContext,
   createContext,
@@ -108,8 +107,7 @@ function Content({ children }: ContentProps) {
       setMeasuredWidth(entry.contentRect.width)
 
       if (isExpanded) {
-        const canvasHeight = Math.max(window.innerHeight * 0.6, 400)
-        setExpandedHeight(canvasHeight)
+        setExpandedHeight(entry.contentRect.height)
       }
     })
 
@@ -145,7 +143,7 @@ function Content({ children }: ContentProps) {
   }
 
   return (
-    <div ref={containerRef} className="p-4">
+    <div ref={containerRef} className={`p-4${isExpanded ? ' flex-1 min-h-0' : ''}`}>
       {renderChild()}
     </div>
   )
@@ -196,12 +194,6 @@ function ExercisePanelBase({ children, title, subtitle }: ExercisePanelProps) {
     }
   }, [isExpanded])
 
-  const handleBackdropClick = useCallback((e: React.MouseEvent) => {
-    if (e.target === e.currentTarget) {
-      setIsExpanded(false)
-    }
-  }, [])
-
   const contextValue: ExercisePanelContextType = {
     isExpanded,
     setIsExpanded,
@@ -242,15 +234,10 @@ function ExercisePanelBase({ children, title, subtitle }: ExercisePanelProps) {
     </div>
   )
 
-  // Fullscreen modal
-  const fullscreenModal = isExpanded && portalContainer && createPortal(
-    <div
-      className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center overflow-y-auto p-4"
-      onClick={handleBackdropClick}
-    >
-      <div className="bg-card rounded-lg overflow-hidden w-[90vw] max-w-[1400px] max-h-[90vh] overflow-y-auto">
-        {panelContent}
-      </div>
+  // Fullscreen view — fills entire viewport
+  const fullscreenView = isExpanded && portalContainer && createPortal(
+    <div className="fixed inset-0 z-50 bg-background flex flex-col">
+      {panelContent}
     </div>,
     portalContainer
   )
@@ -258,7 +245,7 @@ function ExercisePanelBase({ children, title, subtitle }: ExercisePanelProps) {
   return (
     <ExercisePanelContext.Provider value={contextValue}>
       {inlinePanel}
-      {fullscreenModal}
+      {fullscreenView}
     </ExercisePanelContext.Provider>
   )
 }

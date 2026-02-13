@@ -100,7 +100,7 @@ export function BuildingNanogptLesson() {
               'Weight initialization for transformers (brief, practical)',
               'Generate text from the assembled (untrained) model',
               'GPT-2 small configuration (124M parameters)',
-              'NOT: training the model—that\u2019s the next lesson',
+              `NOT: training the model—that's the next lesson`,
               'NOT: dataset preparation or data loading—next lesson',
               'NOT: optimization, learning rate scheduling—next lesson',
               'NOT: GPU utilization, mixed precision, flash attention—Lesson 3',

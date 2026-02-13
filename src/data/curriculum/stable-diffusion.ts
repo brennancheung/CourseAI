@@ -394,7 +394,8 @@ const diffusion: CurriculumNode = {
  *
  * Module 6.3: Architecture & Conditioning
  * 1. U-Net Architecture
- * (more lessons to follow: Timestep Conditioning, Self-Attention, Cross-Attention, Classifier-Free Guidance)
+ * 2. Conditioning the U-Net
+ * (more lessons to follow: CLIP, Text Conditioning & Guidance)
  */
 const architectureAndConditioning: CurriculumNode = {
   slug: 'architecture-and-conditioning',
@@ -439,6 +440,169 @@ const architectureAndConditioning: CurriculumNode = {
           'Map multi-resolution processing to coarse-to-fine denoising',
           'Read pseudocode for the U-Net forward pass',
           'Predict the effect of removing skip connections at different noise levels',
+        ],
+      },
+    },
+    {
+      slug: 'conditioning-the-unet',
+      title: 'Conditioning the U-Net',
+      description:
+        'How sinusoidal embeddings and adaptive normalization let a single U-Net handle every noise level\u2014from pure static to nearly clean.',
+      duration: '30 min',
+      category: 'Architecture & Conditioning',
+      objectives: [
+        'Connect sinusoidal timestep embedding to positional encoding from transformers (same formula, different input)',
+        'Explain why sinusoidal encoding is superior to the simple linear projection from the capstone',
+        'Understand adaptive group normalization as timestep-dependent gamma and beta after standard normalization',
+        'Articulate why conditioning must happen at every residual block, not just the input or bottleneck',
+        'Trace the complete U-Net forward pass with timestep conditioning',
+      ],
+      skills: [
+        'sinusoidal-timestep-embedding',
+        'adaptive-group-normalization',
+        'group-normalization',
+        'global-conditioning-pattern',
+        'film-conditioning',
+      ],
+      prerequisites: ['unet-architecture'],
+      exercise: {
+        constraints: [
+          'Timestep conditioning only\u2014no text conditioning or cross-attention',
+          'No CLIP or text embeddings',
+          'No classifier-free guidance',
+          'No full implementation\u2014conceptual BUILD lesson; implementation is the Module 6.4 capstone',
+          'Group normalization introduced, not developed in detail',
+        ],
+        steps: [
+          'Understand group normalization as the middle ground between batch norm and layer norm',
+          'See the sinusoidal timestep formula and connect it to positional encoding',
+          'Compare simple linear projection vs sinusoidal embedding with concrete examples',
+          'Understand the MLP refinement step (sinusoidal encoding -> MLP -> timestep embedding)',
+          'See adaptive group normalization as the minimal delta from standard normalization',
+          'Walk through concrete gamma(t) and beta(t) values at different timesteps',
+          'Understand per-block projection as the "learned lens" pattern from attention',
+          'See why input-only conditioning fails (dilution through conv layers)',
+          'Trace the complete U-Net forward pass with timestep conditioning',
+          'Implement sinusoidal encoding and adaptive group norm in notebook exercises',
+        ],
+      },
+    },
+    {
+      slug: 'clip',
+      title: 'CLIP',
+      description:
+        'How contrastive learning trains two separate encoders to put matching text and images near each other in a shared embedding space\u2014giving the U-Net a way to understand what to generate.',
+      duration: '30 min',
+      category: 'Architecture & Conditioning',
+      objectives: [
+        'Explain contrastive learning as a training paradigm: push matching pairs together, non-matching pairs apart',
+        'Describe CLIP\u2019s dual-encoder architecture and why both encoders must be trained together',
+        'Understand the shared embedding space and why it enables text-image comparison',
+        'Read the contrastive loss formula and connect each part to cross-entropy',
+        'Explain zero-shot classification as an emergent property of the shared space',
+        'Identify what CLIP does and does not understand (typographic attacks, spatial reasoning, counting)',
+      ],
+      skills: [
+        'contrastive-learning',
+        'clip-dual-encoder',
+        'shared-embedding-space',
+        'contrastive-loss-function',
+        'zero-shot-transfer',
+      ],
+      prerequisites: ['conditioning-the-unet'],
+      exercise: {
+        constraints: [
+          'CLIP as a standalone concept\u2014no connection to the U-Net yet',
+          'No cross-attention or classifier-free guidance',
+          'No CLIP implementation from scratch\u2014understanding the concept is the goal',
+          'No Vision Transformer architecture details\u2014mentioned, not developed',
+          'No CLIP variants (SigLIP, OpenCLIP) or fine-tuning',
+        ],
+        steps: [
+          'Compute a 4\u00d74 cosine similarity matrix from pre-computed embeddings',
+          'Identify the diagonal as the correct matches and connect to cross-entropy labels',
+          'Explore a pretrained CLIP model and visualize the similarity matrix as a heatmap',
+          'Perform zero-shot classification on CIFAR-10 using text prompts',
+          'Probe CLIP\u2019s limitations with spatial, counting, and adversarial examples',
+        ],
+      },
+    },
+    {
+      slug: 'text-conditioning-and-guidance',
+      title: 'Text Conditioning & Guidance',
+      description:
+        'How cross-attention injects CLIP text embeddings into the U-Net\u2014and how classifier-free guidance amplifies their influence at inference time.',
+      duration: '30 min',
+      category: 'Architecture & Conditioning',
+      objectives: [
+        'Explain cross-attention as the same QKV formula with Q from spatial features, K/V from text embeddings',
+        'Trace the per-spatial-location nature of cross-attention (different locations attend to different words)',
+        'Identify where cross-attention layers sit in the U-Net (interleaved at 16\u00d716 and 32\u00d732)',
+        'Describe the CFG training trick (random text dropout) and inference formula',
+        'Explain the guidance scale tradeoff (diversity vs text fidelity vs image quality)',
+        'Contrast global conditioning (timestep via adaptive norm) with spatially-varying conditioning (text via cross-attention)',
+      ],
+      skills: [
+        'cross-attention-mechanism',
+        'spatially-varying-conditioning',
+        'classifier-free-guidance',
+        'guidance-scale-tradeoff',
+        'unet-block-ordering',
+      ],
+      prerequisites: ['clip'],
+      exercise: {
+        constraints: [
+          'Cross-attention mechanism and CFG only\u2014no implementation from scratch (that is the Module 6.4 capstone)',
+          'No latent diffusion or VAE encoder-decoder\u2014next lesson',
+          'No negative prompts or prompt engineering techniques',
+          'No CLIP architecture details\u2014covered in the previous lesson',
+          'No alternative text conditioning approaches (T5 in Imagen)',
+        ],
+        steps: [
+          'Modify self-attention to cross-attention by changing the source of K and V',
+          'Predict and verify the non-square attention weight matrix shape',
+          'Visualize cross-attention weights as a heatmap showing per-spatial-location patterns',
+          'Implement the CFG formula and test at multiple guidance scales',
+          'Generate images at different guidance scales and identify the quality/fidelity tradeoff',
+        ],
+      },
+    },
+    {
+      slug: 'from-pixels-to-latents',
+      title: 'From Pixels to Latents',
+      description:
+        'The diffusion algorithm you built is identical in latent space\u2014the VAE compresses, diffusion denoises, and Stable Diffusion is born.',
+      duration: '25 min',
+      category: 'Architecture & Conditioning',
+      objectives: [
+        'Explain that latent diffusion runs the same DDPM algorithm in the VAE\u2019s compressed latent space',
+        'Trace the complete encode-diffuse-decode pipeline with specific tensor dimensions (512\u00d7512\u00d73 \u2192 64\u00d764\u00d74 \u2192 512\u00d7512\u00d73)',
+        'Describe the frozen-VAE pattern and explain why the VAE is trained separately and never modified',
+        'Compute the 48\u00d7 compression ratio and explain why latent space makes diffusion practical',
+        'Identify every component of Stable Diffusion and explain what problem each solves',
+      ],
+      skills: [
+        'latent-diffusion-architecture',
+        'frozen-vae-pattern',
+        'encode-diffuse-decode-pipeline',
+        'compression-ratio-computation',
+        'stable-diffusion-component-map',
+      ],
+      prerequisites: ['text-conditioning-and-guidance'],
+      exercise: {
+        constraints: [
+          'No new algorithms or math\u2014this is a CONSOLIDATE lesson',
+          'No implementing latent diffusion from scratch\u2014that is the Module 6.4 capstone',
+          'No DDIM or accelerated samplers',
+          'No perceptual loss or adversarial training details\u2014mentioned only',
+          'No SD v1 vs v2 vs XL differences, LoRA, or fine-tuning',
+        ],
+        steps: [
+          'Explore SD\u2019s VAE encoder and decoder with a pre-trained model',
+          'Visualize the 4-channel latent representation and interpolate between encoded images',
+          'Compute the compression ratio and estimate computational cost savings',
+          'Trace the full encode-diffuse-decode pipeline step by step',
+          'Identify which parts of the pipeline are identical to the Module 6.2 implementation',
         ],
       },
     },

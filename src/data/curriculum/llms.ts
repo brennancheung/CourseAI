@@ -670,6 +670,50 @@ const beyondPretraining: CurriculumNode = {
         ],
       },
     },
+    {
+      slug: 'rlhf-and-alignment',
+      title: 'RLHF & Alignment',
+      description:
+        'Why instruction-following is not enough, and how human preferences become the training signal that gives language models judgment.',
+      duration: '25 min',
+      category: 'Fine-tuning',
+      objectives: [
+        'Explain why SFT alone produces models that can be harmful, sycophantic, or confidently wrong',
+        'Describe human preference data format: comparison pairs, not absolute scores',
+        'Explain how a reward model (pretrained LM + scalar head) is trained on preference data',
+        'Describe the PPO training loop: generate, score, update with KL penalty',
+        'Explain DPO as a simpler alternative that achieves similar results without a separate reward model',
+        'Identify reward hacking as the failure mode that motivates the KL constraint',
+      ],
+      skills: [
+        'alignment-problem',
+        'human-preference-data',
+        'reward-models',
+        'ppo-intuition',
+        'dpo',
+        'reward-hacking',
+        'kl-penalty',
+      ],
+      prerequisites: ['instruction-tuning'],
+      exercise: {
+        constraints: [
+          'Conceptual lesson\u2014no implementation or notebook',
+          'PPO at intuitive level only\u2014no algorithm details',
+          'No RL formalism beyond minimum needed (policy = model behavior, reward = score)',
+          'No constitutional AI or RLAIF\u2014Series 5',
+          'No red teaming, adversarial evaluation, or safety benchmarks',
+        ],
+        steps: [
+          'See three concrete SFT failure modes (harmful, sycophantic, confidently wrong)',
+          'Understand why cross-entropy cannot express response quality',
+          'Read a concrete preference comparison pair',
+          'Predict the reward model architecture (callback to classification finetuning)',
+          'Trace the PPO generate-score-update loop',
+          'Understand why the KL penalty prevents reward hacking',
+          'Compare PPO and DPO pipelines',
+        ],
+      },
+    },
   ],
 }
 

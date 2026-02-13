@@ -102,7 +102,7 @@ export function PretrainingLesson() {
               'Build the complete training loop with LR scheduling and gradient clipping',
               'Cross-entropy loss for next-token prediction across all positions',
               'Interpret loss curves and generated text quality',
-              'NOT: GPU optimization, mixed precision, flash attention—that\u2019s Lesson 3',
+              `NOT: GPU optimization, mixed precision, flash attention—that's Lesson 3`,
               'NOT: hyperparameter search—use known-good values from nanoGPT',
               'NOT: evaluation beyond loss and qualitative text inspection',
               'NOT: fine-tuning or transfer learning—Module 4.4',

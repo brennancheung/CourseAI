@@ -314,7 +314,7 @@ export function LoadingRealWeightsLesson() {
               'Handle weight tying during loading',
               'Verify correctness by comparing logits against the HuggingFace reference',
               'Generate coherent text from the correctly loaded model',
-              'NOT: training or fine-tuning the loaded model—that\u2019s Module 4.4',
+              `NOT: training or fine-tuning the loaded model—that's Module 4.4`,
               'NOT: loading different GPT-2 sizes (medium, large, XL)—stretch exercise only',
               'NOT: understanding HuggingFace in depth—used only as a weight source',
               'NOT: quantization, deployment, or KV caching implementation',
@@ -1391,7 +1391,7 @@ for prompt in prompts:
                 headline:
                   'Conv1D vs nn.Linear: same parameters, different layout.',
                 description:
-                  'HuggingFace\u2019s GPT-2 uses Conv1D (in, out). Your model uses nn.Linear (out, in). The fix is .t()—one transpose per 2D weight in attention and FFN.',
+                  `HuggingFace's GPT-2 uses Conv1D (in, out). Your model uses nn.Linear (out, in). The fix is .t()—one transpose per 2D weight in attention and FFN.`,
               },
               {
                 headline:

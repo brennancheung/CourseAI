@@ -1,6 +1,6 @@
 # Series 4: LLMs & Transformers -- Summary
 
-**Status:** In progress (Module 4.1: complete, Module 4.2: complete, Module 4.3: complete (4 of 4), Module 4.4: in progress (2 of 5))
+**Status:** In progress (Module 4.1: complete, Module 4.2: complete, Module 4.3: complete (4 of 4), Module 4.4: in progress (3 of 5))
 
 ## Series Goal
 
@@ -116,6 +116,10 @@ Build deep, implementation-level understanding of transformers and LLMs. The stu
 30. **"A pretrained transformer is a text feature extractor"** -- Extension of CNN transfer learning. Add a head, freeze the backbone, train the head. Applies to classification finetuning but NOT to SFT (explicitly corrected in Lesson 2).
 31. **"SFT teaches format, not knowledge"** -- The base model already has vast knowledge from pretraining. SFT on instruction-response pairs teaches it to express that knowledge in conversational, instruction-following format. Expert-in-monologue analogy.
 32. **"Same heartbeat, third time"** -- The training loop (forward, loss, backward, step) is identical across pretraining, classification finetuning, and SFT. Only the data changes.
+33. **"SFT gives the model a voice; alignment gives it judgment"** -- Mute (base) to speaking (SFT) to speaking wisely (aligned). Each stage adds something essential the previous stage could not provide.
+34. **"For the first time, the training loop changes shape"** -- PPO breaks the "same heartbeat" pattern. Generate-score-update with two models at response level, not token level. DPO partially restores familiar loop shape.
+35. **"The reward model is an experienced editor"** -- Learned judgment from human comparisons, not rules. Has blind spots that can be exploited (reward hacking).
+36. **"KL penalty is the continuous version of 'freeze the backbone'"** -- Soft constraint preventing drift from SFT model. Same purpose as frozen backbone (catastrophic forgetting prevention), but gradient rather than binary.
 
 ## What This Series Has NOT Covered (So Far)
 
@@ -125,7 +129,7 @@ Build deep, implementation-level understanding of transformers and LLMs. The stu
 - ~~Loading real pretrained weights~~ (done: loading-real-weights, Module 4.3. Weight name mapping APPLIED, Conv1D transposition DEVELOPED, logit verification DEVELOPED, HuggingFace INTRODUCED.)
 - ~~Classification finetuning~~ (done: finetuning-for-classification, Module 4.4. Add head, freeze backbone, train. DEVELOPED.)
 - ~~Instruction tuning / SFT~~ (done: instruction-tuning, Module 4.4. Instruction datasets, chat templates, loss masking, "format not knowledge." DEVELOPED/APPLIED.)
-- RLHF, DPO, alignment (Module 4.4, Lesson 3)
+- ~~RLHF, DPO, alignment~~ (done: rlhf-and-alignment, Module 4.4. Alignment problem DEVELOPED, human preference data DEVELOPED, reward models INTRODUCED, PPO intuition INTRODUCED, DPO INTRODUCED, reward hacking INTRODUCED. Conceptual lesson, no notebook.)
 - LoRA, quantization (Module 4.4)
 - Cross-attention mechanics in detail (Series 6)
 - BERT architecture beyond name-drop

@@ -3,3 +3,4 @@
 
 export { FinetuningForClassificationLesson } from './FinetuningForClassificationLesson'
 export { InstructionTuningLesson } from './InstructionTuningLesson'
+export { RlhfAndAlignmentLesson } from './RlhfAndAlignmentLesson'

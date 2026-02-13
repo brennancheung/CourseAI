@@ -1,7 +1,7 @@
 # Module 4.4: Beyond Pretraining -- Record
 
 **Goal:** The student can explain and apply the full post-pretraining pipeline -- adapting a pretrained language model for classification tasks, understanding how instruction tuning and alignment transform base models into assistants, and using parameter-efficient methods to make this practical on real hardware.
-**Status:** In progress (2 of 5 lessons built)
+**Status:** In progress (3 of 5 lessons built)
 
 ## Concept Index
 
@@ -20,6 +20,14 @@
 | SFT training mechanics (same cross-entropy loss, same training loop, different data) | APPLIED | instruction-tuning | Side-by-side ComparisonRow: pretraining loop vs SFT loop -- 5 steps, 4 identical, step 1 differs (data source). No new head, no new loss function. Student runs SFT in notebook. |
 | Classification finetuning vs SFT structural distinction (new head vs same lm_head, narrow task vs broad task) | DEVELOPED | instruction-tuning | ComparisonRow contrasting the two approaches. Classification changes WHAT the model outputs (class labels). SFT changes HOW the model uses its existing output mechanism (instruction-appropriate tokens). Explicitly notes "feature extractor" mental model from Lesson 1 does NOT apply to SFT. |
 | SFT data efficiency (small datasets produce large behavioral changes because format is simpler than knowledge) | DEVELOPED | instruction-tuning | LIMA 1,000 examples result. Connected to classification finetuning data efficiency (1,536-param head learns from small dataset because backbone already extracts features). Same principle at behavior level. |
+| The alignment problem: SFT-only models can be harmful, sycophantic, or confidently wrong despite following instructions | DEVELOPED | rlhf-and-alignment | Three concrete failure mode examples (lock-picking, flat Earth agreement, confident misrepresentation). Motivated by "SFT teaches format but has no signal for quality." |
+| Human preference data format (comparison pairs: prompt + two responses + which is better) | DEVELOPED | rlhf-and-alignment | Quantum computing explanation preference pair. Relative signal (A > B) more reliable than absolute scoring. InstructGPT ~33K comparisons. Core insight: "I cannot define a perfect response, but I can tell you which of these two is better." |
+| Reward model architecture (pretrained LM backbone + scalar output head trained on preference pairs) | INTRODUCED | rlhf-and-alignment | Same pattern as classification finetuning: backbone + head. Instead of class probabilities, outputs a single scalar quality score. RewardModelDiagram SVG. Explicit callback to finetuning-for-classification architecture. Concrete training trace: reward(preferred) - reward(dispreferred) pushes positive. |
+| PPO for language models (generate-score-update loop with KL penalty) | INTRODUCED | rlhf-and-alignment | Three-step loop: generate response, score with reward model, update policy. RlhfLoopDiagram SVG. First time the training loop changes shape (breaks "same heartbeat" pattern). Two models involved (policy + reward model). |
+| KL penalty as soft constraint preventing reward hacking (continuous version of "freeze the backbone") | INTRODUCED | rlhf-and-alignment | Objective: maximize reward minus KL divergence from SFT model. Connected to catastrophic forgetting from finetuning-for-classification. Editor-with-blind-spots analogy for reward hacking. ComparisonRow: reward hacking examples vs KL-constrained behavior. |
+| Reward hacking (model exploits imperfections in learned reward model to achieve high scores without genuine quality) | INTRODUCED | rlhf-and-alignment | Negative example: excessive verbosity, confident-sounding filler, formatting tricks. Editor analogy extended: "An editor who only read articles from one genre might overly reward that genre's conventions." Motivates the KL penalty as essential, not optional. |
+| DPO as preference optimization without a separate reward model | INTRODUCED | rlhf-and-alignment | Directly increases probability of preferred responses, decreases dispreferred. ComparisonRow: PPO pipeline (4 steps, two models) vs DPO pipeline (4 steps, one model). Partially restores familiar training loop shape. Comparable results on benchmarks (Llama 2 used PPO; Zephyr, Mistral used DPO). Implicit KL penalty built into formulation. |
+| RLHF teaches what humans prefer, not what is objectively true (preference correlates with truth but is not identical) | INTRODUCED | rlhf-and-alignment | Seeded early in reward model section, fully elaborated in "Why Alignment Matters Beyond Safety." Sycophancy example: "You're right!" often preferred over correction. Alignment improves but does not perfect truthfulness. |
 
 ## Per-Lesson Summaries
 
@@ -100,6 +108,50 @@
 
 **Notebook:** `4-4-2-instruction-tuning.ipynb` -- Explore an instruction dataset (Alpaca format), implement chat template formatting with special tokens, tokenize formatted examples, implement loss masking (labels = -100 for prompt tokens), run SFT training for a small number of steps, compare base vs instruction-tuned model on several prompts to observe the behavioral shift.
 
+### Lesson 3: RLHF & Alignment (BUILD)
+
+**Concepts taught:**
+- The alignment problem: why SFT alone is insufficient (DEVELOPED)
+- Human preference data format: comparison pairs, not absolute scores (DEVELOPED)
+- Reward models: pretrained LM + scalar head, trained on preferences (INTRODUCED)
+- PPO for language models: generate-score-update loop (INTRODUCED)
+- KL penalty as soft constraint preventing reward hacking (INTRODUCED)
+- Reward hacking as failure mode of unconstrained optimization (INTRODUCED)
+- DPO: same goal, no separate reward model (INTRODUCED)
+- RLHF teaches preference, not truth (INTRODUCED)
+
+**Mental models established:**
+- "SFT gives the model a voice; alignment gives it judgment" -- Mute (base) to speaking (SFT) to speaking wisely (aligned). Each stage adds something essential the previous stage could not provide.
+- "For the first time, the training loop changes shape" -- PPO breaks the "same heartbeat" pattern established across pretraining, classification finetuning, and SFT. Generate-score-update with two models, operating at response level instead of token level.
+- "The reward model is an experienced editor" -- Does not write the article but can tell you which draft is better. Learned judgment from thousands of comparisons, not from rules. Has blind spots that can be exploited.
+- "KL penalty is the continuous version of 'freeze the backbone'" -- Same purpose as frozen backbone (prevent catastrophic forgetting of previous stage's learning), but soft rather than binary.
+
+**Key analogies used:**
+- Voice vs judgment (pretraining = knowledge, SFT = voice, alignment = judgment).
+- Experienced editor (reward model as learned judge, not rule-based scorer).
+- Editor with blind spots (reward hacking: the model finds patterns the reward model over-rewards, just as a clever writer could game an editor's stylistic preferences).
+- Continuous version of freeze-the-backbone (KL penalty as soft constraint, connected to catastrophic forgetting from Lesson 1).
+
+**How concepts were taught:**
+- **Alignment problem:** Three PhaseCards with concrete SFT failure modes: harmful helpfulness (lock-picking instructions), sycophancy (flat Earth agreement), confident incorrectness (misrepresented paper summary). The common thread: format without quality signal.
+- **Human preference data:** Side-by-side preference pair: quantum computing prompt, jargon-heavy Response A (dispreferred) vs age-appropriate Response B (preferred). Human label B > A. Relative signal easier than absolute scoring.
+- **Reward model:** RewardModelDiagram inline SVG showing pretrained LM backbone + nn.Linear scalar head. Explicit callback to classification finetuning architecture from Lesson 1. Concrete training trace with scores 0.3 vs 0.7.
+- **PPO loop:** RlhfLoopDiagram inline SVG showing three-step cycle (generate, score, update) with KL penalty callout and frozen SFT reference model. Three numbered PhaseCards explaining each step.
+- **KL penalty / reward hacking:** ComparisonRow: reward hacking examples (verbosity, confident filler, formatting tricks) vs KL-constrained behavior. Editor-with-blind-spots analogy. Connected to catastrophic forgetting.
+- **DPO:** ComparisonRow contrasting PPO pipeline (4 steps, two models, complex) vs DPO pipeline (4 steps, one model, closer to supervised learning). Concrete trace reusing the quantum computing preference pair. Results: comparable quality, widely adopted.
+- **Preference vs truth:** Seeded in reward model section ("what humans prefer, not what is objectively true"), fully elaborated in "Why Alignment Matters Beyond Safety" section with sycophancy example.
+
+**What is NOT covered:**
+- Implementing RLHF or DPO in code (no notebook -- conceptual lesson)
+- PPO algorithm details (clipping, value function, advantage estimation)
+- RL formalism beyond minimum needed (policy = model behavior, reward = score)
+- Constitutional AI or RLAIF (Series 5)
+- Red teaming, adversarial evaluation, safety benchmarks
+- Political/philosophical aspects of alignment
+- Multi-objective alignment in depth
+
+**Notebook:** None. Conceptual lesson. The implementation complexity of RLHF exceeds what can be done with GPT-2 in a Colab notebook. Focus on why and what, not how.
+
 ## Key Mental Models and Analogies
 
 1. **"A pretrained transformer is a text feature extractor"** -- Same pattern as CNN transfer learning. The backbone extracts features; the head maps them to task outputs. Only the feature extractor changed (CNN -> transformer).
@@ -107,3 +159,7 @@
 3. **"The classification head is tiny"** -- 768 x 2 = 1,536 parameters for binary classification vs 124M total. Training 0.001% of the model. Overfitting the backbone on a small dataset is the real risk.
 4. **"SFT teaches format, not knowledge"** -- The base model already has vast knowledge from pretraining. SFT on instruction-response pairs teaches it to express that knowledge in a conversational, instruction-following format. The expert-in-monologue analogy.
 5. **"Same heartbeat, third time"** -- The training loop (forward, loss, backward, step) is identical across pretraining, classification finetuning, and SFT. Only the data changes. Extended from "same heartbeat, new instruments."
+6. **"SFT gives the model a voice; alignment gives it judgment"** -- Mute (base) to speaking (SFT) to speaking wisely (aligned). Each stage adds something essential the previous stage could not provide.
+7. **"For the first time, the training loop changes shape"** -- PPO breaks the "same heartbeat" pattern. Generate-score-update with two models at response level, not token level. DPO partially restores familiar loop shape.
+8. **"The reward model is an experienced editor"** -- Learned judgment from human comparisons, not rules. Has blind spots that can be exploited (reward hacking).
+9. **"KL penalty is the continuous version of 'freeze the backbone'"** -- Soft constraint preventing drift from SFT model. Same purpose as frozen backbone (catastrophic forgetting prevention), but gradient rather than binary.
