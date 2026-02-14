@@ -4,3 +4,4 @@
 export { ConstitutionalAiLesson } from './ConstitutionalAiLesson'
 export { AlignmentTechniquesLandscapeLesson } from './AlignmentTechniquesLandscapeLesson'
 export { RedTeamingAndAdversarialEvaluationLesson } from './RedTeamingAndAdversarialEvaluationLesson'
+export { EvaluatingLlmsLesson } from './EvaluatingLlmsLesson'

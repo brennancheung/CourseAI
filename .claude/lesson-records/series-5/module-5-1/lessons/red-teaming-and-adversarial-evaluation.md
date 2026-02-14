@@ -383,3 +383,57 @@ No critical issues. The lesson is well-structured, the narrative arc is compelli
 - [x] Cognitive load ≤ 3 new concepts (3 new concepts: red teaming as systematic process, automated red teaming, attack-defense dynamic)
 - [x] Every new concept connected to at least one existing concept
 - [x] Scope boundaries explicitly stated
+
+---
+
+## Review — 2026-02-14 (Iteration 2/3)
+
+### Summary
+- Critical: 0
+- Improvement: 0
+- Polish: 2
+
+### Verdict: PASS
+
+All four improvement findings and two of three polish findings from iteration 1 were resolved. The remaining polish item (notebook Exercise 2 Part C gives away the encoding) was intentionally skipped as the exercise focus is on observing the alignment surface, not implementing encodings -- a defensible decision for a Supported exercise. No new improvement or critical findings emerged. The lesson is effective, well-structured, and ready to ship.
+
+### Iteration 1 Resolution Check
+
+| Iteration 1 Finding | Severity | Resolved? | Notes |
+|---------------------|----------|-----------|-------|
+| Misconception 5 ("red teaming is only about safety") not explicitly addressed | IMPROVEMENT | YES | Section 4 now has an explicit paragraph listing the six dimensions red teams probe (safety, consistency, fairness, factual accuracy, privacy, robustness) with commentary that many are more practically important than dramatic safety failures. |
+| Sycophancy failure example in hook is ambiguous | IMPROVEMENT | YES | The sycophancy GradientCard now explains the mechanism explicitly: "The model adjusts its stance to match the implied framing of the question rather than providing consistent information: asked 'is it safe?' it gives both sides, asked 'what are the dangers?' it gives only dangers." Clear and unambiguous. |
+| Missing explicit connection between taxonomy categories and structural reasons | IMPROVEMENT | YES | Section 7 now opens with an explicit bridging paragraph mapping categories to causes: "Categories 1 and 2 fail because of surface pattern matching. Category 4 fails because of training distribution gaps. Categories 5 and 6 fail because of the capability-safety tension. Category 3 exploits limited cross-turn reasoning." The orphaned Category 3 is addressed as "a related but distinct limitation." |
+| No explicit negative example defining what red teaming is NOT | IMPROVEMENT | YES | Section 4 now contains a "What Red Teaming Is Not" GradientCard distinguishing red teaming from benchmarking (average performance vs adversarial worst-case), adversarial training (training-time vs evaluation), and general QA (normal use vs adversarial use). Sharp boundaries. |
+| Aside "The Missing Piece" nearly identical to "Build, Break, Measure" | POLISH | YES | Rewritten to: "In software, you write tests before shipping. In alignment, the equivalent is red teaming -- but the test surface is infinite and adversarial." Adds new information (software testing parallel) rather than repeating the build/break/measure framing. |
+| Comment numbering in TSX skips and double-counts | POLISH | YES | Section comments now correctly numbered 1-15 (Header through Next Step). |
+| Notebook Exercise 2 Part C gives away the encoding | POLISH | INTENTIONALLY SKIPPED | The encoding is pre-implemented for the student. Defensible: the exercise focus is on observing the alignment surface, not implementing encodings. The hint in the Exercise 2 introduction describes the word reversal approach, and the student writes Parts B and D (fiction reframe + three custom reframes), so active engagement is maintained. |
+
+### Findings
+
+#### [POLISH] — SVG diagram text uses spaced em dashes
+
+**Location:** AttackTaxonomyDiagram (line 82: "Baseline — alignment\nhandles this well", line 151: "Six categories by mechanism exploited — sophistication increases left to right, top to bottom") and AttackDefenseCycleDiagram (line 315: "Each iteration increases sophistication on both sides — the cycle does not converge")
+**Issue:** The Writing Style Rule specifies em dashes with no spaces ("word--word" not "word -- word"). These SVG text elements use spaced em dashes. However, these are diagram labels rendered at 8-9px font size, where tight em dashes reduce legibility.
+**Student impact:** Negligible. These are diagram annotations, not lesson prose. The spaced form is more readable at small font sizes within SVG `<text>` elements.
+**Suggested fix:** Leave as-is. The readability benefit at small SVG font sizes outweighs the style convention, which was designed for prose text. If conformity is preferred, remove spaces, but readability will suffer.
+
+#### [POLISH] — Notebook Exercise 1 is predict-then-reveal rather than predict-then-run
+
+**Location:** Notebook cells 3-4 (Exercise 1)
+**Issue:** Exercise 1 asks the student to classify 10 adversarial prompts, then reveals answers in the next cell. This is a predict-then-reveal pattern (read prompts, think, then run cell to see answers). The planning document says Guided exercises should be "predict-before-run," but this exercise is classification (no code to run), so the predict-then-reveal pattern is the natural fit. The exercise does say "PREDICT the output before running the cell" in the notebook intro, but for this exercise the prediction is the classification itself, not a code output.
+**Student impact:** Negligible. The student reads the prompts, forms classifications, then checks against the answers. The active prediction step is present -- it just takes the form of mental classification rather than predicting code output.
+**Suggested fix:** No change needed. The exercise format is appropriate for a classification task. The "predict-before-run" principle is satisfied in spirit (the student classifies before seeing answers).
+
+### Review Notes
+
+**What works well (reinforced from iteration 1):**
+- The narrative arc remains the lesson's greatest strength. The "Build, Break, Measure" framing across the module is clear and motivating.
+- The hook is excellent. The three passes followed by three failures is a compelling opening, and the sycophancy failure now lands cleanly with the explicit mechanism explanation.
+- The "What Red Teaming Is Not" GradientCard added in the fix pass is a significant improvement. It sharpens the concept boundary precisely where it was needed -- distinguishing red teaming from benchmarking, adversarial training, and QA.
+- The explicit taxonomy-to-structural-reasons bridge in Section 7 is well-written and solves the "two disconnected frameworks" problem cleanly.
+- The breadth paragraph in Section 4 (listing six dimensions red teams probe) makes the "not just safety" point explicit. The statement "Many of these are more practically important than the dramatic safety failures because they affect every user interaction, not just adversarial edge cases" is a strong reframe.
+- The notebook is well-crafted. Exercise 1 has excellent answer explanations that go beyond classification to explain WHY each attack falls into its category. Exercise 3's automated pipeline is a genuinely engaging hands-on experience. The cumulative progression (classify -> probe -> automate) works well.
+- All connections to prior lessons are explicit and natural. The RLAIF scaling parallel, "blind spots move" extension, and "challenge shifts, not disappears" callback all reinforce existing mental models while extending them to the adversarial domain.
+
+**Overall assessment:** The lesson is ready to ship. The iteration 1 fixes addressed all substantive issues. The two remaining polish findings are cosmetic and do not affect the student's learning experience.

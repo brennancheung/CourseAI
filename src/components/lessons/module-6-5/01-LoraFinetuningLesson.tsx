@@ -459,10 +459,10 @@ text_emb = clip.encode(caption)            # [1, 77, 768]
 # 6. U-Net predicts noise (only LoRA params have gradients)
 epsilon_hat = unet(z_t, t, text_emb)       # [4, 64, 64]
 
-# 7. Compute loss — same MSE from DDPM training
+# 7. Compute loss—same MSE from DDPM training
 loss = MSE(epsilon, epsilon_hat)
 
-# 8. Backprop — gradients flow only through LoRA adapters
+# 8. Backprop—gradients flow only through LoRA adapters
 loss.backward()   # base W: no grad. LoRA B, A: grad ✓
 optimizer.step()  # updates only LoRA params`}
               language="python"

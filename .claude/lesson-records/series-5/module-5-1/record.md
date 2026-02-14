@@ -20,6 +20,27 @@
 | Iterative alignment / self-play | INTRODUCED | alignment-techniques-landscape | Multiple rounds of generate-label-train. Each round produces a better model whose outputs feed the next round. Connected to RLAIF from constitutional AI -- AI can label preferences in each round, making iteration practical at scale. Does not require a single long training run; can be multiple discrete offline rounds. |
 | Online DPO (DPO with online data generation) | INTRODUCED | alignment-techniques-landscape | Combines DPO's single-model simplicity with online learning's distribution match. Addresses the "learn from current mistakes" scenario. Positioned as a middle ground between offline DPO and full PPO. |
 
+| Red teaming as systematic adversarial process | DEVELOPED | red-teaming-and-adversarial-evaluation | Systematic, adversarial, probing -- not random guessing or just "jailbreaks." Covers safety, consistency, fairness, factual accuracy, privacy, robustness. Pen-testing analogy: systematic probing, enormous attack surface, ongoing process. Alignment surface framing: alignment holds at most points in input space but has gaps that red teaming maps. |
+| Attack-defense dynamic / asymmetry | DEVELOPED | red-teaming-and-adversarial-evaluation | Alignment is an ongoing dynamic, not a one-time fix. Each defense creates new attack surfaces. Attackers need to find ONE gap; defenders need to cover ALL gaps. DAN progression as concrete worked example of escalation across multiple generations. Connected to "the challenge shifts, not disappears" and "blind spots move" mental models from constitutional-ai. |
+| Attack taxonomy: direct harmful requests | INTRODUCED | red-teaming-and-adversarial-evaluation | Category 1 -- the baseline that alignment handles well. Not interesting for red teaming because alignment explicitly covers these patterns. If a model fails here, alignment training was inadequate. |
+| Attack taxonomy: indirect / reframing attacks | INTRODUCED | red-teaming-and-adversarial-evaluation | Category 2 -- same content, different framing (fiction, educational, hypothetical). Exploits surface pattern matching. Model responds to framing cues, not intent. Lock-picking example as callback from Series 4. |
+| Attack taxonomy: multi-step compositional attacks | INTRODUCED | red-teaming-and-adversarial-evaluation | Category 3 -- each individual step is innocuous, composite is harmful. Exploits limited cross-turn reasoning. Related to but distinct from the three structural reasons (its own mechanism). |
+| Attack taxonomy: encoding and format tricks | INTRODUCED | red-teaming-and-adversarial-evaluation | Category 4 -- Base64, ROT13, unusual Unicode, reversed text. Pure out-of-distribution failure. Alignment training data did not include encoded harmful requests. Connected to generalization failure from Series 1. |
+| Attack taxonomy: persona and role-play attacks | INTRODUCED | red-teaming-and-adversarial-evaluation | Category 5 -- "You are DAN," "pretend no restrictions." Exploits the model's instruction-following ability against its safety training. Capability becomes vulnerability. |
+| Attack taxonomy: few-shot jailbreaking | INTRODUCED | red-teaming-and-adversarial-evaluation | Category 6 -- provide examples of a compliant model, then ask harmful question. In-context learning picks up the adversarial pattern, overriding safety training. Model's learning ability turned against alignment. |
+| Structural reasons for alignment failure: surface pattern matching | INTRODUCED | red-teaming-and-adversarial-evaluation | Reason 1 -- alignment teaches "refuse requests that LOOK harmful." Reframing changes surface while preserving intent. Model is pattern-matching, not reasoning about harm. Maps to attack categories 1-2. |
+| Structural reasons for alignment failure: training distribution coverage | INTRODUCED | red-teaming-and-adversarial-evaluation | Reason 2 -- alignment training data covers a sample. Inputs sufficiently different from the sample produce unaligned behavior. Same generalization problem from Series 1 applied to alignment. Maps to attack category 4. |
+| Structural reasons for alignment failure: capability-safety tension | INTRODUCED | red-teaming-and-adversarial-evaluation | Reason 3 -- model capabilities (instruction following, in-context learning) are also vulnerabilities. More capable = harder to align. Fundamental tension, not a bug. Maps to attack categories 5-6. |
+| Automated red teaming (LLMs probing LLMs at scale) | INTRODUCED | red-teaming-and-adversarial-evaluation | Generate-test-classify-iterate pipeline. Red team model generates adversarial prompts, target responds, classifier judges failures, patterns guide next round. Perez et al. (2022): 154,000 prompts finding failures humans missed. Same scaling insight as RLAIF -- humans cannot cover the space. Limitations: red team model has own blind spots, automated classification imperfect, breadth not depth. |
+| Defense-in-depth for alignment | INTRODUCED | red-teaming-and-adversarial-evaluation | Five layers: training-time alignment (baseline), input filtering (detect adversarial prompts), output filtering (check responses), monitoring (detect novel attack patterns), regular re-evaluation (repeat red teaming after updates). No single layer is sufficient. Each layer catches what others miss. |
+
+| Benchmark limitations / proxy gap (what benchmarks actually measure vs what they claim) | DEVELOPED | evaluating-llms | Benchmarks are proxies for capability, not direct measurements. Every score passes through design choices (task format, prompt formatting, scoring criteria, aggregation) that shape the final number. The name on the benchmark (e.g., "understanding" in MMLU) does not match what the benchmark mechanism tests (multiple-choice recognition). Standardized testing analogy maps precisely: SAT score vs actual readiness. Evaluation Stack diagram (inline SVG) visualizes the layers between capability and leaderboard number. |
+| Goodhart's law for evaluation (when a benchmark becomes a target, it ceases to be a good measure) | DEVELOPED | evaluating-llms | Extension of reward hacking from 4.4.3 to the evaluation domain. Same mechanism, different scale: reward hacking = model optimizing against a proxy (reward model), Goodhart's law for evaluation = ecosystem optimizing against a proxy (benchmark). Explicitly addressed the "we just need better benchmarks" misconception with negative example: a perfect benchmark published today degrades under optimization pressure within a year. Framed as "interpretation, not dismissal" -- benchmark scores require context about optimization pressure, not blanket skepticism. |
+| Contamination as structural property of internet-scale training | INTRODUCED | evaluating-llms | Three forms: direct (exact question in training data), indirect (discussions/paraphrases), benchmark saturation (inadvertent optimization). Key insight: contamination is NOT a bug to fix but a property of the training paradigm. Any published benchmark becomes part of internet, which becomes part of training data. Decontamination is temporary -- expires when benchmark goes public. Software engineering analogy: publishing your test suite and being surprised code passes. Forensic evidence: uneven performance across equivalent sections (95% on crawled vs 72% on held-out questions). |
+| Human evaluation challenges (cost, consistency, scale, bias) | INTRODUCED | evaluating-llms | Callback to annotation bottleneck from constitutional-ai. Inter-annotator disagreement quantified with Cohen's kappa (0.3-0.5 for open-ended quality judgments = "fair to moderate agreement"). Systematic biases: length bias, authority bias, confirmation bias. Chatbot Arena as partial solution (pairwise blind comparisons, Elo ranking -- same insight as preference pairs in RLHF). Human evaluation is another proxy, not ground truth. |
+| LLM-as-judge (scaling evaluation with AI) | INTRODUCED | evaluating-llms | Same scaling argument as RLAIF and automated red teaming: humans cannot evaluate enough outputs. Four systematic biases: verbosity bias, confidence bias, self-preference bias, format sensitivity. Pattern: "the evaluator's limitations become the evaluation's limitations" -- third time this pattern appeared in the module (human annotators, red team models, LLM judges). Defense-in-depth principle applied to evaluation: combine benchmarks, human evaluation, LLM judges, and red teaming. |
+| Evaluation as fundamentally harder than training | INTRODUCED | evaluating-llms | Training has a clear objective (minimize loss). Evaluation requires answering "work for what?" -- multidimensional (helpful/harmless/honest/concise/creative/accurate, dimensions conflict), context-dependent (different users want different things), moving targets (benchmarks saturate as models improve), recursive proxy problem (evaluating benchmarks requires meta-benchmarks). Capstone insight for the module: the challenge shifts from "build alignment" to "test alignment" to "measure alignment" -- each step reveals deeper difficulty. |
+
 ## Per-Lesson Summaries
 
 ### Lesson 1: Constitutional AI (constitutional-ai)
@@ -125,3 +146,113 @@
 - Exercise 3 (Supported): Online vs offline distribution mismatch -- see how a policy's output distribution shifts after an update, making pre-collected preference data stale. Insight: this is the core motivation for online methods.
 
 **Review:** Passed at iteration 2/3. Iteration 1 had 4 improvement findings (missing quantum computing recap example, missing comparison table, missing progressive reveal of design space diagram, fifth misconception not explicitly addressed) and 3 polish findings. All improvement findings resolved. Iteration 2 had 0 improvement/critical findings and 3 minor polish findings (SVG em dash spacing, GradientCard title em dashes, notebook KL direction phrasing).
+
+### Lesson 3: Red Teaming & Adversarial Evaluation (red-teaming-and-adversarial-evaluation)
+
+**Concepts taught:**
+- Red teaming as systematic adversarial process (DEVELOPED) -- systematic, adversarial, probing; covers safety, consistency, fairness, factual accuracy, privacy, robustness
+- Attack-defense dynamic / asymmetry (DEVELOPED) -- alignment is never "done"; each defense creates new attack surfaces; attackers need one gap, defenders need to cover all
+- Attack taxonomy: six categories organized by mechanism exploited (INTRODUCED) -- direct, indirect/reframing, multi-step, encoding, persona, few-shot
+- Three structural reasons for alignment failure (INTRODUCED) -- surface pattern matching, training distribution coverage, capability-safety tension
+- Automated red teaming (INTRODUCED) -- LLMs probing LLMs at scale; generate-test-classify-iterate pipeline
+- Defense-in-depth (INTRODUCED) -- five layers: training-time alignment, input filtering, output filtering, monitoring, regular re-evaluation
+
+**Mental models established:**
+- "Alignment surface" -- alignment as a surface over the input space; holds at most points, has gaps at others; red teaming maps the surface to find gaps. Too large to test exhaustively, so strategies needed to find gaps efficiently.
+- "Pen-testing analogy" -- red teaming an LLM parallels penetration testing a network: systematic probing, enormous attack surface, defense must be comprehensive, ongoing process not a one-time audit.
+- "Capability = vulnerability" -- the model's capabilities (instruction following, in-context learning) are also its attack surfaces. More capable models have larger attack surfaces, not smaller ones.
+- "Blind spots move" (extended) -- patching one gap moves the blind spot elsewhere; blind spots never vanish. Extends the mental model from constitutional-ai into the adversarial domain.
+- "The challenge shifts, not disappears" (extended) -- from "build alignment" to "maintain alignment against adversarial pressure." Same pattern as 5.1.1 (annotator bottleneck to constitution design).
+
+**Analogies used:**
+- Pen-testing / penetration testing analogy (maps to software engineer background: systematic probing, enormous attack surface, ongoing)
+- Alignment surface (spatial metaphor: alignment holds at some points, breaks at others)
+- The DAN progression as concrete example of attack-defense co-evolution (DAN 1.0 -> patch -> DAN 2.0 -> patch -> DAN 3.0 -> persona variants)
+
+**How concepts were taught:**
+- **Recap:** Brief re-activation of Lessons 1-2 key concepts: alignment trains on a sample, blind spots move, alignment has gaps. Sets up: "how do you find those blind spots?"
+- **Hook:** Three passes (direct harmful request refused, balanced answer to sensitive question, acknowledges uncertainty) followed by three failures from the SAME model (reframing attack: lock-picking via fiction, sycophancy: nuclear energy framing-dependent answers, demographic bias: different medical advice by gender). Immediately broadens beyond "red teaming = jailbreaks." WarningBlock aside: "Not Just Jailbreaks."
+- **What red teaming is:** Three key words (systematic, adversarial, probing). Pen-testing analogy. Alignment surface framing. Explicit breadth paragraph: six dimensions red teams probe (safety, consistency, fairness, factual accuracy, privacy, robustness). "What Red Teaming Is Not" GradientCard distinguishing from benchmarking, adversarial training, and general QA.
+- **Attack taxonomy:** Six PhaseCards, one per category, each with mechanism label and concrete example. AttackTaxonomyDiagram (inline SVG, 2x3 grid organized by sophistication). InsightBlock "Not a Flat List" + WarningBlock "Capability = Vulnerability" in asides.
+- **Check 1 (Classify the Attack):** Three novel attacks for student to classify (encoding/format trick, multi-step/compositional, persona/role-play). Predict-then-reveal with detailed explanations.
+- **Why aligned models fail:** Bridging paragraph explicitly mapping six taxonomy categories to three structural reasons. Three GradientCards (surface pattern matching, training distribution coverage, capability-safety tension). InsightBlock: capability-safety tension means red teaming must scale WITH model capability.
+- **Automated red teaming:** Scaling argument connected to RLAIF from Lesson 1. Four PhaseCards (generate, test, classify, analyze & iterate). Perez et al. (2022) reference: 154,000 prompts. Limitations GradientCard. InsightBlock "Same Scaling Insight" + TipBlock "Breadth + Depth" in asides.
+- **Check 2 (Predict the Defense):** Few-shot jailbreaking on Llama 2. Student predicts defenses and their costs. Reveal: input classifier (can be fooled), output classifier (over-refuse), additional RLHF (hurts capability). Pattern: every defense creates a new attack surface.
+- **Cat-and-mouse dynamic:** DAN progression as concrete example. GradientCard "The Fundamental Asymmetry." AttackDefenseCycleDiagram (inline SVG, four-node cycle with escalation labels). Defense-in-depth: five PhaseCards (training-time alignment, input filtering, output filtering, monitoring, regular re-evaluation). Connection to "the challenge shifts, not disappears" and "blind spots move."
+
+**Visual elements:**
+- AttackTaxonomyDiagram: Inline SVG, 2x3 grid of six attack categories with color-coded borders by sophistication, mechanism labels, and "increasing sophistication" arrow along the bottom
+- AttackDefenseCycleDiagram: Inline SVG, four-node cycle (Deploy -> Red Team Finds Gaps -> Patch Defenses -> Attackers Adapt -> Deploy) with escalation labels between nodes and "each cycle escalates" center annotation. Bottom note: "Attackers need to find ONE gap. Defenders need to cover ALL gaps."
+- Worked pass/fail pairs in the hook: three GradientCards (emerald) for passes, three GradientCards (rose) for failures
+
+**What is NOT covered:**
+- Implementing red teaming tools or running adversarial attacks in code (notebook has lightweight exercises)
+- Specific current jailbreaks in detail (patterns, not recipes)
+- Political or ethical debate about AI safety (mechanisms, not policy)
+- Benchmarks or evaluation metrics for safety (Lesson 4)
+- Constitutional AI or preference optimization details (Lessons 1-2)
+- Red teaming for non-LLM systems
+- Responsible disclosure processes or red teaming governance
+
+**Notebook:** `notebooks/5-1-3-red-teaming-and-adversarial-evaluation.ipynb` (3 exercises)
+- Exercise 1 (Guided): Classify 10 adversarial prompts into the six-category attack taxonomy. Identify which mechanism each exploits. First 5 have hints, last 5 are unscaffolded. Insight: the taxonomy is a classification tool, not just a list.
+- Exercise 2 (Supported): Test a model with direct request, fiction reframe, and encoded version of same question. Then invent three additional reframings. Insight: alignment holds at some points on the input surface and fails at others.
+- Exercise 3 (Supported): Use an LLM to generate 20 variations of a sensitive prompt, send to target model, classify responses, visualize distribution. Insight: even at toy scale, automated probing reveals inconsistency that manual testing would miss.
+
+**Review:** Passed at iteration 2/3. Iteration 1 had 4 improvement findings (misconception 5 not explicitly addressed, sycophancy example ambiguous, missing taxonomy-to-structural-reasons bridge, no negative example for what red teaming is NOT) and 3 polish findings. All improvement findings resolved. Iteration 2 had 0 improvement/critical findings and 2 minor polish findings (SVG em dash spacing, notebook Exercise 1 predict-then-reveal format).
+
+### Lesson 4: Evaluating LLMs (evaluating-llms)
+
+**Concepts taught:**
+- Benchmark limitations / proxy gap -- what benchmarks actually measure vs what they claim (DEVELOPED)
+- Goodhart's law for evaluation -- when a benchmark becomes a target, it ceases to be a good measure (DEVELOPED)
+- Contamination as structural property of internet-scale training (INTRODUCED)
+- Human evaluation challenges -- cost, consistency, scale, bias (INTRODUCED)
+- LLM-as-judge -- scaling evaluation with AI and its biases (INTRODUCED)
+- Evaluation as fundamentally harder than training (INTRODUCED)
+
+**Mental models established:**
+- "Benchmarks are standardized tests for LLMs" -- the SAT analogy maps precisely to every evaluation problem: contamination = test prep, Goodhart's law = teaching to the test, proxy gap = SAT score vs actual readiness. Makes abstract evaluation concepts graspable through familiar experience.
+- "Same mechanism, different scale" -- reward hacking (model games proxy) and Goodhart's law for evaluation (ecosystem games proxy) are the same mechanism operating at different levels. Connected explicitly to the "editor with blind spots" from 4.4.3.
+- "The evaluator's limitations become the evaluation's limitations" -- pattern that appeared three times in this module: human annotators have biases (5.1.1), red team models have blind spots (5.1.3), LLM judges have biases (this lesson). No single evaluation source is sufficient.
+- "The challenge shifts, not disappears" (extended) -- from "build alignment" (Lessons 1-2) to "test alignment" (Lesson 3) to "measure alignment" (this lesson). Each shift reveals deeper difficulty. The challenge of defining "good" may be harder than optimizing for it.
+
+**Analogies used:**
+- Standardized testing analogy (SAT measures test-taking ability, not intelligence -- benchmarks measure benchmark-taking ability, not capability)
+- Published test suite analogy (contamination = publishing your test suite and being surprised code passes -- maps to software engineering background)
+- Editor analogy callback (reward model as editor with blind spots from 4.4.3 -- benchmarks as "editors" with the same blind spots, at ecosystem scale)
+
+**How concepts were taught:**
+- **Recap:** Brief re-activation of three prior lessons' key concepts: alignment techniques are diverse with tradeoffs (Lesson 2), red teaming reveals failures benchmarks miss (Lesson 3), reward hacking as proxy optimization (4.4.3). Sets up: "You built it, you broke it -- now how do you measure whether it worked?"
+- **Hook (misconception reveal):** Two models with benchmark scores (Model A wins every benchmark). Then three reveals: Model B gives more concise answers, Model A has suspicious contamination-pattern scores, users prefer Model B 63% of the time. Punchline: higher score on every benchmark, but users prefer the other model. Creates the question: "What went wrong?"
+- **Evaluation Stack:** Benchmark families presented as categories with different measurement strategies (knowledge/reasoning, code, safety/alignment, open-ended generation). Key insight: every benchmark makes design choices that determine what it measures, which may differ from what its name implies. "When Passing Means Nothing" GradientCard: callback to 5.1.3 hook -- model that passed safety benchmarks but failed on demographic bias, sycophancy, indirect requests. Re-framed through evaluation lens: "The benchmark score was real. The safety it implied was not." EvaluationStackDiagram (inline SVG): six layers from "Actual Model Capability" to "Leaderboard Position" with contamination annotation.
+- **Contamination:** Three forms (direct, indirect, saturation) presented via GradientCards. Structural argument explicitly made: contamination is a property of the paradigm, not a bug to fix. Published test suite analogy. Forensic evidence worked example: 95% vs 72% on equivalent sections = contamination signal. "The Alignment Surface Returns" InsightBlock addresses misleading "more benchmarks = more coverage" inference.
+- **Goodhart's law:** Connected to reward hacking ("Remember reward hacking? That was Goodhart's law inside training. Now apply it to evaluation."). Within-lab and across-ecosystem dynamics. "We Just Need Better Benchmarks" GradientCard explicitly names and disproves the misconception with negative example (perfect benchmark degrades under optimization in a year). "Interpretation, Not Dismissal" GradientCard provides balanced framing.
+- **Human evaluation:** Callback to annotation bottleneck from 5.1.1 (lock-picking disagreement). Cohen's kappa defined and contextualized (0.3-0.5 = fair to moderate, far from gold standard reliability). Four problems: inter-annotator disagreement, cost, scale, bias. Chatbot Arena as partial solution (pairwise comparisons more reliable than absolute ratings -- same insight as preference pairs in RLHF).
+- **LLM-as-judge:** Same scaling argument as RLAIF and automated red teaming. Four bias cards (verbosity, confidence, self-preference, format sensitivity). Pattern explicitly identified: third time the module shows "evaluator's limitations = evaluation's limitations." Defense-in-depth principle applied to evaluation.
+- **Why evaluation may be harder than training:** Four GradientCards (multidimensionality, context-dependence, moving targets, recursive proxy problem). Connected to module arc: each lesson shifted the challenge, never resolved it.
+- **Module arc summary:** Build-Break-Measure arc explicitly summarized. Recurring patterns identified: blind spots move, the challenge shifts, tradeoffs are unavoidable, proxies diverge under optimization pressure, scaling requires automation with its own blind spots.
+- **Checkpoints:** Two predict-before-reveal checks -- (1) "What does MMLU actually measure?" (recognition vs generation, proxy gap), (2) "List three questions before trusting a SOTA claim" (contamination, selection bias, judge bias, proxy gap, comparability).
+
+**Visual elements:**
+- EvaluationStackDiagram: Inline SVG with six stacked layers from "Actual Model Capability" (bottom, indigo) through "Task Design," "Prompt Formatting," "Scoring Criteria," "Aggregation" to "Leaderboard Position" (top, red). Each layer has label, subtitle, and right-side note. Contamination annotation on right side (dashed red bracket). Bottom annotation: "The gap between bottom and top is the proxy gap."
+- Two-model benchmark comparison cards (GradientCards: blue Model A, cyan Model B) followed by "What the Numbers Hide" reveal (rose GradientCard)
+- Three contamination form cards (amber, orange, rose)
+- Four LLM judge bias cards (amber, orange, 2x2 grid)
+- Four "why evaluation is harder" cards (violet, purple, blue, rose)
+
+**What is NOT covered:**
+- Specific current benchmark scores or leaderboard positions
+- Implementing evaluation pipelines in code
+- Designing new benchmarks or evaluation frameworks
+- Statistical methodology for evaluation (significance testing, confidence intervals)
+- Evaluation of non-LLM models
+- Constitutional AI, preference optimization, or red teaming details (Lessons 1-3)
+- Full history of NLP benchmarks (GLUE, SuperGLUE) as chronological narrative
+
+**Notebook:** `notebooks/5-1-4-evaluating-llms.ipynb` (3 exercises)
+- Exercise 1 (Guided): Benchmark Autopsy -- given a model's scores on 5 benchmark categories, identify suspicious scores (contamination signals), distinguish recognition vs generation benchmarks, identify unmeasured quality dimensions. First two categories have guided questions, last three are unscaffolded. Insight: reading benchmark results critically is a skill, not just skepticism.
+- Exercise 2 (Supported): LLM-as-Judge Bias Detection -- use an LLM API to judge response pairs where one is longer but less accurate and the other is concise but correct. Systematically vary length and confidence. Track correlation of judge ratings with length/confidence vs accuracy. Visualize bias. Insight: judge biases are measurable and predictable.
+- Exercise 3 (Supported): Design an Evaluation -- given a specific use case (medical Q&A assistant), design a multi-method evaluation strategy integrating benchmarks, human judges, LLM judges, and red teaming. Produce a one-page evaluation plan. Insight: evaluation design requires the same tradeoff thinking as alignment technique selection.
+
+**Review:** Passed at iteration 2/3. Iteration 1 had 3 improvement findings ("we just need better benchmarks" misconception implicit, "model passes benchmarks but fails red teaming" negative example underused, "more benchmarks = more coverage" misleading analogy not addressed) and 3 polish findings (spaced em dashes, Cohen's kappa ungrounded, Exercise 3 labeling). All improvement findings resolved. Iteration 2 had 0 improvement/critical findings and 2 minor polish findings (SVG text size on mobile, notebook Exercise 2 line count estimate).

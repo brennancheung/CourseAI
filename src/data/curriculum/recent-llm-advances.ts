@@ -140,6 +140,110 @@ const advancedAlignment: CurriculumNode = {
         ],
       },
     },
+    {
+      slug: 'evaluating-llms',
+      title: 'Evaluating LLMs',
+      description:
+        'Benchmarks are not what they appear to be\u2014how contamination, Goodhart\u2019s law, and the proxy gap undermine LLM evaluation, and why measuring alignment may be harder than building it.',
+      duration: '25 min',
+      category: 'Alignment',
+      objectives: [
+        'Explain the proxy gap between what benchmarks measure and what they claim to measure',
+        'Describe contamination as a structural property of internet-scale training, not just data leakage',
+        'Apply Goodhart\u2019s law to evaluation: when a benchmark becomes an optimization target, it ceases to be a good measure',
+        'Articulate why human evaluation is imperfect (cost, consistency, scale, bias) and how Chatbot Arena partially addresses these',
+        'Explain LLM-as-judge as a scaling strategy and identify its systematic biases (verbosity, confidence, self-preference, format)',
+        'Argue why evaluation may be fundamentally harder than training',
+      ],
+      skills: [
+        'benchmark-evaluation',
+        'contamination',
+        'goodharts-law',
+        'human-evaluation',
+        'llm-as-judge',
+        'evaluation-stack',
+        'proxy-gap',
+      ],
+      prerequisites: ['red-teaming-and-adversarial-evaluation'],
+      exercise: {
+        constraints: [
+          'Conceptual lesson\u2014no implementing evaluation systems',
+          'Critical assessment of evaluation methods, not specific benchmark scores',
+          'No constitutional AI, preference optimization, or red teaming details (previous lessons)',
+          'No statistical methodology for evaluation',
+        ],
+        steps: [
+          'Reconnect alignment concepts from Lessons 1-3 and reward hacking from Series 4',
+          'See how benchmark rankings can contradict real-world user preferences',
+          'Understand the evaluation stack: layers between capability and leaderboard number',
+          'Learn contamination as a structural, not accidental, problem',
+          'Apply Goodhart\u2019s law from reward hacking to evaluation metrics',
+          'Assess human evaluation limitations (callback to annotation bottleneck)',
+          'Evaluate LLM-as-judge approach and its systematic biases',
+          'Design an evaluation strategy that combines multiple methods',
+        ],
+      },
+    },
+  ],
+}
+
+/**
+ * Reasoning & In-Context Learning
+ *
+ * Module 5.2: Reasoning & In-Context Learning
+ * 1. In-Context Learning
+ * 2. Prompt Engineering (planned)
+ * 3. Chain-of-Thought (planned)
+ * 4. Reasoning Models (planned)
+ */
+const reasoningAndInContextLearning: CurriculumNode = {
+  slug: 'reasoning-and-in-context-learning',
+  title: 'Reasoning & In-Context Learning',
+  children: [
+    {
+      slug: 'in-context-learning',
+      title: 'In-Context Learning',
+      description:
+        'A model trained only on next-token prediction can learn new tasks from examples in the prompt\u2014without any weight update. The mechanism is attention, and it changes how you think about what "learning" means.',
+      duration: '25 min',
+      category: 'Reasoning & ICL',
+      objectives: [
+        'Explain why a transformer can learn new tasks from examples in the prompt without weight updates',
+        'Identify attention as the specific mechanism that enables in-context learning',
+        'Distinguish zero-shot from few-shot prompting and explain when each applies',
+        'Articulate why ICL is a base model capability (not a product of SFT or RLHF)',
+        'Describe the limitations of ICL: ordering sensitivity, context window constraints, and fragility',
+        'Connect ICL to the "capability = vulnerability" pattern from red teaming',
+      ],
+      skills: [
+        'in-context-learning',
+        'few-shot-prompting',
+        'zero-shot-prompting',
+        'attention-as-icl-mechanism',
+        'icl-limitations',
+      ],
+      prerequisites: ['evaluating-llms'],
+      exercise: {
+        constraints: [
+          'Conceptual lesson with notebook exercises',
+          'ICL phenomenon and attention-based mechanism only',
+          'No systematic prompt engineering (next lesson)',
+          'No chain-of-thought reasoning (Lesson 3)',
+          'No retrieval-augmented generation',
+          'No implementing ICL from scratch',
+        ],
+        steps: [
+          'Reconnect attention as data-dependent computation and finetuning for classification',
+          'See few-shot sentiment classification with no weight updates (the puzzle)',
+          'Learn the GPT-3 discovery: ICL as a base model capability',
+          'Trace the attention mechanism that enables ICL (QK matching, V retrieval)',
+          'Verify "the prompt is a program" with same input, different examples, different outputs',
+          'Explore ICL boundaries: novel mappings (works), ordering sensitivity (fragile)',
+          'Connect ICL to few-shot jailbreaking (capability = vulnerability)',
+          'Practice: zero-shot vs few-shot, novel tasks, ordering experiments, ICL vs finetuning',
+        ],
+      },
+    },
   ],
 }
 
@@ -155,5 +259,5 @@ export const recentLlmAdvances: CurriculumNode = {
   icon: 'Sparkles',
   description:
     'Advanced alignment, reasoning models, and multimodal capabilities\u2014extending the LLM foundation into its modern form',
-  children: [advancedAlignment],
+  children: [advancedAlignment, reasoningAndInContextLearning],
 }

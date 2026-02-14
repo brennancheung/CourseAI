@@ -321,3 +321,137 @@ Critical finding in the notebook requires a fix before the lesson is usable. The
 
 **Pattern observation:**
 - The lesson `.tsx` is at a higher quality level than the notebook. The lesson was clearly designed with pedagogical care, while the notebook made pragmatic shortcuts (synthetic data, placeholder repos) that undermine the learning objectives. This suggests the notebook may have been built under time/complexity pressure and would benefit from a focused revision pass.
+
+---
+
+## Review -- 2026-02-14 (Iteration 2/3)
+
+### Summary
+- Critical: 0
+- Improvement: 2
+- Polish: 2
+
+### Verdict: NEEDS REVISION
+
+All iteration 1 findings were properly addressed. No critical issues remain. Two improvement findings identified in the notebook, primarily around Exercise 3's generation/comparison flow and Exercise 4's training time. The lesson `.tsx` continues to be strong.
+
+### Iteration 1 Fix Verification
+
+| Finding | Status | Notes |
+|---------|--------|-------|
+| [CRITICAL] Exercise 3 synthetic data | FIXED | Now uses `lambdalabs/naruto-blip-captions` with 30 real anime-style images. Dataset is displayed to the student before training. Captions are real. |
+| [IMPROVEMENT] VRAM management | FIXED | Exercise 1 loads only the U-Net via `UNet2DConditionModel.from_pretrained()`. No shared pipeline. Each exercise cleans up. VRAM tip in cell-3. |
+| [IMPROVEMENT] Exercise 4 external LoRA repos | FIXED | Exercise 4 is now self-contained: trains a second LoRA locally on a different subset of the same dataset. No external dependencies. |
+| [IMPROVEMENT] Exercise 4 solution reasoning | FIXED | Full reasoning paragraph before code explaining experimental design (same seed, individual baselines, weight ratios). "Why adapter weights matter" section after code. Common mistakes section added. |
+| [POLISH] Mermaid emoji | NOT FIXED | Accepted as low priority in iteration 1. Color coding carries the primary information. |
+| [POLISH] Spaced em dashes in code comments | FIXED | Lines 462 and 465 now use unspaced em dashes: "loss--same" and "Backprop--gradients". |
+
+### Findings
+
+### [IMPROVEMENT] -- Notebook Exercise 3 loads two full pipelines simultaneously for comparison
+
+**Location:** Notebook cell-26 (Exercise 3 generation comparison)
+**Issue:** After training, cell-26 creates a LoRA-merged pipeline (`lora_pipe`) and also loads a completely fresh `clean_pipe` for before/after comparison. Both are full SD pipelines (U-Net + VAE + CLIP + tokenizer) in VRAM simultaneously. On a T4 with 16 GB, having the training components still partially in memory plus two pipelines is risky. The `unet_lora` from training is still alive when `lora_pipe` is constructed, and `clean_pipe` adds a second full pipeline on top.
+**Student impact:** Potential OOM on free-tier Colab T4, especially since the training loop in cell-23 already consumed significant VRAM. The student may hit OOM during the comparison step -- the most rewarding part of the exercise -- which would be frustrating. They would need to restart the runtime and lose training results.
+**Suggested fix:** Generate the LoRA images first using the LoRA pipeline, then delete it and load the clean pipeline for baseline images. Alternatively, load `clean_pipe` in fp16 (which it already does via `dtype`) while the LoRA pipe is fp32, and add an explicit `del unet, vae, text_encoder` before building the pipelines to release the individual training components. A comment noting the VRAM-conscious sequencing would help.
+
+### [IMPROVEMENT] -- Notebook Exercise 4 solution trains for 200 steps adding significant time without clear pedagogical benefit over Exercise 3
+
+**Location:** Notebook cell-30 (Exercise 4 solution)
+**Issue:** The Exercise 4 solution trains a second LoRA from scratch for 200 steps, which on a T4 adds approximately 15-20 minutes of training time. This is on top of Exercise 3's 300 steps (~20-30 minutes). The pedagogical goal of Exercise 4 is to explore LoRA composition, not to practice the training loop again (that was Exercise 3's goal). The additional training is necessary infrastructure for the composition experiment but is not the learning objective.
+**Student impact:** The student spends 15-20 minutes watching a training loop they already understand, reducing the time and energy available for the actual composition experimentation. For an ADHD-friendly design, this is a significant friction point -- the interesting part (composition) is delayed behind repetitive infrastructure.
+**Suggested fix:** Reduce the second LoRA training to 100 steps (still enough to produce a visible style effect on 30 images with rank-8) and add a comment: "Training is shorter here because the goal is composition exploration, not training quality. 100 steps is enough to produce a distinct adapter for comparison." Alternatively, consider saving a pre-trained second LoRA as a downloadable artifact, though that adds external dependency (which was the problem in iteration 1).
+
+### [POLISH] -- Notebook spaced em dashes in Python comments and markdown cells
+
+**Location:** Multiple notebook cells (cell-10, cell-11, cell-12, cell-13, cell-14, cell-16, cell-20, cell-22, cell-24, cell-30)
+**Issue:** Numerous Python comments and markdown solution blocks use spaced em dashes: "Rank 4 -- the small detour" (cell-10, line 3 of code), "Training image -- a random 512x512 image" (cell-11), "VAE encode -- compress the image" (cell-11), "Forward pass -- predict the noise" (cell-14), "Compute MSE loss -- same loss from DDPM training" (cell-15), "Freeze VAE and text encoder -- they do not train" (cell-20), "same config as Exercise 2" (cell-22), and many more throughout the solution blocks. The writing style rule specifies no spaces around em dashes.
+**Student impact:** Negligible. These are code comments and solution text. The student reads them as annotations, not lesson prose. However, consistency with the lesson `.tsx` (which correctly uses unspaced em dashes) would be cleaner.
+**Suggested fix:** Replace spaced ` -- ` with unspaced `--` throughout notebook Python comments and markdown solution text. Low priority since these are code annotations.
+
+### [POLISH] -- Mermaid diagram emoji indicators (carried from iteration 1)
+
+**Location:** Lesson Section 5, Mermaid diagram (line 254-277)
+**Issue:** Unchanged from iteration 1. Snowflake and fire emoji in Mermaid node labels may render inconsistently across browsers. Color coding carries the information independently.
+**Student impact:** Minor visual inconsistency on some platforms.
+**Suggested fix:** Same as iteration 1. Low priority.
+
+### Review Notes
+
+**What works well (unchanged from iteration 1):**
+- The lesson `.tsx` remains exceptionally well-designed. The prediction checkpoint hook, ComparisonRow training loop comparison, conv-only negative example with "steering wheel in the trunk" analogy, and worked example with tensor shapes are all strong.
+- The notebook is now significantly improved. Using a real anime dataset makes Exercise 3 genuinely demonstrative. The self-contained Exercise 4 eliminates external dependencies. The solution reasoning is pedagogically sound.
+
+**Iteration 1 fixes assessment:**
+- All critical and improvement fixes were properly applied. The notebook now matches the lesson's pedagogical quality much more closely.
+- The naruto-blip-captions dataset choice is excellent: visually distinctive style, real captions, available on Hugging Face, and small enough for Colab training.
+- Exercise 4's self-contained design (train second LoRA locally) is a strictly better approach than the external repo dependency.
+
+**Remaining concerns:**
+- The two improvement findings are both VRAM/time related. They do not affect pedagogical correctness but may affect the student experience on free-tier Colab. The VRAM issue in cell-26 is the more important one -- hitting OOM during the comparison step would be particularly frustrating since it is the payoff moment after 20-30 minutes of training.
+- The Polish items are genuinely minor and do not affect learning outcomes.
+
+---
+
+## Review -- 2026-02-14 (Iteration 3/3 FINAL)
+
+### Summary
+- Critical: 0
+- Improvement: 0
+- Polish: 2
+
+### Verdict: PASS
+
+All iteration 2 findings were properly fixed. No critical or improvement findings remain. The lesson component and notebook are both at high quality. Ship it.
+
+### Iteration 2 Fix Verification
+
+| Finding | Status | Notes |
+|---------|--------|-------|
+| [IMPROVEMENT] Cell-26 loads two pipelines simultaneously | FIXED | Cell-26 now sequences generation: generates LoRA images first, deletes lora_pipe, then loads clean_pipe for baseline. Explicit `del unet, vae, text_encoder` before pipeline construction. Comment documents the VRAM-conscious sequencing rationale. |
+| [IMPROVEMENT] Exercise 4 trains for 200 steps | FIXED | Reduced to 100 steps with comment: "Training is shorter here because the goal is composition exploration, not training quality. 100 steps is enough to produce a distinct adapter for comparison." |
+| [POLISH] Spaced em dashes in notebook | PARTIALLY FIXED | Characters changed from double-hyphens (`--`) to proper em dash characters, but spacing around them remains (e.g., `Rank 4 — the small detour`). These are in code comments and solution text, not lesson prose. Student impact: negligible. |
+| [POLISH] Mermaid emoji | NOT FIXED | Carried forward from iteration 1 as accepted low priority. Color coding carries the information independently. |
+
+### Findings
+
+### [POLISH] -- Spaced em dashes in notebook code comments and solution blocks (carried)
+
+**Location:** Notebook cells 10, 11, 12, 14, 15, 20, 22, 24, 30 (Python comments and solution markdown)
+**Issue:** Em dash characters now used (improved from iteration 2's double-hyphens) but spacing around them persists: `Rank 4 — the small detour`, `VAE encode — compress the image`, `Forward pass — predict the noise`, etc. The writing style rule specifies `word—word` not `word — word`.
+**Student impact:** Negligible. These are code comment annotations and solution text within `<details>` blocks, not lesson prose. The lesson `.tsx` correctly uses unspaced em dashes throughout all student-visible prose.
+**Suggested fix:** Replace `word — word` with `word—word` in notebook Python comments and solution markdown. Low priority.
+
+### [POLISH] -- Mermaid diagram emoji indicators (carried from iterations 1 and 2)
+
+**Location:** Lesson Section 5, Mermaid diagram (line 254-277)
+**Issue:** Unchanged. Snowflake and fire emoji in Mermaid node labels may render inconsistently across browsers. Color coding carries the information independently.
+**Student impact:** Minor visual inconsistency on some platforms.
+**Suggested fix:** Same as prior iterations. Low priority.
+
+### Review Notes
+
+**Overall assessment:** This lesson is ready to ship. After three iterations of review and two rounds of fixes, both the lesson component and the notebook are at high quality.
+
+**Lesson component strengths (consistent across all three iterations):**
+- Exceptionally well-connected to prior knowledge. Every new concept explicitly linked to a specific prior lesson with established terminology and analogies.
+- The prediction checkpoint hook is one of the best hook designs in the course, calibrating overconfidence by asking predictions the student will likely get partially wrong.
+- The ComparisonRow of LLM LoRA vs diffusion LoRA training steps is effective. The "80% identical" framing is accurate and reassuring.
+- The negative example (conv-only LoRA) with the "steering wheel in the trunk" analogy vividly defines the boundary.
+- The worked example with tensor shapes at every stage is concrete and verifiable.
+- All structural patterns are correctly followed (Row layout, block components, section progression, scope boundaries).
+- Writing style is clean: unspaced em dashes, proper HTML entities, no style violations in student-visible prose.
+
+**Notebook improvement trajectory:**
+- Iteration 1: Critical issue (synthetic training data). Major revision required.
+- Iteration 2: No critical issues. VRAM management and training time improvements needed.
+- Iteration 3: All fixes properly applied. Notebook now uses real data (naruto-blip-captions), manages VRAM with sequential pipeline loading, and has appropriately scoped training times.
+
+**Pedagogical quality indicators:**
+- 5 modalities for the core concept (visual, symbolic, concrete, verbal/analogy, intuitive). Exceeds the 3 minimum.
+- 5 misconceptions addressed with concrete negative examples. Exceeds the 3 minimum.
+- 2 genuinely new concepts. Within the 2-3 load limit.
+- Clear scope boundaries with explicit NOT-about items.
+- ADHD-friendly: prediction checkpoints create engagement, ComparisonRows reduce cognitive overhead, the lesson never overloads.
+
+**No systemic issues identified.** The two remaining Polish items are genuinely minor and do not warrant another revision cycle.

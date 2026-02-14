@@ -564,9 +564,10 @@ export function RedTeamingAndAdversarialEvaluationLesson() {
         </Row.Content>
         <Row.Aside>
           <InsightBlock title="The Missing Piece">
-            Lessons 1-2 built the alignment. This lesson asks: how do you know
-            if it worked? The answer turns out to be uncomfortable&mdash;you
-            have to try to break it.
+            In software, you write tests before shipping. In alignment, the
+            equivalent is red teaming&mdash;but the test surface is infinite
+            and adversarial. You cannot enumerate all inputs, so you need
+            strategies to find failures efficiently.
           </InsightBlock>
         </Row.Aside>
       </Row>
@@ -641,7 +642,11 @@ export function RedTeamingAndAdversarialEvaluationLesson() {
                   <strong>Model:</strong> Provides a one-sided list of dangers
                   with no mention of benefits or safety improvements&mdash;
                   contradicting its balanced answer to the nearly identical
-                  question above.
+                  question above. The model adjusts its stance to match the
+                  implied framing of the question rather than providing
+                  consistent information: asked &ldquo;is it safe?&rdquo; it
+                  gives both sides, asked &ldquo;what are the dangers?&rdquo;
+                  it gives only dangers.
                 </p>
               </GradientCard>
 
@@ -723,6 +728,20 @@ export function RedTeamingAndAdversarialEvaluationLesson() {
             </p>
 
             <p className="text-muted-foreground">
+              Crucially, red teaming is not just about safety&mdash;toxicity,
+              violence, or illegal content. The full scope of what red teams
+              probe includes: <strong>safety</strong> (harmful outputs),{' '}
+              <strong>consistency</strong> (contradictory answers to rephrased
+              questions), <strong>fairness</strong> (demographic bias in
+              advice), <strong>factual accuracy</strong> (confident
+              hallucinations), <strong>privacy</strong> (revealing training
+              data), and <strong>robustness</strong> (degraded performance
+              under unusual formatting). Many of these are more practically
+              important than the dramatic safety failures because they affect
+              every user interaction, not just adversarial edge cases.
+            </p>
+
+            <p className="text-muted-foreground">
               And here is the &ldquo;of course&rdquo; beat: of course the
               surface has gaps. The alignment training data was a
               sample&mdash;whether human preference pairs or AI-generated
@@ -731,6 +750,30 @@ export function RedTeamingAndAdversarialEvaluationLesson() {
               failure, the same concept from the earliest lessons in Series 1,
               applied to alignment.
             </p>
+
+            <GradientCard title="What Red Teaming Is Not" color="rose">
+              <ul className="space-y-1 text-sm">
+                <li>
+                  &bull; <strong>Not benchmarking.</strong> Benchmarks test
+                  average performance on a fixed dataset. Red teaming tests
+                  adversarial worst-case behavior&mdash;the question is not
+                  &ldquo;how well does it perform?&rdquo; but &ldquo;can it be
+                  made to fail?&rdquo;
+                </li>
+                <li>
+                  &bull; <strong>Not adversarial training.</strong> Adversarial
+                  training is a training-time technique that exposes the model
+                  to adversarial examples during optimization. Red teaming
+                  happens after training, as an evaluation process.
+                </li>
+                <li>
+                  &bull; <strong>Not general QA.</strong> QA tests whether the
+                  model works correctly under normal use. Red teaming
+                  specifically simulates adversarial use&mdash;deliberately
+                  searching for inputs that make the model fail.
+                </li>
+              </ul>
+            </GradientCard>
           </div>
         </Row.Content>
         <Row.Aside>
@@ -975,8 +1018,16 @@ export function RedTeamingAndAdversarialEvaluationLesson() {
           <div className="space-y-4">
             <p className="text-muted-foreground">
               The attack taxonomy shows <em>what</em> attacks look like. Now
-              the deeper question: <em>why</em> do they work? Three structural
-              reasons, each of which makes alignment fundamentally difficult.
+              the deeper question: <em>why</em> do they work? The six
+              categories from the taxonomy reduce to three underlying causes.
+              Categories 1 and 2 (direct and indirect) fail because of surface
+              pattern matching. Category 4 (encoding) fails because of training
+              distribution gaps. Categories 5 and 6 (persona and few-shot)
+              fail because of the capability-safety tension. Category 3
+              (multi-step) exploits a related but distinct limitation: the
+              model&rsquo;s inability to reason about cumulative intent across
+              turns. Three structural reasons, each of which makes alignment
+              fundamentally difficult.
             </p>
 
             <GradientCard title="Reason 1: Surface Pattern Matching" color="amber">
@@ -1533,7 +1584,7 @@ export function RedTeamingAndAdversarialEvaluationLesson() {
       </Row>
 
       {/* ================================================================
-          13. References
+          14. References
           ================================================================ */}
       <Row>
         <Row.Content>
@@ -1569,7 +1620,7 @@ export function RedTeamingAndAdversarialEvaluationLesson() {
       </Row>
 
       {/* ================================================================
-          14. Next Step (Section 13)
+          15. Next Step
           ================================================================ */}
       <Row>
         <Row.Content>

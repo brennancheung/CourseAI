@@ -1,6 +1,6 @@
 # Series 6: Stable Diffusion -- Plan
 
-**Status:** In progress (Modules 6.1-6.3 complete, Module 6.4 in progress)
+**Status:** Complete (all 5 modules complete: 6.1, 6.2, 6.3, 6.4, 6.5)
 **Prerequisites:** Series 1-3 (complete), Series 4 Modules 4.1-4.2 (attention, cross-attention, embeddings, positional encoding)
 
 ## Series Goal

@@ -791,6 +791,82 @@ const customization: CurriculumNode = {
         ],
       },
     },
+    {
+      slug: 'img2img-and-inpainting',
+      title: 'Img2Img and Inpainting',
+      description:
+        'Same denoising process, different starting point. Reconfigure the inference pipeline to edit real images and selectively replace regions\u2014no training required.',
+      duration: '30 min',
+      category: 'Customization',
+      objectives: [
+        'Explain how img2img starts the denoising loop from a noised real image instead of pure noise',
+        'Map the strength parameter to a starting timestep on the alpha-bar curve and explain its nonlinear behavior',
+        'Describe inpainting as a per-step spatial mask applied during the denoising loop',
+        'Explain why inpainting boundaries blend seamlessly using the U-Net receptive field',
+        'Use StableDiffusionImg2ImgPipeline and StableDiffusionInpaintPipeline with full parameter comprehension',
+      ],
+      skills: [
+        'img2img-mechanism',
+        'strength-parameter',
+        'inpainting-mechanism',
+        'spatial-mask-denoising',
+        'inference-time-customization',
+      ],
+      prerequisites: ['lora-finetuning'],
+      exercise: {
+        constraints: [
+          'No training\u2014img2img and inpainting are inference-time only',
+          'No ControlNet or structural conditioning',
+          'No specialized inpainting models with extra input channels',
+          'No outpainting, SDEdit, or video inpainting',
+          'No textual inversion (next lesson)',
+        ],
+        steps: [
+          'Run img2img at strengths 0.1, 0.3, 0.5, 0.7, 0.9 with the same prompt and seed to see the full strength spectrum',
+          'Trace the img2img mechanism by hand: VAE encode, forward process noise, denoise from t_start, compare to pipeline output',
+          'Create a binary mask and run inpainting with StableDiffusionInpaintPipeline, experimenting with mask sizing',
+          'Creative workflow: sketch to img2img to selective inpainting refinement',
+        ],
+      },
+    },
+    {
+      slug: 'textual-inversion',
+      title: 'Textual Inversion',
+      description:
+        'Don\u2019t change the model. Don\u2019t change the inference process. Change what the model hears\u2014optimize a single embedding vector to teach it a new word.',
+      duration: '35 min',
+      category: 'Customization',
+      objectives: [
+        'Explain how textual inversion creates a pseudo-token and optimizes its embedding in CLIP\u2019s space while keeping the entire model frozen',
+        'Trace the gradient flow from MSE loss through the frozen U-Net and CLIP encoder back to a single embedding row',
+        'Compare textual inversion to LoRA on expressiveness, training speed, file size, and use cases',
+        'Recommend textual inversion vs LoRA vs img2img for a given customization scenario',
+        'Describe the two-stage pipeline (embedding lookup \u2192 CLIP transformer) and where textual inversion intervenes',
+      ],
+      skills: [
+        'textual-inversion-mechanism',
+        'pseudo-token-creation',
+        'embedding-optimization',
+        'customization-spectrum',
+        'textual-inversion-limitations',
+      ],
+      prerequisites: ['img2img-and-inpainting'],
+      exercise: {
+        constraints: [
+          'Not DreamBooth or full model fine-tuning',
+          'Not multi-token textual inversion (mentioned only)',
+          'Not hypernetworks or other embedding-space methods',
+          'Not CLIP internal architecture or reimplementing CLIP',
+          'Not production deployment or optimization for speed',
+        ],
+        steps: [
+          'Explore the CLIP embedding table: inspect shape, look up embeddings, compute cosine similarities, add a new token',
+          'One training step by hand: VAE encode, tokenize prompt with pseudo-token, DDPM step, verify only the new embedding row has non-zero gradients',
+          'Train a full textual inversion embedding on concept images for 3,000 steps, compare checkpoints',
+          'Compare textual inversion vs LoRA on the same concept images: file size, training time, output quality',
+        ],
+      },
+    },
   ],
 }
 
