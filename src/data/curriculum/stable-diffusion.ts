@@ -610,6 +610,191 @@ const architectureAndConditioning: CurriculumNode = {
 }
 
 /**
+ * Stable Diffusion
+ *
+ * Module 6.4: Stable Diffusion
+ * 1. Stable Diffusion Architecture (CONSOLIDATE — assembles all components from 6.1–6.3)
+ * 2. Samplers and Efficiency (planned)
+ * 3. Generate with Stable Diffusion (planned)
+ */
+const stableDiffusionModule: CurriculumNode = {
+  slug: 'stable-diffusion-module',
+  title: 'Stable Diffusion',
+  children: [
+    {
+      slug: 'stable-diffusion-architecture',
+      title: 'The Stable Diffusion Pipeline',
+      description:
+        'Every component you built across 14 lessons, assembled into one system. Trace the complete pipeline from text prompt to generated image with real tensor shapes at every stage.',
+      duration: '30 min',
+      category: 'Stable Diffusion',
+      objectives: [
+        'Trace the complete Stable Diffusion inference pipeline from text prompt to pixel image with tensor shapes at every handoff',
+        'Explain how CLIP, the conditioned U-Net, and the VAE work together as independently trained components',
+        'Describe the denoising loop with all conditioning mechanisms firing simultaneously (timestep, cross-attention, CFG)',
+        'Contrast the training pipeline (VAE encoder used) with the inference pipeline (VAE encoder not used)',
+        'Explain negative prompts as a direct application of the CFG formula',
+      ],
+      skills: [
+        'sd-pipeline-trace',
+        'component-modularity',
+        'training-vs-inference-pipeline',
+        'negative-prompts',
+        'sd-tensor-shapes',
+      ],
+      prerequisites: ['from-pixels-to-latents'],
+      exercise: {
+        constraints: [
+          'No new concepts\u2014this is a CONSOLIDATE lesson assembling prior knowledge',
+          'No implementing the pipeline from scratch\u2014notebook uses diffusers',
+          'No samplers beyond DDPM (DDIM, Euler, DPM-Solver are next lesson)',
+          'No SD v1 vs v2 vs XL differences, LoRA, or fine-tuning',
+        ],
+        steps: [
+          'Load and inspect the three SD components separately (CLIP, VAE, U-Net) and verify parameter counts',
+          'Trace the CLIP stage: tokenize a prompt, inspect token IDs and output embedding shape',
+          'Trace one denoising step: embed timestep, two U-Net passes for CFG, scheduler step',
+          'Execute the complete pipeline manually and verify every tensor shape matches the lesson predictions',
+        ],
+      },
+    },
+    {
+      slug: 'samplers-and-efficiency',
+      title: 'Samplers and Efficiency',
+      description:
+        'The model predicts noise. The sampler decides what to do with that prediction. Same weights, different walkers\u2014from 1000 steps to 20.',
+      duration: '35 min',
+      category: 'Stable Diffusion',
+      objectives: [
+        'Explain why DDPM requires many steps (Markov chain assumption, adjacent-step formula)',
+        'Describe DDIM\u2019s predict-x\u2080-then-jump mechanism and why it enables step-skipping',
+        'Connect the ODE perspective to gradient descent (Euler\u2019s method bridge)',
+        'Explain why higher-order solvers (DPM-Solver) achieve good quality at 20 steps',
+        'Choose a sampler with understanding: DPM-Solver++ (default), DDIM (reproducibility), Euler (debugging)',
+      ],
+      skills: [
+        'ddim-predict-and-leap',
+        'ode-perspective-diffusion',
+        'euler-method-connection',
+        'higher-order-solvers',
+        'sampler-selection',
+        'deterministic-vs-stochastic-sampling',
+      ],
+      prerequisites: ['stable-diffusion-architecture'],
+      exercise: {
+        constraints: [
+          'No deriving DDIM or DPM-Solver from first principles',
+          'No score-based models or SDE/ODE duality in full rigor',
+          'No implementing samplers from scratch\u2014notebook uses diffusers schedulers',
+          'No ancestral sampling, Karras samplers, or UniPC',
+          'No training-based acceleration (distillation, consistency models)',
+        ],
+        steps: [
+          'Same model, three samplers: DDPM at 1000 steps, DDIM at 50, DPM-Solver at 20. Compare quality and timing',
+          'DDIM determinism: generate 3 images with the same seed and verify pixel-level identity',
+          'Step count exploration: generate at 5, 10, 20, 50, 100, 200 steps with DPM-Solver. Find the sweet spot',
+          'Inspect DDIM intermediates at 10 steps: VAE-decode each intermediate latent and observe coarse-to-fine progression',
+        ],
+      },
+    },
+    {
+      slug: 'generate-with-stable-diffusion',
+      title: 'Generate with Stable Diffusion',
+      description:
+        'Every parameter in the diffusers API maps to a concept you built from scratch. Use the real library and understand every parameter\u2014this is you driving a machine you built.',
+      duration: '30 min',
+      category: 'Stable Diffusion',
+      objectives: [
+        'Use the diffusers StableDiffusionPipeline to generate images with full parameter comprehension',
+        'Map every API parameter to its underlying concept and source lesson',
+        'Predict the effect of parameter changes before running the code, then verify',
+        'Diagnose common failure modes by reasoning from the underlying mechanisms',
+        'Apply a systematic experimental workflow for parameter exploration',
+      ],
+      skills: [
+        'diffusers-pipeline-usage',
+        'parameter-concept-mapping',
+        'guidance-scale-tuning',
+        'sampler-selection-applied',
+        'negative-prompt-usage',
+        'seed-reproducibility',
+        'systematic-experimentation',
+      ],
+      prerequisites: ['samplers-and-efficiency'],
+      exercise: {
+        constraints: [
+          'No new mathematical formulas or derivations\u2014this is CONSOLIDATE',
+          'No fine-tuning, LoRA, or customization (Module 6.5)',
+          'No img2img, inpainting, or ControlNet',
+          'No prompt engineering as a deep topic',
+          'No SD v1 vs v2 vs XL differences',
+          'No advanced pipeline configurations (custom pipelines, callbacks, attention processors)',
+        ],
+        steps: [
+          'Load StableDiffusionPipeline and generate your first image with default parameters',
+          'Guidance scale sweep: generate at guidance_scale = 1, 3, 7.5, 15, 25 with fixed seed and prompt',
+          'Step count and scheduler comparison: generate at 5, 10, 20, 50, 100 steps with DPM-Solver++, then swap to DDIM and Euler',
+          'Design your own controlled experiment: pick a parameter, form a hypothesis, generate, and write a conclusion',
+        ],
+      },
+    },
+  ],
+}
+
+/**
+ * Customization & Fine-Tuning
+ *
+ * Module 6.5: Customization
+ * 1. LoRA Fine-Tuning
+ * 2. Img2Img and Inpainting (planned)
+ * 3. Textual Inversion (planned)
+ */
+const customization: CurriculumNode = {
+  slug: 'customization',
+  title: 'Customization & Fine-Tuning',
+  children: [
+    {
+      slug: 'lora-finetuning',
+      title: 'LoRA Fine-Tuning for Diffusion Models',
+      description:
+        'Same detour, different highway. Apply LoRA to the Stable Diffusion U-Net for style and subject customization\u2014without retraining 860M parameters.',
+      duration: '35 min',
+      category: 'Customization',
+      objectives: [
+        'Explain why cross-attention projections are the primary LoRA target in the diffusion U-Net',
+        'Trace one complete diffusion LoRA training step end to end with tensor shapes',
+        'Compare the diffusion LoRA training loop to the LLM LoRA training loop and identify what transfers and what changes',
+        'Distinguish style LoRA data strategies from subject LoRA data strategies',
+        'Describe multiple LoRA composition and its practical limitations',
+      ],
+      skills: [
+        'diffusion-lora-target-layers',
+        'diffusion-lora-training-loop',
+        'style-vs-subject-lora',
+        'lora-composition',
+        'diffusion-lora-hyperparameters',
+      ],
+      prerequisites: ['generate-with-stable-diffusion'],
+      exercise: {
+        constraints: [
+          'Not reimplementing LoRA from scratch\u2014done in LoRA and Quantization',
+          'Not DreamBooth, textual inversion, or other fine-tuning techniques',
+          'Not ControlNet or structural conditioning',
+          'Not SD v1 vs v2 vs XL LoRA differences',
+          'Not hyperparameter optimization beyond practical guidance',
+        ],
+        steps: [
+          'Inspect LoRA target layers: list cross-attention projections, compute param counts for rank-4 vs rank-16',
+          'Trace one LoRA training step: VAE encode, sample timestep, add noise, U-Net forward, MSE loss, verify gradient flow',
+          'Train a style LoRA with diffusers + PEFT on a small dataset, compare with and without LoRA',
+          'LoRA composition experiment: load two adapters, apply individually and together, experiment with alpha scaling',
+        ],
+      },
+    },
+  ],
+}
+
+/**
  * Stable Diffusion & Image Generation
  *
  * Series 6: From generative foundations through diffusion models
@@ -621,5 +806,11 @@ export const stableDiffusion: CurriculumNode = {
   icon: 'Image',
   description:
     'Generative foundations, diffusion models, and Stable Diffusion\u2014from autoencoders to text-to-image generation',
-  children: [generativeFoundations, diffusion, architectureAndConditioning],
+  children: [
+    generativeFoundations,
+    diffusion,
+    architectureAndConditioning,
+    stableDiffusionModule,
+    customization,
+  ],
 }

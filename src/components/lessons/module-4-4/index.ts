@@ -4,3 +4,5 @@
 export { FinetuningForClassificationLesson } from './FinetuningForClassificationLesson'
 export { InstructionTuningLesson } from './InstructionTuningLesson'
 export { RlhfAndAlignmentLesson } from './RlhfAndAlignmentLesson'
+export { LoraAndQuantizationLesson } from './LoraAndQuantizationLesson'
+export { PuttingItAllTogetherLesson } from './PuttingItAllTogetherLesson'

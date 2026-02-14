@@ -714,6 +714,72 @@ const beyondPretraining: CurriculumNode = {
         ],
       },
     },
+    {
+      slug: 'lora-and-quantization',
+      title: 'LoRA, Quantization & Inference',
+      description:
+        'The two techniques that take LLMs from \u201crequires a cluster\u201d to \u201cruns on your laptop\u201d\u2014efficient finetuning with LoRA and efficient inference with quantization.',
+      duration: '35 min',
+      category: 'Fine-tuning',
+      objectives: [
+        'Break down training memory into weights, gradients, and optimizer states with concrete arithmetic',
+        'Explain low-rank decomposition: a large matrix factored into two smaller matrices',
+        'Describe the LoRA architecture: frozen base weights + trainable low-rank bypass',
+        'Trace absmax and zero-point quantization with specific numbers',
+        'Explain why neural network weights tolerate quantization (redundancy, Gaussian distribution)',
+        'Describe QLoRA as the combination of quantized base model + LoRA adapters',
+      ],
+      skills: [
+        'training-memory-breakdown',
+        'low-rank-decomposition',
+        'lora-architecture',
+        'lora-rank-hyperparameter',
+        'absmax-quantization',
+        'zero-point-quantization',
+        'qlora',
+        'parameter-efficient-finetuning',
+      ],
+      prerequisites: ['rlhf-and-alignment'],
+      exercise: {
+        constraints: [
+          'LoRA and quantization mechanics only',
+          'No SVD, eigenvalues, or formal linear algebra beyond rank intuition',
+          'No quantization-aware training\u2014post-training quantization only',
+          'No pruning, distillation, mixture of experts, or production deployment',
+          'PEFT library for practical LoRA, not full from-scratch implementation',
+        ],
+        steps: [
+          'Calculate memory requirements for inference and training at different precisions',
+          'Implement a LoRALinear layer from scratch and verify frozen base weights',
+          'Apply absmax quantization step by step and compute reconstruction error',
+          'LoRA-finetune a model using the HuggingFace PEFT library',
+          'Load a quantized model and compare memory, speed, and quality vs full precision',
+        ],
+      },
+    },
+    {
+      slug: 'putting-it-all-together',
+      title: 'Putting It All Together',
+      description:
+        'The complete LLM pipeline from raw text to aligned model on your laptop\u2014no new concepts, just synthesis of everything you have learned across Series 4.',
+      duration: '20 min',
+      category: 'Synthesis',
+      objectives: [
+        'Trace the complete LLM pipeline from raw text to deployed model',
+        'Explain what each pipeline stage adds and why no stage can be skipped',
+        'Map pipeline stages to real open-source model artifacts (base, instruct, quantized)',
+        'Match practical scenarios to the appropriate adaptation method',
+        'Articulate the adaptation spectrum from classification head to full finetuning',
+      ],
+      skills: [
+        'llm-pipeline',
+        'pipeline-dependencies',
+        'model-ecosystem',
+        'adaptation-spectrum',
+        'series-synthesis',
+      ],
+      prerequisites: ['lora-and-quantization'],
+    },
   ],
 }
 

@@ -1,6 +1,6 @@
 # Series 4: LLMs & Transformers -- Summary
 
-**Status:** In progress (Module 4.1: complete, Module 4.2: complete, Module 4.3: complete (4 of 4), Module 4.4: in progress (3 of 5))
+**Status:** Complete (Module 4.1: complete, Module 4.2: complete, Module 4.3: complete (4 of 4), Module 4.4: complete (5 of 5))
 
 ## Series Goal
 
@@ -82,6 +82,37 @@ Build deep, implementation-level understanding of transformers and LLMs. The stu
 | HuggingFace transformers library | INTRODUCED | GPT2LMHeadModel.from_pretrained("gpt2"). Minimal introduction as weight source only. |
 | Verification chain (parameter count + logit comparison + coherent generation) | DEVELOPED | Three levels of evidence: structure, computation, behavior. Module synthesis. |
 
+### From Module 4.4: Beyond Pretraining (complete)
+
+| Concept | Depth | Key Teaching |
+|---------|-------|-------------|
+| Adding a classification head to a pretrained LM | DEVELOPED | Replace lm_head with nn.Linear(d_model, num_classes). Last-token hidden state as sequence representation. Same pattern as CNN transfer learning. |
+| Frozen backbone finetuning for transformers | DEVELOPED | requires_grad=False on transformer parameters. Train only tiny classification head (1,536 params for binary). |
+| Full finetuning vs frozen backbone tradeoffs | INTRODUCED | Frozen = fast/safe/low memory. Full = slow/risky/higher accuracy. Overfitting argument. Partial unfreezing as middle ground. |
+| Catastrophic forgetting in finetuned LMs | INTRODUCED | Full finetuning on narrow task risks destroying general language abilities. Observable in notebook. |
+| Instruction dataset format (instruction/response pairs) | DEVELOPED | Multiple task types (factual, creative, coding, summarization). Alpaca 52K and LIMA 1K references. |
+| Chat templates and special tokens as structural delimiters | DEVELOPED | ChatML format. Special tokens acquire meaning from SFT. Wrong-template negative example. |
+| Loss masking / prompt masking (label = -100) | DEVELOPED | Compute loss only on response tokens. PyTorch ignore_index=-100 convention. LossMaskingDiagram SVG. |
+| SFT teaches format, not knowledge | DEVELOPED | Central insight. Expert-in-monologue analogy. "Capital of France" dual-prompt evidence. |
+| SFT training mechanics (same loop, same loss, different data) | APPLIED | Side-by-side with pretraining loop. 5 steps, 4 identical. No new head, no new loss. |
+| The alignment problem (SFT-only models can be harmful, sycophantic, confidently wrong) | DEVELOPED | Three concrete failure modes. Format without quality signal. |
+| Human preference data format (comparison pairs) | DEVELOPED | Relative signal (A > B) more reliable than absolute scoring. |
+| Reward model architecture (pretrained LM + scalar head) | INTRODUCED | Same pattern as classification finetuning. Trained on preference pairs. |
+| PPO for language models (generate-score-update with KL penalty) | INTRODUCED | Three-step loop. Two models. Breaks "same heartbeat" pattern. |
+| KL penalty as soft constraint preventing reward hacking | INTRODUCED | Continuous version of "freeze the backbone." |
+| DPO (preference optimization without separate reward model) | INTRODUCED | Directly adjusts probabilities. One model. Partially restores familiar loop. |
+| Training memory breakdown (weights + gradients + optimizer states, ~12 bytes/param) | DEVELOPED | bf16 weights + bf16 gradients + fp32 Adam states = ~84 GB for 7B. Optimizer states dominate (two-thirds). |
+| The memory wall problem (full finetuning does not scale) | DEVELOPED | ~84 GB for 7B model. Consumer GPU (24 GB) cannot fit. "Two problems, two solutions" framing. |
+| Low-rank decomposition / matrix factorization | INTRODUCED | Large matrix as product of two thin matrices. 768x768 -> rank-8: 48x reduction. No SVD. |
+| LoRA: Low-Rank Adaptation | DEVELOPED | h = Wx + BAx*(alpha/r). Freeze base, add trainable detour. B initialized to zeros. Applied to W_Q, W_V. Merge at inference. |
+| Why LoRA works (low-rank constraint as regularization) | DEVELOPED | Matches or exceeds full finetuning. Implicit regularization. |
+| Quantization (float to int8/int4 for inference) | DEVELOPED | Absmax walkthrough with concrete numbers. Outlier problem as negative example. Zero-point quantization. |
+| QLoRA (quantized base + LoRA adapters) | INTRODUCED | 4-bit base + bf16 adapters. ~4 GB total for 7B model. ~21x more efficient than full finetuning. |
+| GPTQ, AWQ (post-training quantization methods) | MENTIONED | Name-drop level. INT4 with less than 1% perplexity degradation. |
+| The complete LLM pipeline as sequential dependency chain | DEVELOPED | CONSOLIDATE synthesis. Pretraining -> SFT -> alignment -> LoRA -> quantization. Each stage depends on the previous. Capstone FullPipelineDiagram SVG. |
+| Pipeline stages mapped to open-source model artifacts | DEVELOPED | CONSOLIDATE synthesis. Base models, instruct models, LoRA adapters, quantized variants. Llama 3 family as concrete example. |
+| The adaptation spectrum (all methods as points on "how much to change") | DEVELOPED | CONSOLIDATE synthesis. Extends "frozen backbone -> KL penalty -> LoRA" to full spectrum: no adaptation, classification head, LoRA/QLoRA, SFT, RLHF/DPO, full finetuning. |
+
 ## Key Mental Models Carried Forward
 
 1. **"A language model approximates P(next token | context)"** -- Extension of "ML is function approximation." The defining objective.
@@ -120,8 +151,14 @@ Build deep, implementation-level understanding of transformers and LLMs. The stu
 34. **"For the first time, the training loop changes shape"** -- PPO breaks the "same heartbeat" pattern. Generate-score-update with two models at response level, not token level. DPO partially restores familiar loop shape.
 35. **"The reward model is an experienced editor"** -- Learned judgment from human comparisons, not rules. Has blind spots that can be exploited (reward hacking).
 36. **"KL penalty is the continuous version of 'freeze the backbone'"** -- Soft constraint preventing drift from SFT model. Same purpose as frozen backbone (catastrophic forgetting prevention), but gradient rather than binary.
+37. **"LoRA is the surgical version of 'freeze the backbone'"** -- Same philosophy (preserve pretrained knowledge, adapt minimally) but applied inside the model with tiny trainable detours alongside frozen weights. Highway and detour metaphor.
+38. **"Finetuning is a refinement, not a revolution"** -- Weight changes during finetuning are low-rank because you are adjusting, not rewriting. The adaptation lives in a small subspace. This is why LoRA works.
+39. **"Frozen backbone -> KL penalty -> LoRA" spectrum** -- Three approaches to adapting without forgetting, at increasing surgical precision. Binary constraint, soft constraint, targeted bypass.
+40. **"The precision spectrum continues"** -- float32 -> bfloat16 -> int8 -> int4. Each step trades precision for memory, and neural networks tolerate it because weight distributions are compressible.
+41. **"The pipeline is assembly, not invention"** -- Extension of the GPT architecture principle to the entire LLM pipeline. Each stage is a known technique; the pipeline is their careful composition. No stage can be skipped or reordered.
+42. **"Every adaptation method answers the same question: how much should I change?"** -- Extension of the "frozen backbone -> KL penalty -> LoRA" spectrum to all adaptation methods in the module. A continuum from "change nothing" to "change everything."
 
-## What This Series Has NOT Covered (So Far)
+## What This Series Has NOT Covered
 
 - ~~Implementing any component in PyTorch~~ (done: building-nanogpt, Module 4.3)
 - ~~Training a model (pretraining, loss curves, learning rate scheduling)~~ (done: pretraining, Module 4.3)
@@ -130,7 +167,7 @@ Build deep, implementation-level understanding of transformers and LLMs. The stu
 - ~~Classification finetuning~~ (done: finetuning-for-classification, Module 4.4. Add head, freeze backbone, train. DEVELOPED.)
 - ~~Instruction tuning / SFT~~ (done: instruction-tuning, Module 4.4. Instruction datasets, chat templates, loss masking, "format not knowledge." DEVELOPED/APPLIED.)
 - ~~RLHF, DPO, alignment~~ (done: rlhf-and-alignment, Module 4.4. Alignment problem DEVELOPED, human preference data DEVELOPED, reward models INTRODUCED, PPO intuition INTRODUCED, DPO INTRODUCED, reward hacking INTRODUCED. Conceptual lesson, no notebook.)
-- LoRA, quantization (Module 4.4)
+- ~~LoRA, quantization~~ (done: lora-and-quantization, Module 4.4. LoRA DEVELOPED, quantization DEVELOPED, low-rank decomposition INTRODUCED, QLoRA INTRODUCED, GPTQ/AWQ MENTIONED. PEFT and bitsandbytes libraries INTRODUCED. Notebook with 5 exercises.)
 - Cross-attention mechanics in detail (Series 6)
 - BERT architecture beyond name-drop
 - Mixture of experts, sparse attention
@@ -149,3 +186,11 @@ The narrative arc across the six lessons is the strongest in the course so far. 
 
 ### Module 4.3 (complete)
 Four lessons taking the student from architecture implementation through training, engineering, and verification. The module arc: Building nanoGPT (architecture, gibberish generation), Pretraining (training loop, Shakespeare), Scaling & Efficiency (engineering that makes it practical), Loading Real Weights (verification with real GPT-2 weights, coherent text generation). The cognitive load progression is BUILD -> STRETCH -> BUILD -> CONSOLIDATE, ending on a high note. Three lessons have notebooks. The student can implement a complete GPT, train it, understand the engineering trade-offs, load real pretrained weights, verify correctness via logit comparison, and generate coherent text from their own code. The verification chain (parameter count + logit comparison + coherent generation) provides three levels of evidence that the implementation is correct. The final lesson is the emotional capstone: the student's own code running real GPT-2, the "I built GPT" moment.
+
+### Module 4.4 (complete)
+Five lessons covering the full post-pretraining pipeline: classification finetuning (frozen backbone + task head), instruction tuning (SFT teaches format, not knowledge), alignment (RLHF/DPO gives judgment beyond format), practical adaptation (LoRA and quantization make it accessible), and a final synthesis lesson connecting the entire 18-lesson series into one coherent pipeline. The cognitive load progression is BUILD -> STRETCH -> BUILD -> STRETCH -> CONSOLIDATE. Three lessons have notebooks (Lessons 1, 2, 4). Lesson 3 (RLHF & Alignment) is conceptual due to implementation complexity. Lesson 5 (Putting It All Together) is a CONSOLIDATE synthesis with no new concepts, no notebook, no exercises -- the student sees the complete LLM pipeline as a single picture and can trace the journey from raw text to deployed model on their laptop.
+
+The module establishes a clear dependency chain through adaptation methods: frozen backbone (Lesson 1) -> KL penalty (Lesson 3) -> LoRA (Lesson 4), all unified in the final lesson as points on an adaptation spectrum. The series capstone (Lesson 5) extends "assembly, not invention" from the GPT architecture to the entire pipeline, and maps pipeline stages to real open-source model artifacts the student can download and use.
+
+### Series 4 (complete)
+Eighteen lessons across four modules. From "what is a language model?" (4.1.1) to "here is the complete pipeline from raw text to aligned model on your laptop" (4.4.5). The student has implementation-level understanding of: tokenization (BPE, built from scratch), embeddings and positional encoding, the complete transformer architecture (attention, Q/K/V, multi-head, blocks, causal masking), GPT implementation and training, engineering optimizations (mixed precision, KV caching, flash attention), classification finetuning, instruction tuning, RLHF/DPO alignment, LoRA, and quantization. 42 mental models accumulated. The student can read a HuggingFace model card like "Llama 3 70B Instruct, 4-bit GPTQ" and explain every word.
