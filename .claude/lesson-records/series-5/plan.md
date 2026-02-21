@@ -1,6 +1,6 @@
 # Series 5: Recent LLM Advances -- Plan
 
-**Status:** In progress
+**Status:** Complete (Modules 5.1, 5.2, 5.3)
 **Prerequisites:** Series 4 (LLMs & Transformers), Series 1-3 (foundations, PyTorch, CNNs)
 
 ## Series Goal
