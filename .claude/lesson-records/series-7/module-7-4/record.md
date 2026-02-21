@@ -1,7 +1,7 @@
 # Module 7.4: Next-Generation Architectures -- Record
 
 **Goal:** The student can trace the architectural evolution from Stable Diffusion v1.5 through SDXL to the Diffusion Transformer (DiT) and SD3/Flux, understanding why the field moved from refined U-Nets to transformers and how flow matching, joint text-image attention, and stronger text encoders converge in the current frontier architecture.
-**Status:** Complete (3 of 3 lessons built)
+**Status:** Complete (4 of 4 lessons built)
 
 ## Concept Index
 
@@ -33,6 +33,17 @@
 | Logit-normal timestep sampling (biasing training timestep distribution toward intermediate noise levels around t=0.5 where denoising is hardest; a training optimization, not a fundamental change to the objective) | INTRODUCED | sd3-and-flux | Minor new detail. Intermediate timesteps are where the model makes the most important compositional decisions. TipBlock emphasizes this is an optimization, not a paradigm change. |
 | SD3/Flux as convergence architecture (every component traces to a prior lesson: transformers from Series 4, latent diffusion from Series 6, flow matching from 7.2, DiT from 7.4.2, text encoding from 6.3.3/7.4.1/this lesson) | INTRODUCED | sd3-and-flux | The emotional and intellectual core of the lesson and the series conclusion. Five-thread convergence map (GradientCard grid). Annotated 13-step SD3 pipeline with every step traced to its source lesson. InsightBlock: "You Already Knew All of This." Three independent advances summarized (architecture DiT->MMDiT, training DDPM->flow matching, text encoding CLIP->CLIP+T5). |
 | SD3 vs Flux architectural positioning (both MMDiT family; Flux uses single-stream blocks in later layers, drops second CLIP encoder, available as Dev/Schnell/Pro variants) | MENTIONED | sd3-and-flux | ComparisonRow with concrete distinguishing details. For vocabulary positioning: when the student encounters "Flux.1 Schnell" or "SD3.5 Large," they know these are MMDiT variants with flow matching training. |
+| S3-DiT single-stream architecture (shared Q/K/V projections and shared SwiGLU FFN across all token types after lightweight refiner layers; eliminates ~50% parameter overhead of MMDiT's dual-stream per-layer duplication) | INTRODUCED | z-image | "Translate once, then speak together." Parameter counting makes the efficiency argument concrete: for d_model=3840 and 30 layers, single-stream saves ~2.5B parameters vs dual-stream. Refiner layers (2 per modality) pre-process embeddings into a shared representation space, enabling shared projections. Misconception addressed: "single-stream does not mean no modality awareness--the awareness is concentrated upfront." ComparisonRow: MMDiT dual-stream vs S3-DiT single-stream. |
+| Refiner layers for modality pre-processing (2 lightweight transformer layers per modality that map raw embeddings into a shared representation space before the main 30-layer backbone) | INTRODUCED | z-image | Solves the same problem as MMDiT's separate projections (text and image embeddings in different spaces) but with different allocation: 2 dedicated layers upfront vs duplication across 30 layers. Connected to the "French/Japanese speaker" negative example from sd3-and-flux. |
+| Qwen3-4B as text encoder (single LLM replacing triple encoder setup CLIP ViT-L + OpenCLIP ViT-bigG + T5-XXL; richer compositional reasoning, bilingual support, instruction-following baked into embeddings) | INTRODUCED | z-image | Text encoder evolution trajectory traced: SD v1.5 (1 CLIP) -> SDXL (2 CLIPs) -> SD3 (2 CLIPs + T5) -> Z-Image (1 LLM). "Convergence to simplicity"--from multiple specialized encoders back to one powerful encoder. Misconception addressed: "LLM provides embeddings, not chat responses--richer embeddings from diverse language training, not inference-time reasoning." |
+| Prompt Enhancer (PE) integrated during supervised fine-tuning (VLM that expands short prompts with descriptive detail; compensates for 6B model's limited world knowledge; zero inference cost because reasoning baked in during SFT) | INTRODUCED | z-image | Concrete example: "West Lake at sunset" expanded with visual details. Key insight: no inference-time cost because the PE teaches during training, model generates independently at inference. |
+| 3D Unified RoPE (temporal axis d_t=32 for text sequential position, height axis d_h=48 and width axis d_w=48 for image spatial position; orthogonal axes mean cross-modal attention has no positional bias) | INTRODUCED | z-image | Extension of 1D RoPE from Series 4. Concrete dimension allocations shown. Text tokens: temporal=position, spatial=0. Image tokens: temporal=0, spatial=row,col. Cross-modal attention depends on content, not position. Generalizes to arbitrary resolutions without retraining (continuous rotation frequencies vs learned embeddings). |
+| adaLN with shared low-rank down-projection (shared low-rank compression of conditioning vector + layer-specific up-projections; LoRA pattern applied to timestep conditioning) | INTRODUCED | z-image | Parameter-efficient extension of adaLN-Zero from diffusion-transformers. Connected to LoRA's low-rank factorization pattern. |
+| DMD / Distribution Matching Distillation (third distillation paradigm: CFG-augmented regression + distribution matching loss; distinct from consistency distillation and adversarial distillation) | INTRODUCED | z-image | Gap fill: student had NOT TAUGHT. Framed as third entry in distillation taxonomy from Module 7.3. Two components: CFG augmentation ("spear") pushes quality, distribution matching ("shield") prevents mode collapse. |
+| Decoupled-DMD (spear/shield decomposition with separate noise schedules; spear at high noise for large-scale composition, shield at low noise for fine-detail distribution matching; eliminates artifacts from forced coupling) | INTRODUCED | z-image | Z-Image's own metaphor. Pseudocode showing coupled vs decoupled training steps. Conceptual advance: understand WHY the method works, then optimize each component independently. Misconception addressed: "not a minor tweak--a conceptual reframing that enables DMDR." |
+| DMDR / DMD + Reinforcement Learning (combines Decoupled-DMD with DPO stage for text rendering/counting and GRPO stage for aesthetics/photorealism; breaks the teacher ceiling by using DMD as regularizer and RL as quality driver) | INTRODUCED | z-image | "The teacher becomes the guardrail, not the ceiling." DPO and GRPO directly transferred from Series 5 to image generation. DMD prevents reward hacking (same problem from Series 5). Two-stage RL: DPO for objective correctness (binary preferences), GRPO for subjective quality (scalar rewards). |
+| Z-Image performance positioning (6.15B params vs Flux 32B; #1 open-source on Artificial Analysis; 87.4% Good+Same rate vs Flux Dev; Z-Image Turbo: 8 steps, sub-second on H800, <16GB VRAM) | MENTIONED | z-image | "Simplicity beats complexity"--competitive performance from architecture simplification + training innovation + post-training, not architectural novelty. |
+| Three-phase training curriculum (Phase 1: low-res pre-training 256x256, Phase 2: omni pre-training arbitrary resolution, Phase 3: PE-aware SFT high-quality data) | MENTIONED | z-image | Brief overview. Progressive resolution training mirrors SDXL's approach but formalized. $630K total training cost (314K H800 GPU hours). |
 
 ## Per-Lesson Summaries
 
@@ -165,3 +176,69 @@
 **Review notes:**
 - Iteration 1: NEEDS REVISION--0 critical, 3 improvement (inconsistent image token counts 256 vs 1024 between sections without bridging, SD3 vs Flux comparison thin and asymmetric, notebook Exercise 2 uses synthetic attention weights without disclosure), 3 polish (plan called for three-column comparison but two-column built, "learned lens" connection not used, Check #3 Q1 adaLN-Zero answer vague)
 - Iteration 2: PASS--all three improvement findings fixed (bridging sentence added for token count change, Flux comparison made concrete with architectural details, Exercise 2 reframed as "Joint Attention Structure" with honest synthetic data disclosure). 2 polish remaining (aside repeats body text in "One Room" section, adaLN-Zero answer still hedges on concrete count). Lesson accepted as the series capstone.
+
+### z-image (Lesson 4)
+**Status:** Complete
+**Cognitive load:** BUILD
+**Notebook:** `notebooks/7-4-4-z-image.ipynb`
+**Review:** PASS on iteration 2/3 (iteration 1 had 1 CRITICAL + 3 IMPROVEMENT + 2 POLISH, all fixed; iteration 2 found only 2 POLISH)
+
+**Concepts taught:**
+- S3-DiT single-stream architecture (INTRODUCED)--shared Q/K/V projections and shared SwiGLU FFN across all token types after lightweight refiner layers, eliminating ~50% parameter overhead of MMDiT's dual-stream design
+- Refiner layers for modality pre-processing (INTRODUCED)--2 lightweight transformer layers per modality mapping raw embeddings into a shared representation space
+- Qwen3-4B as text encoder (INTRODUCED)--single LLM replacing triple encoder setup, text encoder evolution trajectory traced
+- Prompt Enhancer (INTRODUCED)--VLM that expands prompts during SFT, zero inference cost
+- 3D Unified RoPE (INTRODUCED)--temporal axis for text, spatial axes for image, orthogonal cross-modal attention
+- adaLN with shared low-rank down-projection (INTRODUCED)--LoRA pattern applied to timestep conditioning
+- DMD / Distribution Matching Distillation (INTRODUCED)--gap fill, third distillation paradigm with spear/shield decomposition
+- Decoupled-DMD (INTRODUCED)--separate noise schedules for spear (high noise) and shield (low noise)
+- DMDR (INTRODUCED)--DMD + DPO + GRPO breaking the teacher ceiling
+- Z-Image performance positioning (MENTIONED)--6.15B vs Flux 32B, competitive with 1/5 parameters
+- Three-phase training curriculum (MENTIONED)--progressive resolution training
+
+**Mental models established:**
+- "Translate once, then speak together"--S3-DiT concentrates modality-specific processing in refiner layers, then uses fully shared projections and FFN. Contrasts with MMDiT's "shared listening, separate thinking" (modality-specific at every layer).
+- "Spear and shield"--Decoupled-DMD separates distillation into quality-driving CFG augmentation (spear) and distribution-preserving regularization (shield). Separate noise schedules for each.
+- "The teacher becomes the guardrail, not the ceiling"--DMDR uses DMD as regularizer and RL as quality driver. The teacher's role shifts from quality ceiling to guardrail preventing reward hacking.
+- "Simplicity beats complexity"--Z-Image's competitive performance comes from being simpler than MMDiT, not more complex. Architecture simplification + training innovation + post-training beats architecture complexity.
+- "Convergence to simplicity" (text encoders)--from 1 CLIP to 2 CLIPs to 3 encoders back to 1 LLM. The trajectory is "one powerful enough encoder replaces all."
+
+**Analogies used:**
+- "Translate once, then speak together" vs "shared listening, separate thinking" (S3-DiT vs MMDiT modality handling)
+- "Spear and shield" (Z-Image's own metaphor for DMD's two components)
+- "The teacher becomes the guardrail, not the ceiling" (DMDR's reframing of teacher-student relationship)
+- "Convergence to simplicity" (text encoder trajectory from multiple specialized to one powerful)
+- LoRA pattern applied to timestep conditioning (shared low-rank down-projection + per-layer up-projections)
+- Extended the "French/Japanese speaker" analogy from sd3-and-flux (refiner layers as upfront translation)
+
+**How concepts were taught:**
+- S3-DiT: parameter counting (d_model=3840, 30 layers, ~50% savings from shared projections/FFN). ComparisonRow: MMDiT dual-stream (5 properties) vs S3-DiT single-stream (5 properties). Negative example: single-stream without refiner layers fails for the same reason naive concatenation fails in MMDiT. The refiner layers solve the same problem differently--"translate once" vs "translate at every exchange."
+- Qwen3-4B: text encoder evolution CodeBlock tracing the progression (SD v1.5 -> SDXL -> SD3 -> Z-Image). Practical benefits listed (compositional reasoning, bilingual, instruction-following). Misconception addressed: LLM provides embeddings, not chat responses.
+- Prompt Enhancer: concrete before/after example ("West Lake at sunset" -> expanded description). Key insight: integrated during SFT, zero inference cost.
+- 3D Unified RoPE: concrete dimension allocations (d_t=32, d_h=48, d_w=48). Worked examples for text token at position 5 and image patch at row 3, col 7. Orthogonal axes mean cross-modal attention has no positional bias--content determines relationships.
+- DMD: gap fill from NOT TAUGHT. Framed as third entry in distillation taxonomy. Two components: CFG augmentation (spear) + distribution matching (shield).
+- Decoupled-DMD: pseudocode CodeBlock showing coupled vs decoupled training (separate noise schedules). Conceptual advance: understand WHY, then optimize independently.
+- DMDR: two-stage RL (DPO for text rendering/counting, GRPO for aesthetics). DMD prevents reward hacking (connected to Series 5). GradientCards for DPO and GRPO stages.
+- Source code references: five Z-Image repo files mapped to course concepts. Positioned as capstone reading exercise.
+- Check-your-understanding: 8 predict-and-verify questions across 4 checks, testing comprehension of refiner layers, parameter savings, 3D RoPE cross-modal behavior, text encoder simplification, spear-without-shield failure, decoupling benefits, DPO vs GRPO selection, DMD as reward hacking prevention.
+
+**Misconceptions addressed:**
+1. "Single-stream means the model treats text and image identically with no modality awareness"--No. Refiner layers provide modality-specific pre-processing. The awareness is concentrated upfront (2 layers) instead of duplicated across 30 layers. WarningBlock.
+2. "Distillation cannot produce models better than the teacher"--DMDR combines distillation with RL. DMD is the regularizer, RL is the quality driver. The teacher shifts from ceiling to guardrail. WarningBlock.
+3. "Using an LLM as text encoder means chatbot-like understanding"--Qwen3-4B provides embeddings, not chat responses. Richer embeddings from diverse training, not inference-time reasoning. WarningBlock.
+4. "Z-Image's efficiency comes from a fundamentally different architecture"--Architecture is simpler (standard transformer with SwiGLU, RMSNorm, RoPE). Efficiency from single-stream parameter savings + better training + post-training. InsightBlock.
+5. "Decoupled-DMD is a minor tweak"--Conceptual advance: understand which component drives quality vs stability, then optimize independently. Enables DMDR. WarningBlock.
+
+**What is NOT covered:**
+- Implementing S3-DiT from scratch (architectural understanding, not coding)
+- Full training procedure details (dataset construction, hyperparameters, World Knowledge Topological Graph)
+- The Prompt Enhancer VLM's architecture or training in detail (scoped to brief overview with concrete example)
+- Every ablation from the paper (only key design choices)
+- Z-Image's data curation pipeline
+- Comparing to every other architecture (SD3/Flux as primary comparison)
+- Deploying Z-Image in production
+- Visual semantic tokens from Z-Image's editing variants (explicitly scoped out as editing-specific)
+
+**Review notes:**
+- Iteration 1: MAJOR REVISION--1 critical (notebook missing), 3 improvement (visual semantic tokens introduced without adequate explanation, Decoupled-DMD loss pseudocode missing, Prompt Enhancer explanation shallow/disconnected), 2 polish (em dashes with spaces in CodeBlock, "Flux.2 Dev" reference possibly incorrect). All six findings fixed.
+- Iteration 2: PASS--0 critical, 0 improvement, 2 polish (aside repeats body text in "Simplicity, Not Novelty" InsightBlock, notebook Exercise 3 TODO markers could be more helpful). Both genuinely minor. Lesson accepted as the series and module capstone.

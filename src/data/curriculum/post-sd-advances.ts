@@ -477,6 +477,47 @@ const nextGenerationArchitectures: CurriculumNode = {
         ],
       },
     },
+    {
+      slug: 'z-image',
+      title: 'Z-Image & Z-Image Turbo',
+      description:
+        'What comes after the convergence—Z-Image\'s single-stream S3-DiT simplifies MMDiT\'s dual-stream design, an LLM replaces triple text encoders, and Decoupled-DMD plus RL post-training breaks the teacher ceiling. 6.15B parameters competing with 32B Flux.',
+      duration: '40 min',
+      category: 'Next-Generation Architectures',
+      objectives: [
+        'Explain how S3-DiT\'s single-stream design with refiner layers replaces MMDiT\'s dual-stream per-layer modality-specific projections, saving ~50% of block parameters',
+        'Trace the text encoder evolution from CLIP to Qwen3-4B and articulate why a single LLM replaces three specialized encoders',
+        'Describe the spear/shield decomposition in Decoupled-DMD: CFG-augmented regression drives quality, distribution matching prevents collapse, separate noise schedules eliminate coupling artifacts',
+        'Explain how DMDR combines DMD with DPO and GRPO to break the teacher ceiling, with DMD preventing reward hacking while RL provides quality signal beyond the teacher',
+        'Connect 3D Unified RoPE to the 1D RoPE from Series 4, explaining how temporal, height, and width axes encode position for multi-modal sequences',
+      ],
+      skills: [
+        's3-dit-single-stream',
+        'refiner-layers',
+        'llm-text-encoder',
+        '3d-unified-rope',
+        'decoupled-dmd',
+        'spear-shield-decomposition',
+        'dmdr-rl-post-training',
+        'teacher-ceiling-breaking',
+      ],
+      prerequisites: ['sd3-and-flux'],
+      exercise: {
+        constraints: [
+          'Architecture understanding and pretrained inference—no S3-DiT training from scratch',
+          'No full training procedure details (dataset construction, hyperparameters)',
+          'No Prompt Enhancer VLM internals',
+          'No every ablation from the paper—only key design choices',
+          'No comparing to every other architecture (SD3/Flux as primary comparison)',
+        ],
+        steps: [
+          'Load Z-Image via diffusers, inspect architecture: print model class names, parameter counts, verify single-stream design',
+          'Extract transformer block structure from Z-Image and compare to MMDiT blocks, count modality-specific parameters, verify ~50% savings',
+          'Generate images with Z-Image at varying step counts (8, 20, 30, 50), compare with Z-Image Turbo at 8 steps, test compositional prompts',
+          'Trace the full Z-Image pipeline end-to-end: Qwen3-4B text encoding, patchify, refiner layers, 30 single-stream blocks, unpatchify, VAE decode',
+        ],
+      },
+    },
   ],
 }
 

@@ -4,3 +4,4 @@
 export { SDXLLesson } from './01-SDXLLesson'
 export { DiffusionTransformersLesson } from './02-DiffusionTransformersLesson'
 export { SD3AndFluxLesson } from './03-SD3AndFluxLesson'
+export { ZImageLesson } from './04-ZImageLesson'

@@ -43,7 +43,7 @@ Take a software engineer from "uses AI tools" to "understands how models actuall
 | 7.2 | The Score-Based Perspective | 2 of 2 | complete |
 | 5.3 | Scaling Architecture | 3 of 3 | complete |
 | 7.3 | Fast Generation | 3 of 3 | complete |
-| 7.4 | Next-Generation Architectures | 3 of 3 | complete |
+| 7.4 | Next-Generation Architectures | 4 of 4 | complete |
 
 ## Progression
 Series 1 (Foundations) establishes the complete path from "what is learning?" through linear models, neural networks, and training. Series 2 (PyTorch) bridges theory to practice — hands-on implementation right after the concepts. Series 3 (CNNs) covers convolutional architectures with PyTorch in hand, needed for understanding U-Net in Stable Diffusion. Series 4-7 cover the target domains: LLMs and generative models.

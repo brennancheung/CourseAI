@@ -14,7 +14,7 @@ Take the student from "I understand how Stable Diffusion v1.5 works end-to-end" 
 | 7.1 | Controllable Generation | 3 | complete | ControlNet, IP-Adapter -- structural and semantic conditioning beyond text prompts |
 | 7.2 | The Score-Based Perspective | 2 | complete | Score functions, SDE/ODE duality, flow matching -- the theoretical reframing underlying modern architectures |
 | 7.3 | Fast Generation | 3 | complete | Consistency models, latent consistency models, SDXL Turbo -- collapsing the multi-step process |
-| 7.4 | Next-Generation Architectures | 3 | complete | SDXL, Diffusion Transformers (DiT), SD3/Flux -- the architectural shift from U-Net to transformer |
+| 7.4 | Next-Generation Architectures | 4 | complete | SDXL, Diffusion Transformers (DiT), SD3/Flux, Z-Image -- the architectural shift from U-Net to transformer and beyond convergence |
 
 ## Lessons
 
@@ -48,6 +48,7 @@ Take the student from "I understand how Stable Diffusion v1.5 works end-to-end" 
 | 9 | sdxl | SDXL | Dual text encoders (CLIP + OpenCLIP), larger U-Net, higher base resolution, refiner model, micro-conditioning. What changed and why it matters. |
 | 10 | diffusion-transformers | Diffusion Transformers (DiT) | Replace U-Net with a transformer: patchify latents into tokens, use standard transformer blocks with adaptive layer norm. Why transformers scale better than U-Nets. |
 | 11 | sd3-and-flux | SD3 & Flux | MMDiT (joint text-image attention), T5 text encoder, rectified flow scheduling. How flow matching + DiT + better text encoding converge into the current frontier. |
+| 12 | z-image | Z-Image & Z-Image Turbo | S3-DiT single-stream architecture, Qwen3-4B LLM encoder, Decoupled-DMD distillation, DMDR post-training. What comes after convergence--simplification and RL post-training. |
 
 ## Scope Boundaries
 
