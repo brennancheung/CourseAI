@@ -16,6 +16,7 @@ import {
   SummaryBlock,
   ModuleCompleteBlock,
   NextStepBlock,
+  LessonLink,
 } from '@/components/lessons'
 import { CodeBlock } from '@/components/common/CodeBlock'
 import 'katex/dist/katex.min.css'
@@ -65,10 +66,10 @@ export function GenerateWithStableDiffusionLesson() {
         <Row.Aside>
           <TipBlock title="What You Already Know">
             You traced the complete pipeline in{' '}
-            <strong>The Stable Diffusion Pipeline</strong>. You implemented CFG
-            in <strong>Text Conditioning &amp; Guidance</strong>. You chose
+            <LessonLink slug="stable-diffusion-architecture">The Stable Diffusion Pipeline</LessonLink>. You implemented CFG
+            in <LessonLink slug="text-conditioning-and-guidance">Text Conditioning &amp; Guidance</LessonLink>. You chose
             samplers with understanding in{' '}
-            <strong>Samplers and Efficiency</strong>. This lesson connects all
+            <LessonLink slug="samplers-and-efficiency">Samplers and Efficiency</LessonLink>. This lesson connects all
             of that to the real API.
           </TipBlock>
         </Row.Aside>
@@ -247,7 +248,7 @@ image = pipe(
           <div className="space-y-4">
             <p className="text-muted-foreground">
               You know this parameter as the <InlineMath math="w" /> in the CFG
-              formula from <strong>Text Conditioning &amp; Guidance</strong>:
+              formula from <LessonLink slug="text-conditioning-and-guidance">Text Conditioning &amp; Guidance</LessonLink>:
             </p>
             <div className="py-3 px-5 bg-muted/50 rounded-lg">
               <InlineMath math="\varepsilon_{\text{cfg}} = \varepsilon_{\text{uncond}} + w \cdot (\varepsilon_{\text{cond}} - \varepsilon_{\text{uncond}})" />
@@ -299,7 +300,7 @@ image = pipe(
           />
           <div className="space-y-4">
             <p className="text-muted-foreground">
-              You learned in <strong>Samplers and Efficiency</strong> that
+              You learned in <LessonLink slug="samplers-and-efficiency">Samplers and Efficiency</LessonLink> that
               DPM-Solver++ plateaus around 20&ndash;30 steps. The model defines
               the trajectory; the sampler decides how to traverse it. More steps
               beyond the sweet spot means more compute for diminishing returns.
@@ -499,7 +500,7 @@ for seed in [42, 123, 999, 7777]:
         </Row.Content>
         <Row.Aside>
           <ConceptBlock title="Seed and Structure">
-            Remember from <strong>Sampling and Generation</strong>: early
+            Remember from <LessonLink slug="sampling-and-generation">Sampling and Generation</LessonLink>: early
             denoising steps create structure, late steps refine details. The
             seed determines the structural decisions&mdash;the overall
             composition, pose, and layout. Changing the seed changes the
@@ -517,7 +518,7 @@ for seed in [42, 123, 999, 7777]:
           />
           <div className="space-y-4">
             <p className="text-muted-foreground">
-              You know from <strong>From Pixels to Latents</strong> that the VAE
+              You know from <LessonLink slug="from-pixels-to-latents">From Pixels to Latents</LessonLink> that the VAE
               downsamples 8&times; in each spatial dimension. Every pixel
               dimension must be a multiple of 8.
             </p>
@@ -565,8 +566,8 @@ for seed in [42, 123, 999, 7777]:
           />
           <div className="space-y-4">
             <p className="text-muted-foreground">
-              You know from <strong>CLIP</strong> and{' '}
-              <strong>Text Conditioning &amp; Guidance</strong> that the prompt
+              You know from <LessonLink slug="clip">CLIP</LessonLink> and{' '}
+              <LessonLink slug="text-conditioning-and-guidance">Text Conditioning &amp; Guidance</LessonLink> that the prompt
               is tokenized (77 tokens max, padded with SOT/EOT), encoded by
               CLIP&rsquo;s text transformer to [1, 77, 768] contextual
               embeddings, and injected via cross-attention at every denoising

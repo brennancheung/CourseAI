@@ -17,6 +17,7 @@ import {
   NextStepBlock,
   ReferencesBlock,
   ModuleCompleteBlock,
+  LessonLink,
 } from '@/components/lessons'
 import { CodeBlock } from '@/components/common/CodeBlock'
 import { MermaidDiagram } from '@/components/widgets/MermaidDiagram'
@@ -250,12 +251,12 @@ export function IPAdapterLesson() {
             <ol className="list-decimal list-inside text-muted-foreground space-y-2 ml-4">
               <li>
                 CLIP&rsquo;s image encoder produces embeddings in the shared
-                text-image space (you know this from <strong>CLIP</strong>)
+                text-image space (you know this from <LessonLink slug="clip">CLIP</LessonLink>)
               </li>
               <li>
                 Cross-attention&rsquo;s K/V projections translate conditioning
                 embeddings into the U-Net&rsquo;s internal language (you know
-                this from <strong>Text Conditioning and Guidance</strong>)
+                this from <LessonLink slug="text-conditioning-and-guidance">Text Conditioning and Guidance</LessonLink>)
               </li>
               <li>
                 Adding a <strong>separate</strong> set of K/V projections for
@@ -548,7 +549,7 @@ output = text_out + scale * image_out`}
                   No—IP-Adapter is purely additive. The frozen model is
                   bit-for-bit identical without it. The text K/V projections
                   were never modified. Same principle as the ControlNet
-                  disconnect test from <strong>ControlNet</strong>.
+                  disconnect test from <LessonLink slug="controlnet">ControlNet</LessonLink>.
                 </p>
               </details>
             </GradientCard>

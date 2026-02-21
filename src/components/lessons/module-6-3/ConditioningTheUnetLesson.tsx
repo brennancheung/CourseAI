@@ -16,6 +16,7 @@ import {
   SummaryBlock,
   NextStepBlock,
   ReferencesBlock,
+  LessonLink,
 } from '@/components/lessons'
 import { CodeBlock } from '@/components/common/CodeBlock'
 import { NormalizationComparisonWidget } from '@/components/widgets/NormalizationComparisonWidget'
@@ -75,11 +76,11 @@ export function ConditioningTheUnetLesson() {
         </Row.Content>
         <Row.Aside>
           <TipBlock title="What You Already Know">
-            In <strong>Embeddings and Position</strong>, you implemented sinusoidal
+            In <LessonLink slug="embeddings-and-position">Embeddings and Position</LessonLink>, you implemented sinusoidal
             positional encoding from the formula&mdash;the &ldquo;clock with many
-            hands.&rdquo; In <strong>Build a Diffusion Model</strong>, you used
-            a simple linear timestep projection. In <strong>The U-Net
-            Architecture</strong>, the pseudocode had a comment: &ldquo;timestep
+            hands.&rdquo; In <LessonLink slug="build-a-diffusion-model">Build a Diffusion Model</LessonLink>, you used
+            a simple linear timestep projection. In <LessonLink slug="unet-architecture">The U-Net
+            Architecture</LessonLink>, the pseudocode had a comment: &ldquo;timestep
             parameter omitted&mdash;next lesson.&rdquo; This is that lesson.
           </TipBlock>
         </Row.Aside>
@@ -111,7 +112,7 @@ export function ConditioningTheUnetLesson() {
           />
           <div className="space-y-4">
             <p className="text-muted-foreground">
-              In <strong>The U-Net Architecture</strong>, group normalization was
+              In <LessonLink slug="unet-architecture">The U-Net Architecture</LessonLink>, group normalization was
               mentioned by name: &ldquo;diffusion U-Nets use group norm instead of
               batch norm.&rdquo; Before we build on it, you need to understand what
               it actually does.
@@ -210,7 +211,7 @@ export function ConditioningTheUnetLesson() {
           />
           <div className="space-y-4">
             <p className="text-muted-foreground">
-              Recall the pseudocode from <strong>The U-Net Architecture</strong>.
+              Recall the pseudocode from <LessonLink slug="unet-architecture">The U-Net Architecture</LessonLink>.
               The function signature had a conspicuous gap:
             </p>
             <CodeBlock
@@ -227,7 +228,7 @@ export function ConditioningTheUnetLesson() {
               tasks. How does the same network do both?
             </p>
             <p className="text-muted-foreground">
-              In <strong>Build a Diffusion Model</strong>, the capstone&rsquo;s
+              In <LessonLink slug="build-a-diffusion-model">Build a Diffusion Model</LessonLink>, the capstone&rsquo;s
               answer was: normalize t to [0, 1], pass through a 2-layer MLP, and add
               the result to the bottleneck features. That &ldquo;worked&rdquo; for
               MNIST. But it is like describing your GPS position with a single number
@@ -713,7 +714,7 @@ gamma, beta = Linear(512, 2 * channels)(t_emb).chunk(2)
             />
             <p className="text-muted-foreground">
               Same embedding, different lens per block. You know this pattern
-              from <strong>Queries and Keys</strong>&mdash;one embedding, multiple
+              from <LessonLink slug="queries-and-keys">Queries and Keys</LessonLink>&mdash;one embedding, multiple
               learned projections. Each block&rsquo;s linear layer learns to extract
               the <em>aspect</em> of the timestep that matters at its resolution
               level.
@@ -901,7 +902,7 @@ gamma, beta = Linear(512, 2 * channels)(t_emb).chunk(2)
           />
           <div className="space-y-4">
             <p className="text-muted-foreground">
-              The pseudocode from <strong>The U-Net Architecture</strong> is now
+              The pseudocode from <LessonLink slug="unet-architecture">The U-Net Architecture</LessonLink> is now
               complete. The spatial architecture is unchanged&mdash;only the
               conditioning is new:
             </p>

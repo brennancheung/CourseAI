@@ -16,6 +16,7 @@ import {
   SummaryBlock,
   ModuleCompleteBlock,
   ReferencesBlock,
+  LessonLink,
 } from '@/components/lessons'
 import { CodeBlock } from '@/components/common/CodeBlock'
 import { MermaidDiagram } from '@/components/widgets/MermaidDiagram'
@@ -120,7 +121,7 @@ export function TextualInversionLesson() {
           <div className="space-y-4">
             <p className="text-muted-foreground">
               <strong>Premise 1: The two-stage CLIP text encoding pipeline.</strong>{' '}
-              From <strong>The Stable Diffusion Pipeline</strong>: the tokenizer
+              From <LessonLink slug="stable-diffusion-architecture">The Stable Diffusion Pipeline</LessonLink>: the tokenizer
               converts text to integer IDs, <code>nn.Embedding</code> looks up
               initial vectors for each token, then the CLIP transformer applies
               self-attention across all tokens to produce contextual embeddings
@@ -129,7 +130,7 @@ export function TextualInversionLesson() {
             </p>
             <p className="text-muted-foreground">
               <strong>Premise 2: Embeddings are learned parameters.</strong>{' '}
-              From <strong>Embeddings &amp; Position</strong>: each row of the
+              From <LessonLink slug="embeddings-and-position">Embeddings &amp; Position</LessonLink>: each row of the
               embedding table is a trainable tensor with{' '}
               <code>requires_grad=True</code>. You verified this yourself&mdash;
               <code>embedding.weight[i]</code> is the same tensor you get from{' '}
@@ -138,7 +139,7 @@ export function TextualInversionLesson() {
             </p>
             <p className="text-muted-foreground">
               <strong>Premise 3: CLIP&rsquo;s embedding space is continuous
-              and meaningful.</strong> From <strong>CLIP</strong>: nearby
+              and meaningful.</strong> From <LessonLink slug="clip">CLIP</LessonLink>: nearby
               vectors represent similar concepts. You explored this geometry
               interactively with the EmbeddingSpaceExplorer&mdash;semantic
               clusters, meaningful distances, the insight that
@@ -313,9 +314,9 @@ export function TextualInversionLesson() {
           <div className="space-y-4">
             <p className="text-muted-foreground">
               You have seen the DDPM training loop three times: in{' '}
-              <strong>Learning to Denoise</strong> (the original), in{' '}
-              <strong>Build a Diffusion Model</strong> (your implementation),
-              and in <strong>LoRA Fine-Tuning</strong> (with frozen base and
+              <LessonLink slug="learning-to-denoise">Learning to Denoise</LessonLink> (the original), in{' '}
+              <LessonLink slug="build-a-diffusion-model">Build a Diffusion Model</LessonLink> (your implementation),
+              and in <LessonLink slug="lora-finetuning">LoRA Fine-Tuning</LessonLink> (with frozen base and
               LoRA params). Textual inversion uses the same loop a fourth
               time. Compare it to the LoRA version:
             </p>
@@ -419,7 +420,7 @@ export function TextualInversionLesson() {
               backpropagation. Every frozen layer (gray) passes gradients
               through without updating its own weights. Only the embedding
               row (violet) receives the update. Compare this to the LoRA
-              diagram from <strong>LoRA Fine-Tuning</strong>&mdash;there,
+              diagram from <LessonLink slug="lora-finetuning">LoRA Fine-Tuning</LessonLink>&mdash;there,
               the violet was at the cross-attention projections. Here,
               it is at the embedding table.
             </p>

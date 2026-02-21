@@ -16,6 +16,7 @@ import {
   SummaryBlock,
   ReferencesBlock,
   NextStepBlock,
+  LessonLink,
 } from '@/components/lessons'
 import { CodeBlock } from '@/components/common/CodeBlock'
 import { ExternalLink } from 'lucide-react'
@@ -452,7 +453,7 @@ Cross-attention K/V source: [77, 2048]  (was [77, 768] in SD v1.5)`}
               [1280]-dim vector summarizing the entire prompt. It is
               concatenated with the timestep embedding and fed through the
               adaptive norm pathway—the same global conditioning mechanism you
-              know from <strong>Conditioning the U-Net</strong>.
+              know from <LessonLink slug="conditioning-the-unet">Conditioning the U-Net</LessonLink>.
             </p>
             <p className="text-muted-foreground">
               So SDXL uses text in <strong>two ways</strong>:
@@ -743,7 +744,7 @@ Cross-attention K/V source: [77, 2048]  (was [77, 768] in SD v1.5)`}
         </Row.Content>
         <Row.Aside>
           <ConceptBlock title="Extending the Framework">
-            From <strong>IP-Adapter</strong>, you know four conditioning
+            From <LessonLink slug="ip-adapter">IP-Adapter</LessonLink>, you know four conditioning
             channels: WHEN (timestep), WHAT (text), WHERE (ControlNet),
             WHAT-IT-LOOKS-LIKE (IP-Adapter). Micro-conditioning adds a fifth:
             AT-WHAT-QUALITY (resolution awareness). Same philosophy—one more

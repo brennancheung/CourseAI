@@ -22,4 +22,6 @@ export {
   ModuleCompleteBlock,
   // References
   ReferencesBlock,
+  // Inline lesson links
+  LessonLink,
 } from './blocks'

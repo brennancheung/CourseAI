@@ -17,6 +17,7 @@ import {
   ModuleCompleteBlock,
   ReferencesBlock,
   NextStepBlock,
+  LessonLink,
 } from '@/components/lessons'
 import { CodeBlock } from '@/components/common/CodeBlock'
 import { ExternalLink } from 'lucide-react'
@@ -247,7 +248,7 @@ Over 30 layers: ~2.5B fewer parameters`}
           />
           <div className="space-y-4">
             <p className="text-muted-foreground">
-              Recall the negative example from <strong>SD3 & Flux</strong>:
+              Recall the negative example from <LessonLink slug="sd3-and-flux">SD3 &amp; Flux</LessonLink>:
               naive concatenation fails because text embeddings and image patch
               embeddings live in different representation spaces. Forcing them
               through the same projections is like asking a French speaker and a
@@ -1302,11 +1303,11 @@ Z-Image Turbo (this)       8      Competitive with many-step models`}
             <p className="text-muted-foreground">
               Reading this source code is a capstone exercise in its own right.
               Every class name maps to a concept from this course: transformer
-              blocks (Series 4), RoPE (from <strong>Positional Encoding</strong>
+              blocks (Series 4), RoPE (from <LessonLink slug="embeddings-and-position">Positional Encoding</LessonLink>
               ), timestep embedding (from{' '}
-              <strong>Conditioning the U-Net</strong>), patchify (from{' '}
-              <strong>Diffusion Transformers</strong>), flow matching (from{' '}
-              <strong>Flow Matching</strong>). The code is your knowledge,
+              <LessonLink slug="conditioning-the-unet">Conditioning the U-Net</LessonLink>), patchify (from{' '}
+              <LessonLink slug="diffusion-transformers">Diffusion Transformers</LessonLink>), flow matching (from{' '}
+              <LessonLink slug="flow-matching">Flow Matching</LessonLink>). The code is your knowledge,
               implemented.
             </p>
           </div>

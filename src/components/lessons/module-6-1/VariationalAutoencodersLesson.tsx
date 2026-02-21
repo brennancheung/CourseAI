@@ -16,6 +16,7 @@ import {
   GradientCard,
   ComparisonRow,
   ReferencesBlock,
+  LessonLink,
 } from '@/components/lessons'
 import { VaeLatentSpaceWidget } from '@/components/widgets/VaeLatentSpaceWidget'
 import { ExercisePanel } from '@/components/widgets/ExercisePanel'
@@ -112,7 +113,7 @@ export function VariationalAutoencodersLesson() {
         <Row.Content>
           <div className="space-y-4">
             <p className="text-muted-foreground">
-              In <strong>Autoencoders</strong>, you built a network that
+              In <LessonLink slug="autoencoders">Autoencoders</LessonLink>, you built a network that
               compresses images through a bottleneck and reconstructs them. You
               saw that the bottleneck forces the network to learn what
               matters&mdash;but you also saw the critical failure: random latent

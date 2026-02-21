@@ -17,6 +17,7 @@ import {
   SummaryBlock,
   NextStepBlock,
   ReferencesBlock,
+  LessonLink,
 } from '@/components/lessons'
 import 'katex/dist/katex.min.css'
 import { InlineMath, BlockMath } from 'react-katex'
@@ -68,11 +69,11 @@ export function SamplersAndEfficiencyLesson() {
         <Row.Aside>
           <TipBlock title="What You Already Know">
             You implemented the DDPM sampling loop in{' '}
-            <strong>Build a Diffusion Model</strong> and felt the 1000-step cost.
+            <LessonLink slug="build-a-diffusion-model">Build a Diffusion Model</LessonLink> and felt the 1000-step cost.
             You derived the closed-form formula in{' '}
-            <strong>The Forward Process</strong>. You saw samplers as swappable
+            <LessonLink slug="the-forward-process">The Forward Process</LessonLink>. You saw samplers as swappable
             components in{' '}
-            <strong>The Stable Diffusion Pipeline</strong>. This lesson explains
+            <LessonLink slug="stable-diffusion-architecture">The Stable Diffusion Pipeline</LessonLink>. This lesson explains
             how those pieces fit together to make generation 50&times; faster.
           </TipBlock>
         </Row.Aside>
@@ -107,9 +108,9 @@ export function SamplersAndEfficiencyLesson() {
           />
           <div className="space-y-4">
             <p className="text-muted-foreground">
-              In <strong>Build a Diffusion Model</strong>, you generated 64 MNIST
+              In <LessonLink slug="build-a-diffusion-model">Build a Diffusion Model</LessonLink>, you generated 64 MNIST
               digits and waited minutes. In{' '}
-              <strong>The Stable Diffusion Pipeline</strong>, you saw that each
+              <LessonLink slug="stable-diffusion-architecture">The Stable Diffusion Pipeline</LessonLink>, you saw that each
               denoising step requires a full U-Net forward pass&mdash;or two with
               CFG. At 50 steps, that is 100 forward passes through an 860M
               parameter U-Net.
@@ -123,7 +124,7 @@ export function SamplersAndEfficiencyLesson() {
             </p>
             <p className="text-muted-foreground">
               But recall the closed-form formula from{' '}
-              <strong>The Forward Process</strong>:
+              <LessonLink slug="the-forward-process">The Forward Process</LessonLink>:
             </p>
             <div className="py-4 px-6 bg-muted/50 rounded-lg">
               <BlockMath math="x_t = \sqrt{\bar{\alpha}_t} \cdot x_0 + \sqrt{1 - \bar{\alpha}_t} \cdot \varepsilon" />
@@ -282,7 +283,7 @@ export function SamplersAndEfficiencyLesson() {
               But there is a direct relationship between{' '}
               <InlineMath math="\varepsilon" /> and{' '}
               <InlineMath math="x_0" />, from the closed-form formula you
-              derived in <strong>The Forward Process</strong>:
+              derived in <LessonLink slug="the-forward-process">The Forward Process</LessonLink>:
             </p>
             <div className="py-4 px-6 bg-muted/50 rounded-lg">
               <BlockMath math="\hat{x}_0 = \frac{x_t - \sqrt{1 - \bar{\alpha}_t} \cdot \varepsilon_\theta}{\sqrt{\bar{\alpha}_t}}" />
@@ -337,7 +338,7 @@ export function SamplersAndEfficiencyLesson() {
                 Rearrange the closed-form formula to solve for{' '}
                 <InlineMath math="x_0" />. You already know this formula&mdash;it
                 is the same rearrangement from{' '}
-                <strong>The Forward Process</strong>.
+                <LessonLink slug="the-forward-process">The Forward Process</LessonLink>.
               </p>
             </PhaseCard>
             <PhaseCard number={2} title="Leap to the next timestep" subtitle="Use the closed-form formula in the forward direction" color="violet">
@@ -360,7 +361,7 @@ export function SamplersAndEfficiencyLesson() {
             the difference between a step-by-step formula and a leap formula.{' '}
             <InlineMath math="\bar{\alpha}" /> encodes the entire schedule up to
             timestep <InlineMath math="t" />&mdash;the &ldquo;signal-to-noise
-            dial&rdquo; from <strong>The Forward Process</strong>.
+            dial&rdquo; from <LessonLink slug="the-forward-process">The Forward Process</LessonLink>.
           </ConceptBlock>
         </Row.Aside>
       </Row>
@@ -474,7 +475,7 @@ export function SamplersAndEfficiencyLesson() {
           <div className="space-y-4">
             <p className="text-muted-foreground">
               Using a cosine schedule (the same one from{' '}
-              <strong>The Forward Process</strong>):
+              <LessonLink slug="the-forward-process">The Forward Process</LessonLink>):
             </p>
             <ul className="list-disc list-inside text-muted-foreground space-y-1 ml-4">
               <li>

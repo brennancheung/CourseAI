@@ -15,6 +15,7 @@ import {
   NextStepBlock,
   GradientCard,
   ComparisonRow,
+  LessonLink,
 } from '@/components/lessons'
 import { GenerativeVsDiscriminativeWidget } from '@/components/widgets/GenerativeVsDiscriminativeWidget'
 import { ExercisePanel } from '@/components/widgets/ExercisePanel'
@@ -140,7 +141,7 @@ export function FromClassificationToGenerationLesson() {
               next?&rdquo;
             </p>
             <p className="text-muted-foreground">
-              In <strong>What is a Language Model?</strong>, you watched a language model
+              In <LessonLink slug="what-is-a-language-model">What is a Language Model?</LessonLink>, you watched a language model
               assign probabilities to every possible next token, then <em>sample</em> one. You
               dragged the temperature slider and watched the probability distribution reshape.
               When the model sampled &ldquo;mat&rdquo; after &ldquo;The cat sat on the,&rdquo;

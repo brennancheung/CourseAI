@@ -16,6 +16,7 @@ import {
   SummaryBlock,
   NextStepBlock,
   ReferencesBlock,
+  LessonLink,
 } from '@/components/lessons'
 import { CodeBlock } from '@/components/common/CodeBlock'
 import { MermaidDiagram } from '@/components/widgets/MermaidDiagram'
@@ -119,7 +120,7 @@ export function TextConditioningAndGuidanceLesson() {
           />
           <div className="space-y-4">
             <p className="text-muted-foreground">
-              In <strong>Decoder-Only Transformers</strong>, you saw that
+              In <LessonLink slug="decoder-only-transformers">Decoder-Only Transformers</LessonLink>, you saw that
               encoder-decoder transformers have &ldquo;cross-attention&rdquo;
               where the decoder attends to the encoder&rsquo;s output. You know
               the concept exists: Q comes from one input, K and V from another.
@@ -127,7 +128,7 @@ export function TextConditioningAndGuidanceLesson() {
             </p>
             <p className="text-muted-foreground">
               Quick callback: you know the QKV formula deeply from{' '}
-              <strong>Values and the Attention Output</strong>. In
+              <LessonLink slug="values-and-attention-output">Values and the Attention Output</LessonLink>. In
               self-attention, Q, K, and V are all projected from the same input.
               In cross-attention, Q comes from one input and K/V from another.{' '}
               <strong>Same formula, different sources.</strong>
@@ -1050,7 +1051,7 @@ difference = [0.20, -0.20,  0.30]  # ε_cond - ε_uncond
         </Row.Content>
         <Row.Aside>
           <TipBlock title="Directions in Space">
-            In <strong>Exploring Latent Spaces</strong> (Module 6.1), you saw meaningful
+            In <LessonLink slug="exploring-latent-spaces">Exploring Latent Spaces</LessonLink> (Module 6.1), you saw meaningful
             directions in the VAE&rsquo;s latent space. The CFG &ldquo;text
             direction&rdquo; is similar&mdash;a meaningful direction in noise
             prediction space. But it is computed fresh at every denoising
@@ -1401,7 +1402,7 @@ difference = [0.20, -0.20,  0.30]  # ε_cond - ε_uncond
               timestep conditioning via adaptive normalization, text
               conditioning via cross-attention, and classifier-free guidance to
               amplify the text signal. But there is one remaining problem you
-              felt in <strong>Build a Diffusion Model</strong>: pixel-space
+              felt in <LessonLink slug="build-a-diffusion-model">Build a Diffusion Model</LessonLink>: pixel-space
               diffusion is painfully slow.
             </p>
             <p className="text-muted-foreground">

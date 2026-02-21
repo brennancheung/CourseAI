@@ -14,6 +14,7 @@ Take a software engineer from "uses AI tools" to "understands how models actuall
 | 5 | Recent LLM Advances | complete | RLHF, constitutional AI, reasoning models, multimodal |
 | 6 | Stable Diffusion | complete | Classical diffusion, DDPM, latent diffusion, LoRA fine-tuning |
 | 7 | Post-SD Advances | complete | ControlNet, SDXL, consistency models, flow matching |
+| 8 | Special Topics | active | Standalone deep dives — catch-all for one-off topics across any domain |
 
 ## Module Status
 
@@ -44,6 +45,7 @@ Take a software engineer from "uses AI tools" to "understands how models actuall
 | 5.3 | Scaling Architecture | 3 of 3 | complete |
 | 7.3 | Fast Generation | 3 of 3 | complete |
 | 7.4 | Next-Generation Architectures | 4 of 4 | complete |
+| 8.1 | Vision & Vision-Language Models | 2 of 2 | complete |
 
 ## Progression
-Series 1 (Foundations) establishes the complete path from "what is learning?" through linear models, neural networks, and training. Series 2 (PyTorch) bridges theory to practice — hands-on implementation right after the concepts. Series 3 (CNNs) covers convolutional architectures with PyTorch in hand, needed for understanding U-Net in Stable Diffusion. Series 4-7 cover the target domains: LLMs and generative models.
+Series 1 (Foundations) establishes the complete path from "what is learning?" through linear models, neural networks, and training. Series 2 (PyTorch) bridges theory to practice — hands-on implementation right after the concepts. Series 3 (CNNs) covers convolutional architectures with PyTorch in hand, needed for understanding U-Net in Stable Diffusion. Series 4-7 cover the target domains: LLMs and generative models. Series 8 (Special Topics) is an open-ended catch-all for standalone deep dives into any topic worth exploring.

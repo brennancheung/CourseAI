@@ -17,6 +17,7 @@ import {
   ModuleCompleteBlock,
   ReferencesBlock,
   NextStepBlock,
+  LessonLink,
 } from '@/components/lessons'
 import { CodeBlock } from '@/components/common/CodeBlock'
 import { ExternalLink } from 'lucide-react'
@@ -459,7 +460,7 @@ export function TheSpeedLandscapeLesson() {
         <Row.Aside>
           <ConceptBlock title="The Right Question">
             You have learned the &ldquo;three levels of speed&rdquo; framework
-            from <strong>Consistency Models</strong>. This lesson fills it with
+            from <LessonLink slug="consistency-models">Consistency Models</LessonLink>. This lesson fills it with
             decision-relevant detail and reframes it from a progression to a
             menu.
           </ConceptBlock>
@@ -565,7 +566,7 @@ export function TheSpeedLandscapeLesson() {
                 <p>
                   <strong>Mechanism:</strong> Higher-order ODE solver that reads
                   trajectory curvature. Swap the scheduler, keep everything
-                  else. (from <strong>Samplers & Efficiency</strong>)
+                  else. (from <LessonLink slug="samplers-and-efficiency">Samplers &amp; Efficiency</LessonLink>)
                 </p>
                 <div className="grid grid-cols-2 gap-x-4 gap-y-1 mt-2 text-muted-foreground">
                   <p><strong>Steps:</strong> 15-20</p>
@@ -582,7 +583,7 @@ export function TheSpeedLandscapeLesson() {
                 <p>
                   <strong>Mechanism:</strong> Straight-line interpolation with
                   velocity prediction. Euler&rsquo;s method on straight paths
-                  is nearly exact. (from <strong>Flow Matching</strong>)
+                  is nearly exact. (from <LessonLink slug="flow-matching">Flow Matching</LessonLink>)
                 </p>
                 <div className="grid grid-cols-2 gap-x-4 gap-y-1 mt-2 text-muted-foreground">
                   <p><strong>Steps:</strong> 20-30</p>
@@ -599,7 +600,7 @@ export function TheSpeedLandscapeLesson() {
                 <p>
                   <strong>Mechanism:</strong> Student model distilled from
                   teacher via the consistency objective. Teleport to the
-                  destination. (from <strong>Consistency Models</strong>)
+                  destination. (from <LessonLink slug="consistency-models">Consistency Models</LessonLink>)
                 </p>
                 <div className="grid grid-cols-2 gap-x-4 gap-y-1 mt-2 text-muted-foreground">
                   <p><strong>Steps:</strong> 2-4</p>
@@ -616,7 +617,7 @@ export function TheSpeedLandscapeLesson() {
                 <p>
                   <strong>Mechanism:</strong> Consistency distillation captured
                   as a LoRA adapter. One adapter, many models. (from{' '}
-                  <strong>Latent Consistency & Turbo</strong>)
+                  <LessonLink slug="latent-consistency-and-turbo">Latent Consistency &amp; Turbo</LessonLink>)
                 </p>
                 <div className="grid grid-cols-2 gap-x-4 gap-y-1 mt-2 text-muted-foreground">
                   <p><strong>Steps:</strong> 4-8</p>
@@ -633,7 +634,7 @@ export function TheSpeedLandscapeLesson() {
                 <p>
                   <strong>Mechanism:</strong> Hybrid diffusion + adversarial
                   loss. Two teachers: ODE consistency + discriminator realism.
-                  (from <strong>Latent Consistency & Turbo</strong>)
+                  (from <LessonLink slug="latent-consistency-and-turbo">Latent Consistency &amp; Turbo</LessonLink>)
                 </p>
                 <div className="grid grid-cols-2 gap-x-4 gap-y-1 mt-2 text-muted-foreground">
                   <p><strong>Steps:</strong> 1-4</p>

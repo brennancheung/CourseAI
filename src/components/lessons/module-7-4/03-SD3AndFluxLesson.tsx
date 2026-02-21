@@ -17,6 +17,7 @@ import {
   ModuleCompleteBlock,
   ReferencesBlock,
   NextStepBlock,
+  LessonLink,
 } from '@/components/lessons'
 import { CodeBlock } from '@/components/common/CodeBlock'
 import { ExternalLink } from 'lucide-react'
@@ -80,7 +81,7 @@ export function SD3AndFluxLesson() {
             you already know: MMDiT joint attention (simpler than
             cross-attention), T5-XXL (a bigger text encoder), and flow matching
             applied in practice (same objective you trained with in{' '}
-            <strong>Flow Matching</strong>).
+            <LessonLink slug="flow-matching">Flow Matching</LessonLink>).
           </TipBlock>
         </Row.Aside>
       </Row>
@@ -126,7 +127,7 @@ export function SD3AndFluxLesson() {
               </li>
               <li>
                 <strong>Flow matching</strong> (from{' '}
-                <strong>Flow Matching</strong>): Straight-line interpolation{' '}
+                <LessonLink slug="flow-matching">Flow Matching</LessonLink>): Straight-line interpolation{' '}
                 <InlineMath math="x_t = (1-t) \cdot x_0 + t \cdot \epsilon" />.
                 Velocity prediction{' '}
                 <InlineMath math="v = \epsilon - x_0" />. Straight trajectories
@@ -199,8 +200,8 @@ export function SD3AndFluxLesson() {
               </GradientCard>
               <GradientCard title="Thread 5: Text Encoding" color="cyan">
                 <p className="text-sm">
-                  CLIP from <strong>CLIP</strong>, dual encoders from{' '}
-                  <strong>SDXL</strong>. How text conditions the model.
+                  CLIP from <LessonLink slug="clip">CLIP</LessonLink>, dual encoders from{' '}
+                  <LessonLink slug="sdxl">SDXL</LessonLink>. How text conditions the model.
                 </p>
               </GradientCard>
             </div>
@@ -933,7 +934,7 @@ Split back: text [77, d_model], image [256, d_model]`}
           <div className="space-y-4">
             <p className="text-muted-foreground">
               SD3&rsquo;s training objective is the conditional flow matching
-              you already know from <strong>Flow Matching</strong>:
+              you already know from <LessonLink slug="flow-matching">Flow Matching</LessonLink>:
             </p>
             <ul className="list-disc list-inside text-muted-foreground space-y-1 ml-4">
               <li>
@@ -967,7 +968,7 @@ Split back: text [77, d_model], image [256, d_model]`}
         <Row.Aside>
           <InsightBlock title="Same Objective, Bigger Model">
             SD3&rsquo;s flow matching training is what you trained in{' '}
-            <strong>Flow Matching</strong>: same interpolation, same velocity
+            <LessonLink slug="flow-matching">Flow Matching</LessonLink>: same interpolation, same velocity
             target, same MSE loss. Only the scale changes—millions of images
             and billions of parameters instead of 2D toy data.
           </InsightBlock>
@@ -983,7 +984,7 @@ Split back: text [77, d_model], image [256, d_model]`}
           />
           <div className="space-y-4">
             <p className="text-muted-foreground">
-              SD3 uses rectified flow (from <strong>Flow Matching</strong>):
+              SD3 uses rectified flow (from <LessonLink slug="flow-matching">Flow Matching</LessonLink>):
               after initial training, generate aligned (noise, data) pairs
               using the model, then retrain on these pairs. This makes the
               aggregate velocity field straighter, reducing the number of
@@ -993,7 +994,7 @@ Split back: text [77, d_model], image [256, d_model]`}
               In practice, SD3/Flux achieves good results in 20-30 steps,
               compared to 50+ for DDPM-based models. This is the practical
               payoff of the &ldquo;curved vs straight&rdquo; insight from{' '}
-              <strong>Flow Matching</strong>.
+              <LessonLink slug="flow-matching">Flow Matching</LessonLink>.
             </p>
             <p className="text-muted-foreground">
               One new detail: instead of sampling timesteps uniformly during
@@ -1034,7 +1035,7 @@ Split back: text [77, d_model], image [256, d_model]`}
               <div className="space-y-2 text-sm">
                 <p>
                   SD3 uses flow matching with velocity prediction. The model
-                  you trained in <strong>Flow Matching</strong> used the same
+                  you trained in <LessonLink slug="flow-matching">Flow Matching</LessonLink> used the same
                   objective on 2D data. What changes when you apply this to a
                   real image generation model?
                 </p>

@@ -13,6 +13,7 @@ import { llms } from './llms'
 import { stableDiffusion } from './stable-diffusion'
 import { recentLlmAdvances } from './recent-llm-advances'
 import { postSdAdvances } from './post-sd-advances'
+import { specialTopics } from './special-topics'
 
 // Re-export types and utilities
 export * from './types'
@@ -31,4 +32,5 @@ export const curriculum: CurriculumNode[] = [
   recentLlmAdvances,
   stableDiffusion,
   postSdAdvances,
+  specialTopics,
 ]

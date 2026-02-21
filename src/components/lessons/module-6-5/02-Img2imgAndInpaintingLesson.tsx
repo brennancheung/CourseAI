@@ -16,6 +16,7 @@ import {
   SummaryBlock,
   NextStepBlock,
   ReferencesBlock,
+  LessonLink,
 } from '@/components/lessons'
 import { CodeBlock } from '@/components/common/CodeBlock'
 import 'katex/dist/katex.min.css'
@@ -222,7 +223,7 @@ export function Img2imgAndInpaintingLesson() {
         </Row.Content>
         <Row.Aside>
           <ConceptBlock title="VAE Encoder Callback">
-            In <strong>The Stable Diffusion Pipeline</strong>, we said the VAE
+            In <LessonLink slug="stable-diffusion-architecture">The Stable Diffusion Pipeline</LessonLink>, we said the VAE
             encoder is not used during text-to-image inference. That was
             correct—text-to-image starts from random noise, so there is no
             image to encode. Img2img <em>does</em> have an input image, so
@@ -432,7 +433,7 @@ output = vae.decode(z)                 # [3, 512, 512]`}
             If img2img blended the original with the generated result
             (like alpha compositing), strength=0.5 would produce a ghostly
             double exposure—the same problem as pixel-space interpolation
-            from <strong>Exploring Latent Spaces</strong>. Instead, img2img
+            from <LessonLink slug="exploring-latent-spaces">Exploring Latent Spaces</LessonLink>. Instead, img2img
             at strength=0.5 produces a single coherent image. The mechanism
             is <em>denoising</em>, not blending.
           </WarningBlock>
@@ -450,7 +451,7 @@ output = vae.decode(z)                 # [3, 512, 512]`}
             <p className="text-muted-foreground">
               The strength parameter maps onto the alpha-bar curve—and that
               curve is nonlinear. Combined with the coarse-to-fine denoising
-              progression from <strong>Sampling and Generation</strong>, the
+              progression from <LessonLink slug="sampling-and-generation">Sampling and Generation</LessonLink>, the
               effect is qualitatively different at different strength values:
             </p>
           </div>
@@ -493,7 +494,7 @@ output = vae.decode(z)                 # [3, 512, 512]`}
         </Row.Content>
         <Row.Aside>
           <InsightBlock title="Coarse-to-Fine Explains It">
-            Remember from <strong>Sampling and Generation</strong>: at t=900
+            Remember from <LessonLink slug="sampling-and-generation">Sampling and Generation</LessonLink>: at t=900
             the model makes bold structural decisions; at t=50 it polishes
             textures. Strength determines which of these phases you allow the
             model to execute. Low strength = polishing only. High strength =
@@ -633,7 +634,7 @@ output = vae.decode(z)                 # [3, 512, 512]`}
         <Row.Aside>
           <TipBlock title="Same Formula Again">
             The re-noising step uses the exact same forward process
-            closed-form formula from <strong>The Forward Process</strong>:{' '}
+            closed-form formula from <LessonLink slug="the-forward-process">The Forward Process</LessonLink>:{' '}
             <InlineMath math="x_t = \sqrt{\bar{\alpha}_t} \cdot x_0 + \sqrt{1-\bar{\alpha}_t} \cdot \varepsilon" />.
             Third context for this formula: (1) training, (2) img2img starting
             point, (3) inpainting per-step re-noising.
@@ -957,7 +958,7 @@ output = vae.decode(z)                 # [3, 512, 512]`}
                   The sampler is orthogonal to the img2img mechanism. Img2img
                   changes the starting point; the sampler determines how to
                   get from there to z_0. Any sampler works. The same practical
-                  guidance from <strong>Samplers and Efficiency</strong>{' '}
+                  guidance from <LessonLink slug="samplers-and-efficiency">Samplers and Efficiency</LessonLink>{' '}
                   applies: DPM-Solver++ at 20-30 steps for efficiency, DDIM
                   for reproducibility. The sampler does not &ldquo;know&rdquo;
                   whether it started from pure noise or a noised image.
@@ -1082,7 +1083,7 @@ output = vae.decode(z)                 # [3, 512, 512]`}
             or selective application (inpainting).</strong> The pipeline you
             traced across 17 lessons is unchanged. Img2img moves the starting
             line. Inpainting adds a spatial filter. Both use the forward
-            process formula you derived in <strong>The Forward Process</strong>
+            process formula you derived in <LessonLink slug="the-forward-process">The Forward Process</LessonLink>
             —now in its third and fourth applications.
           </InsightBlock>
         </Row.Content>

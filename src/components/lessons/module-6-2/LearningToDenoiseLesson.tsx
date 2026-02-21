@@ -17,6 +17,7 @@ import {
   ComparisonRow,
   PhaseCard,
   ReferencesBlock,
+  LessonLink,
 } from '@/components/lessons'
 import { MermaidDiagram } from '@/components/widgets/MermaidDiagram'
 import { ExercisePanel } from '@/components/widgets/ExercisePanel'
@@ -75,7 +76,7 @@ export function LearningToDenoiseLesson() {
         </Row.Content>
         <Row.Aside>
           <TipBlock title="What You Already Know">
-            In <strong>The Forward Process</strong>, you derived the closed-form
+            In <LessonLink slug="the-forward-process">The Forward Process</LessonLink>, you derived the closed-form
             formula that jumps to any noise level in one step. This lesson uses
             that formula as a tool inside the training algorithm.
           </TipBlock>
@@ -111,7 +112,7 @@ export function LearningToDenoiseLesson() {
           />
           <div className="space-y-4">
             <p className="text-muted-foreground">
-              In <strong>The Forward Process</strong>, you derived a closed-form
+              In <LessonLink slug="the-forward-process">The Forward Process</LessonLink>, you derived a closed-form
               formula that jumps from a clean image to any noise level in one
               step:
             </p>
@@ -683,7 +684,7 @@ export function LearningToDenoiseLesson() {
               <p className="text-sm text-muted-foreground">
                 Same algorithm, same loss, same code. The difficulty varies
                 entirely with the timestep. This connects to the multi-scale
-                denoising from <strong>The Diffusion Idea</strong>: high noise
+                denoising from <LessonLink slug="the-diffusion-idea">The Diffusion Idea</LessonLink>: high noise
                 levels require structural decisions, low noise levels require
                 fine detail.
               </p>
@@ -879,7 +880,7 @@ export function LearningToDenoiseLesson() {
         </Row.Content>
         <Row.Aside>
           <InsightBlock title="Same Building Blocks, Different Question">
-            In <strong>The Diffusion Idea</strong>, you learned that diffusion
+            In <LessonLink slug="the-diffusion-idea">The Diffusion Idea</LessonLink>, you learned that diffusion
             uses the same building blocks as everything else&mdash;conv layers,
             MSE loss, backprop. Here is the payoff: the training objective IS
             MSE loss. The question is &ldquo;what noise was added?&rdquo;

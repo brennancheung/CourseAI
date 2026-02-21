@@ -16,6 +16,7 @@ import {
   SummaryBlock,
   ReferencesBlock,
   NextStepBlock,
+  LessonLink,
 } from '@/components/lessons'
 import { CodeBlock } from '@/components/common/CodeBlock'
 import { ExternalLink } from 'lucide-react'
@@ -382,12 +383,12 @@ Step 4: Add positional embeddings
             <p className="text-muted-foreground">
               Smaller patch size = more tokens = finer spatial detail = quadratic
               attention cost. This is the same tradeoff you saw in{' '}
-              <strong>SDXL</strong>: more tokens means{' '}
+              <LessonLink slug="sdxl">SDXL</LessonLink>: more tokens means{' '}
               <InlineMath math="O(L^2)" /> attention compute.{' '}
               <strong>Patch size is the resolution knob for DiT.</strong>
             </p>
             <p className="text-muted-foreground">
-              In <strong>SDXL</strong>, you traced these exact token counts: 256
+              In <LessonLink slug="sdxl">SDXL</LessonLink>, you traced these exact token counts: 256
               at 16×16, 1024 at 32×32, 4096 at 64×64. DiT gives you explicit
               control over this tradeoff via the patch size parameter.
             </p>
@@ -939,7 +940,7 @@ Predicted noise (or velocity): [4, 32, 32]—same shape as the noisy latent inpu
           />
           <div className="space-y-4">
             <p className="text-muted-foreground">
-              In <strong>SDXL</strong>, you identified a limitation: there is no
+              In <LessonLink slug="sdxl">SDXL</LessonLink>, you identified a limitation: there is no
               clear recipe for making a U-Net bigger. To double the parameters,
               you must decide:
             </p>

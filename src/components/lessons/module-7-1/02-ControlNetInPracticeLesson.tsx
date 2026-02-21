@@ -16,6 +16,7 @@ import {
   SummaryBlock,
   NextStepBlock,
   ReferencesBlock,
+  LessonLink,
 } from '@/components/lessons'
 import { CodeBlock } from '@/components/common/CodeBlock'
 import { MermaidDiagram } from '@/components/widgets/MermaidDiagram'
@@ -72,7 +73,7 @@ export function ControlNetInPracticeLesson() {
         <Row.Aside>
           <TipBlock title="Practical Session">
             No new theory today. Everything here builds on the architecture you
-            learned in <strong>ControlNet</strong>. The emphasis is entirely on
+            learned in <LessonLink slug="controlnet">ControlNet</LessonLink>. The emphasis is entirely on
             using the tool: which preprocessor, what settings, how to combine.
           </TipBlock>
         </Row.Aside>
@@ -106,7 +107,7 @@ export function ControlNetInPracticeLesson() {
           />
           <div className="space-y-4">
             <p className="text-muted-foreground">
-              In <strong>ControlNet</strong>, you saw Canny edge maps as the
+              In <LessonLink slug="controlnet">ControlNet</LessonLink>, you saw Canny edge maps as the
               primary example of spatial conditioning. Edge map goes in,
               ControlNet produces features, those features get added to the
               frozen decoder via zero convolutions. The architecture made
@@ -477,7 +478,7 @@ result = pipe(
               preprocessor types. The only things that change are: (1) which
               preprocessor extracts the map from the image, and (2) which
               ControlNet checkpoint you load. The architecture you learned in{' '}
-              <strong>ControlNet</strong> is genuinely map-agnostic—the
+              <LessonLink slug="controlnet">ControlNet</LessonLink> is genuinely map-agnostic—the
               trainable encoder copy processes whatever spatial input you give
               it.
             </p>
@@ -596,12 +597,12 @@ result = pipe(
             </p>
             <p className="text-muted-foreground">
               Remember &ldquo;Nothing, Then a Whisper&rdquo; from{' '}
-              <strong>ControlNet</strong>? During training, zero convolutions
+              <LessonLink slug="controlnet">ControlNet</LessonLink>? During training, zero convolutions
               gradually turn up the volume of spatial control from zero. At
               inference time, <code className="text-xs">conditioning_scale</code>{' '}
               is your <strong>manual volume knob</strong> for the same signal.
               You choose how loud the spatial control is. If the tradeoff feels
-              familiar, it should&mdash;in <strong>Img2Img and Inpainting</strong>,
+              familiar, it should&mdash;in <LessonLink slug="img2img-and-inpainting">Img2Img and Inpainting</LessonLink>,
               the strength parameter controlled how much of the original image
               survived versus how much the model generated freely. Conditioning
               scale is the same idea applied to spatial maps.
@@ -798,7 +799,7 @@ result_alt = pipe(
           />
           <div className="space-y-4">
             <p className="text-muted-foreground">
-              Remember the forward pass from <strong>ControlNet</strong>: each
+              Remember the forward pass from <LessonLink slug="controlnet">ControlNet</LessonLink>: each
               ControlNet independently contributes additive features to the
               skip connections. Stacking multiple ControlNets means the decoder
               receives the sum of all their contributions:

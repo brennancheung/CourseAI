@@ -12,6 +12,7 @@ import {
   SummaryBlock,
   ModuleCompleteBlock,
   NextStepBlock,
+  LessonLink,
 } from '@/components/lessons'
 import { ExternalLink } from 'lucide-react'
 
@@ -99,15 +100,15 @@ export function BuildADiffusionModelLesson() {
           />
           <div className="space-y-4">
             <p className="text-muted-foreground">
-              In <strong>The Diffusion Idea</strong>, you built the intuition:
+              In <LessonLink slug="the-diffusion-idea">The Diffusion Idea</LessonLink>, you built the intuition:
               destruction is easy, creation from scratch is impossibly hard, but
               undoing one small step of destruction is learnable. In{' '}
-              <strong>The Forward Process</strong>, you derived the math: the
+              <LessonLink slug="the-forward-process">The Forward Process</LessonLink>, you derived the math: the
               closed-form formula that turns any clean image into any noise
-              level in one step. In <strong>Learning to Denoise</strong>, you
+              level in one step. In <LessonLink slug="learning-to-denoise">Learning to Denoise</LessonLink>, you
               traced the training algorithm: predict the noise, compare with
               MSE, update weights. In{' '}
-              <strong>Sampling and Generation</strong>, you walked through the
+              <LessonLink slug="sampling-and-generation">Sampling and Generation</LessonLink>, you walked through the
               reverse process: 1,000 small steps from pure noise to a generated
               image.
             </p>

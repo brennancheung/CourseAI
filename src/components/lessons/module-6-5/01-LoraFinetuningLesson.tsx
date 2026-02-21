@@ -16,6 +16,7 @@ import {
   SummaryBlock,
   NextStepBlock,
   ReferencesBlock,
+  LessonLink,
 } from '@/components/lessons'
 import { CodeBlock } from '@/components/common/CodeBlock'
 import { MermaidDiagram } from '@/components/widgets/MermaidDiagram'
@@ -68,9 +69,9 @@ export function LoraFinetuningLesson() {
         <Row.Aside>
           <TipBlock title="What You Already Know">
             You built LoRA from scratch in{' '}
-            <strong>LoRA and Quantization</strong>—the highway-and-detour
+            <LessonLink slug="lora-and-quantization">LoRA and Quantization</LessonLink>—the highway-and-detour
             bypass, B=0 initialization, merge at inference. You traced the
-            full SD pipeline in <strong>The Stable Diffusion Pipeline</strong>.
+            full SD pipeline in <LessonLink slug="stable-diffusion-architecture">The Stable Diffusion Pipeline</LessonLink>.
             This lesson connects those two systems.
           </TipBlock>
         </Row.Aside>
@@ -433,7 +434,7 @@ export function LoraFinetuningLesson() {
             <p className="text-muted-foreground">
               Let&rsquo;s trace one complete training step for a watercolor
               style LoRA. You have seen this pattern before—a full training step
-              trace—in <strong>Learning to Denoise</strong>. The only
+              trace—in <LessonLink slug="learning-to-denoise">Learning to Denoise</LessonLink>. The only
               differences are the VAE encoding and the LoRA adapter setup.
             </p>
           </div>
@@ -472,14 +473,14 @@ optimizer.step()  # updates only LoRA params`}
           <div className="space-y-4 mt-4">
             <p className="text-muted-foreground">
               Every line maps to something you already know. Steps 2–4 are the
-              forward process from <strong>The Forward Process</strong>, now
+              forward process from <LessonLink slug="the-forward-process">The Forward Process</LessonLink>, now
               applied in latent space (from{' '}
-              <strong>From Pixels to Latents</strong>). Step 6 is the same
+              <LessonLink slug="from-pixels-to-latents">From Pixels to Latents</LessonLink>). Step 6 is the same
               U-Net forward pass from{' '}
-              <strong>The Stable Diffusion Pipeline</strong>. Steps 7–8 are
-              DDPM training loss from <strong>Learning to Denoise</strong> with
+              <LessonLink slug="stable-diffusion-architecture">The Stable Diffusion Pipeline</LessonLink>. Steps 7–8 are
+              DDPM training loss from <LessonLink slug="learning-to-denoise">Learning to Denoise</LessonLink> with
               LoRA&rsquo;s frozen-base-weights pattern from{' '}
-              <strong>LoRA and Quantization</strong>.
+              <LessonLink slug="lora-and-quantization">LoRA and Quantization</LessonLink>.
             </p>
           </div>
         </Row.Content>
@@ -624,7 +625,7 @@ optimizer.step()  # updates only LoRA params`}
           />
           <div className="space-y-4">
             <p className="text-muted-foreground">
-              In <strong>LoRA and Quantization</strong>, you learned that LLM
+              In <LessonLink slug="lora-and-quantization">LoRA and Quantization</LessonLink>, you learned that LLM
               LoRA commonly uses rank 8–64. Diffusion LoRA typically uses{' '}
               <strong>rank 4–8</strong>—lower. Why?
             </p>

@@ -16,6 +16,7 @@ import {
   SummaryBlock,
   NextStepBlock,
   ReferencesBlock,
+  LessonLink,
 } from '@/components/lessons'
 import { MermaidDiagram } from '@/components/widgets/MermaidDiagram'
 import { CodeBlock } from '@/components/common/CodeBlock'
@@ -134,7 +135,7 @@ export function StableDiffusionArchitectureLesson() {
           <InsightBlock title="The Prompt">
             The traced example uses <strong>&ldquo;a cat sitting on a beach at
             sunset&rdquo;</strong>&mdash;the same prompt from the cross-attention
-            lesson in <strong>Text Conditioning &amp; Guidance</strong>, where
+            lesson in <LessonLink slug="text-conditioning-and-guidance">Text Conditioning &amp; Guidance</LessonLink>, where
             you saw per-spatial-location attention weights. You already know what
             the attention pattern looks like for this prompt.
           </InsightBlock>
@@ -156,7 +157,7 @@ export function StableDiffusionArchitectureLesson() {
             <p className="text-muted-foreground">
               <strong>Tokenizer:</strong> The prompt &ldquo;a cat sitting on a
               beach at sunset&rdquo; is split into subword tokens, just like the
-              BPE tokenization you learned in <strong>Tokenization</strong>.
+              BPE tokenization you learned in <LessonLink slug="tokenization">Tokenization</LessonLink>.
               CLIP&rsquo;s tokenizer adds a start-of-text (SOT) token at the
               beginning, an end-of-text (EOT) token after the last word, and
               pads the remaining positions to a fixed length of 77 tokens.
@@ -231,7 +232,7 @@ export function StableDiffusionArchitectureLesson() {
         </Row.Content>
         <Row.Aside>
           <TipBlock title="Why 4 Channels?">
-            In <strong>Exploring Latent Spaces</strong>, you worked with VAE
+            In <LessonLink slug="exploring-latent-spaces">Exploring Latent Spaces</LessonLink>, you worked with VAE
             latent vectors. Stable Diffusion&rsquo;s VAE preserves spatial
             structure: each image becomes a 4-channel 64&times;64 &ldquo;latent
             image&rdquo; instead of collapsing to a flat vector. The 4 channels
@@ -305,7 +306,7 @@ export function StableDiffusionArchitectureLesson() {
               <p className="text-sm text-muted-foreground">
                 t &rarr; sinusoidal encoding &rarr; MLP &rarr; t<sub>emb</sub>{' '}
                 (512-dim vector). This is the &ldquo;conductor&rsquo;s
-                score&rdquo; from <strong>Conditioning the U-Net</strong>,
+                score&rdquo; from <LessonLink slug="conditioning-the-unet">Conditioning the U-Net</LessonLink>,
                 telling the network how much noise to expect.
               </p>
             </div>
@@ -332,8 +333,8 @@ export function StableDiffusionArchitectureLesson() {
                 z<sub>t</sub>, same t<sub>emb</sub>. The only difference:
                 cross-attention uses the <strong>real text
                 embeddings</strong> from CLIP. This is the &ldquo;contrast
-                slider&rdquo; from <strong>Text Conditioning &amp;
-                Guidance</strong>.
+                slider&rdquo; from <LessonLink slug="text-conditioning-and-guidance">Text Conditioning &amp;
+                Guidance</LessonLink>.
               </p>
             </div>
             <div className="rounded-lg bg-violet-500/5 border border-violet-500/20 p-3 space-y-1">
@@ -375,7 +376,7 @@ export function StableDiffusionArchitectureLesson() {
           <div className="space-y-4">
             <p className="text-muted-foreground">
               Inside the U-Net at one step, the tensor shapes follow the same
-              pattern from <strong>The U-Net Architecture</strong>, but with
+              pattern from <LessonLink slug="unet-architecture">The U-Net Architecture</LessonLink>, but with
               Stable Diffusion&rsquo;s larger channel counts:
             </p>
             <div className="space-y-2">
@@ -415,13 +416,13 @@ export function StableDiffusionArchitectureLesson() {
               256&times;77 attention matrix (16&times;16&nbsp;=&nbsp;256 spatial
               locations, each attending to 77 text tokens). At 32&times;32, it
               is 1024&times;77. These are the shapes you predicted in{' '}
-              <strong>Text Conditioning &amp; Guidance</strong>.
+              <LessonLink slug="text-conditioning-and-guidance">Text Conditioning &amp; Guidance</LessonLink>.
             </p>
           </div>
         </Row.Content>
         <Row.Aside>
           <ConceptBlock title="Bigger Numbers, Same Pattern">
-            In <strong>The U-Net Architecture</strong>, you traced a toy U-Net
+            In <LessonLink slug="unet-architecture">The U-Net Architecture</LessonLink>, you traced a toy U-Net
             with channels 64 &rarr; 128 &rarr; 256 &rarr; 512. Stable
             Diffusion&rsquo;s U-Net uses 320 &rarr; 640 &rarr; 1280 &rarr;
             1280. The numbers are larger, but the pattern is identical: double
@@ -447,7 +448,7 @@ export function StableDiffusionArchitectureLesson() {
             </p>
             <p className="text-muted-foreground">
               This is the &ldquo;translator from latent language to pixel
-              language&rdquo; from <strong>From Pixels to Latents</strong>. The
+              language&rdquo; from <LessonLink slug="from-pixels-to-latents">From Pixels to Latents</LessonLink>. The
               decoder runs <strong>once</strong>, after the entire denoising
               loop. It is fast compared to the 50-step (100 forward pass)
               denoising loop.
@@ -503,8 +504,8 @@ graph LR
         </Row.Content>
         <Row.Aside>
           <ConceptBlock title="Three Translators">
-            Extending the analogy from <strong>From Pixels to
-            Latents</strong>: CLIP translates human language to
+            Extending the analogy from <LessonLink slug="from-pixels-to-latents">From Pixels to
+            Latents</LessonLink>: CLIP translates human language to
             geometric-meaning space. The U-Net generates in latent space. The
             VAE translates latent language back to pixel language. Three
             translators, one pipeline.
@@ -778,7 +779,7 @@ graph LR
         </Row.Content>
         <Row.Aside>
           <ConceptBlock title="Two Languages, One Translator">
-            Remember from <strong>CLIP</strong>: &ldquo;two encoders, one
+            Remember from <LessonLink slug="clip">CLIP</LessonLink>: &ldquo;two encoders, one
             shared space&mdash;the loss creates the alignment, not the
             architecture.&rdquo; CLIP&rsquo;s contrastive training is what makes
             the 768-dimensional embeddings meaningful to the U-Net&rsquo;s

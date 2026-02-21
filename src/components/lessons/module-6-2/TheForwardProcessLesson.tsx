@@ -16,6 +16,7 @@ import {
   GradientCard,
   ComparisonRow,
   ReferencesBlock,
+  LessonLink,
 } from '@/components/lessons'
 import { ExercisePanel } from '@/components/widgets/ExercisePanel'
 import { AlphaBarCurveWidget } from '@/components/widgets/AlphaBarCurveWidget'
@@ -190,7 +191,7 @@ export function TheForwardProcessLesson() {
         </Row.Content>
         <Row.Aside>
           <TipBlock title="What You Already Know">
-            In <strong>The Diffusion Idea</strong>, you watched images dissolve
+            In <LessonLink slug="the-diffusion-idea">The Diffusion Idea</LessonLink>, you watched images dissolve
             into noise and understood <em>why</em> small denoising steps make
             generation learnable. This lesson formalizes <em>how</em> that
             noise addition works mathematically.
@@ -227,7 +228,7 @@ export function TheForwardProcessLesson() {
           />
           <div className="space-y-4">
             <p className="text-muted-foreground">
-              In <strong>The Diffusion Idea</strong>, you learned that the
+              In <LessonLink slug="the-diffusion-idea">The Diffusion Idea</LessonLink>, you learned that the
               training loop needs noisy images at <em>random</em> timesteps. To
               train, you pick a clean image, pick a random timestep{' '}
               <InlineMath math="t" />, and create the noisy version at step{' '}
@@ -346,7 +347,7 @@ export function TheForwardProcessLesson() {
           />
           <div className="space-y-4">
             <p className="text-muted-foreground">
-              In <strong>The Diffusion Idea</strong>, you dragged a slider and
+              In <LessonLink slug="the-diffusion-idea">The Diffusion Idea</LessonLink>, you dragged a slider and
               watched an image dissolve into noise. Now: what formula was the
               slider computing at each step?
             </p>
@@ -566,7 +567,7 @@ export function TheForwardProcessLesson() {
               which is the wrong tradeoff.
             </p>
             <p className="text-muted-foreground">
-              Remember the widget from <strong>The Diffusion Idea</strong>? The
+              Remember the widget from <LessonLink slug="the-diffusion-idea">The Diffusion Idea</LessonLink>? The
               first few steps barely changed the image. The last few steps
               erased the remaining traces. That was the schedule at work.
             </p>
@@ -1113,7 +1114,7 @@ export function TheForwardProcessLesson() {
         </Row.Content>
         <Row.Aside>
           <TipBlock title="The Widget Connection">
-            The widget from <strong>The Diffusion Idea</strong> used a cosine
+            The widget from <LessonLink slug="the-diffusion-idea">The Diffusion Idea</LessonLink> used a cosine
             schedule. That is why the image degraded slowly at first and then
             rapidly near the end. Now you know the math behind that behavior.
           </TipBlock>

@@ -17,6 +17,7 @@ import {
   ComparisonRow,
   PhaseCard,
   ReferencesBlock,
+  LessonLink,
 } from '@/components/lessons'
 import { ExercisePanel } from '@/components/widgets/ExercisePanel'
 import { DenoisingTrajectoryWidget } from '@/components/widgets/DenoisingTrajectoryWidget'
@@ -70,7 +71,7 @@ export function SamplingAndGenerationLesson() {
         </Row.Content>
         <Row.Aside>
           <TipBlock title="What You Already Know">
-            In <strong>Learning to Denoise</strong>, you traced the complete
+            In <LessonLink slug="learning-to-denoise">Learning to Denoise</LessonLink>, you traced the complete
             training algorithm. The model can predict noise at any timestep. Now:
             how do you use that ability to generate?
           </TipBlock>
@@ -290,7 +291,7 @@ export function SamplingAndGenerationLesson() {
           <TipBlock title="Familiar Structure">
             Notice the pattern: <strong>deterministic mean + sigma &times;
             z</strong>. This is the same structure as the reparameterization
-            trick from <strong>Variational Autoencoders</strong>. A learned
+            trick from <LessonLink slug="variational-autoencoders">Variational Autoencoders</LessonLink>. A learned
             mean plus controlled randomness.
           </TipBlock>
         </Row.Aside>
@@ -309,7 +310,7 @@ export function SamplingAndGenerationLesson() {
               <InlineMath math="\epsilon" />.
             </p>
             <p className="text-muted-foreground">
-              In <strong>The Forward Process</strong>, you derived the formula
+              In <LessonLink slug="the-forward-process">The Forward Process</LessonLink>, you derived the formula
               for destroying an image. Now you are running it in
               reverse&mdash;using the model&rsquo;s noise prediction to
               approximately undo one step of that destruction.
@@ -377,7 +378,7 @@ export function SamplingAndGenerationLesson() {
         </Row.Content>
         <Row.Aside>
           <TipBlock title="Continuity with Training">
-            In <strong>Learning to Denoise</strong>, you used{' '}
+            In <LessonLink slug="learning-to-denoise">Learning to Denoise</LessonLink>, you used{' '}
             <InlineMath math="t = 500" /> for the training walkthrough. Same
             timestep, same schedule&mdash;now from the sampling side.
           </TipBlock>

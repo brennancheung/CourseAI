@@ -16,6 +16,7 @@ import {
   SummaryBlock,
   NextStepBlock,
   ReferencesBlock,
+  LessonLink,
 } from '@/components/lessons'
 import { CodeBlock } from '@/components/common/CodeBlock'
 import { ExternalLink } from 'lucide-react'
@@ -107,7 +108,7 @@ export function LatentConsistencyAndTurboLesson() {
           <div className="space-y-4">
             <p className="text-muted-foreground">
               <strong>Consistency distillation</strong> (from{' '}
-              <strong>Consistency Models</strong>). You trained a consistency
+              <LessonLink slug="consistency-models">Consistency Models</LessonLink>). You trained a consistency
               model by distilling from a pretrained teacher. The teacher takes
               one ODE step between adjacent timesteps. The consistency model
               learns to map both points to the same endpoint. The result:
@@ -138,7 +139,7 @@ export function LatentConsistencyAndTurboLesson() {
         </Row.Content>
         <Row.Aside>
           <ConceptBlock title="The Bridge">
-            <strong>Consistency Models</strong> ended with a promise:
+            <LessonLink slug="consistency-models">Consistency Models</LessonLink> ended with a promise:
             &ldquo;The next lesson takes this to real scale.&rdquo; You have
             the theory from toy 2D data. Now we see it work on actual images.
           </ConceptBlock>
@@ -246,7 +247,7 @@ export function LatentConsistencyAndTurboLesson() {
                   &bull; The training procedure is structurally identical—the
                   same distillation loss{' '}
                   <InlineMath math="\mathcal{L}_\text{CD}" /> you saw in{' '}
-                  <strong>Consistency Models</strong>
+                  <LessonLink slug="consistency-models">Consistency Models</LessonLink>
                 </li>
               </ul>
             </GradientCard>
@@ -305,7 +306,7 @@ export function LatentConsistencyAndTurboLesson() {
             LCM starts from a pretrained SD checkpoint and applies consistency
             distillation to it. Remove the distillation and you have the
             original SD model back. The architecture is unchanged—the
-            modularity from <strong>Stable Diffusion Architecture</strong>{' '}
+            modularity from <LessonLink slug="stable-diffusion-architecture">Stable Diffusion Architecture</LessonLink>{' '}
             is preserved.
           </WarningBlock>
         </Row.Aside>
@@ -685,7 +686,7 @@ image = pipe(
           />
           <div className="space-y-4">
             <p className="text-muted-foreground">
-              You saw in <strong>Consistency Models</strong> that 1-step
+              You saw in <LessonLink slug="consistency-models">Consistency Models</LessonLink> that 1-step
               consistency model output is soft. The images are recognizable but
               lack the crisp detail of multi-step diffusion. Why?
             </p>
@@ -1131,7 +1132,7 @@ image = pipe(
           />
           <div className="space-y-4">
             <p className="text-muted-foreground">
-              In <strong>Consistency Models</strong>, Level 3 of the
+              In <LessonLink slug="consistency-models">Consistency Models</LessonLink>, Level 3 of the
               &ldquo;three levels of speed&rdquo; was a single entry:
               consistency models. Now Level 3 has two sub-approaches:
             </p>

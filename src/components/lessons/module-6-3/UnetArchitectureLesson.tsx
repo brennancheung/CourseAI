@@ -17,6 +17,7 @@ import {
   NextStepBlock,
   ReferencesBlock,
   TryThisBlock,
+  LessonLink,
 } from '@/components/lessons'
 import { MermaidDiagram } from '@/components/widgets/MermaidDiagram'
 import { CodeBlock } from '@/components/common/CodeBlock'
@@ -69,10 +70,10 @@ export function UnetArchitectureLesson() {
         </Row.Content>
         <Row.Aside>
           <TipBlock title="What You Already Know">
-            In <strong>Autoencoders</strong>, you built an encoder-decoder that
+            In <LessonLink slug="autoencoders">Autoencoders</LessonLink>, you built an encoder-decoder that
             compressed images through a bottleneck. The reconstructions were
             blurry&mdash;fine details were lost through the bottleneck. Hold that
-            thought. Then in <strong>Build a Diffusion Model</strong>, you used a
+            thought. Then in <LessonLink slug="build-a-diffusion-model">Build a Diffusion Model</LessonLink>, you used a
             minimal U-Net with 2 skip connections and a simple timestep embedding.
             It generated recognizable MNIST digits. Now: why was it shaped like
             that?
@@ -107,7 +108,7 @@ export function UnetArchitectureLesson() {
           />
           <div className="space-y-4">
             <p className="text-muted-foreground">
-              In <strong>Build a Diffusion Model</strong>, the neural network was a
+              In <LessonLink slug="build-a-diffusion-model">Build a Diffusion Model</LessonLink>, the neural network was a
               black box. You fed it a noisy image and a timestep, and it predicted
               noise. It worked. But why was the network shaped the way it was?
             </p>
@@ -301,7 +302,7 @@ export function UnetArchitectureLesson() {
               <strong>Without skip connections</strong>, the decoder is just an
               autoencoder decoder. It must reconstruct all spatial detail from the
               8&times;8&times;512 bottleneck alone. Remember the blurry
-              reconstructions from <strong>Autoencoders</strong>? The fine
+              reconstructions from <LessonLink slug="autoencoders">Autoencoders</LessonLink>? The fine
               details&mdash;exact edge positions, textures, the precise boundary
               between a shoe and its background&mdash;are lost through the
               bottleneck. The decoder has to <em>hallucinate</em> them.
@@ -518,7 +519,7 @@ graph TD
           <div className="space-y-4">
             <p className="text-muted-foreground">
               This is the &ldquo;of course&rdquo; moment. Remember the denoising
-              trajectory from <strong>Sampling and Generation</strong>? You watched
+              trajectory from <LessonLink slug="sampling-and-generation">Sampling and Generation</LessonLink>? You watched
               structure emerge first and details appear later. The U-Net&rsquo;s
               multi-resolution processing is <em>why</em>.
             </p>
@@ -643,7 +644,7 @@ graph TD
               features at each level. The decoder expands in three steps,
               concatenating the saved encoder features at each matching resolution.
               The bottleneck sits at the bottom of the U. This is the pattern you
-              saw in <strong>Build a Diffusion Model</strong>&mdash;now you
+              saw in <LessonLink slug="build-a-diffusion-model">Build a Diffusion Model</LessonLink>&mdash;now you
               understand <em>why</em> each piece exists.
             </p>
           </div>

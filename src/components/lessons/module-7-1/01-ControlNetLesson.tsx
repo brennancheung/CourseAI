@@ -16,6 +16,7 @@ import {
   SummaryBlock,
   NextStepBlock,
   ReferencesBlock,
+  LessonLink,
 } from '@/components/lessons'
 import { CodeBlock } from '@/components/common/CodeBlock'
 import { MermaidDiagram } from '@/components/widgets/MermaidDiagram'
@@ -110,7 +111,7 @@ export function ControlNetLesson() {
           />
           <div className="space-y-4">
             <p className="text-muted-foreground">
-              From <strong>Text Conditioning &amp; Guidance</strong>: cross-attention
+              From <LessonLink slug="text-conditioning-and-guidance">Text Conditioning &amp; Guidance</LessonLink>: cross-attention
               uses <InlineMath math="Q" /> from spatial features and{' '}
               <InlineMath math="K" />, <InlineMath math="V" /> from text
               embeddings. Each spatial location independently attends to all text
@@ -389,7 +390,7 @@ d1 = decoder_block_1(cat(d2, e1 + z1))`}
         </Row.Content>
         <Row.Aside>
           <TipBlock title="Connection to Prior Knowledge">
-            In <strong>The U-Net Architecture</strong>, the decoder received{' '}
+            In <LessonLink slug="unet-architecture">The U-Net Architecture</LessonLink>, the decoder received{' '}
             <code className="text-xs">cat(up(b), e2)</code> at each skip
             connection. ControlNet changes this to{' '}
             <code className="text-xs">cat(up(b), e2 + zero_conv(c2))</code>.

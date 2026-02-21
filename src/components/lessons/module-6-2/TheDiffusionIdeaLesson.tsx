@@ -18,6 +18,7 @@ import {
   ComparisonRow,
   PhaseCard,
   ReferencesBlock,
+  LessonLink,
 } from '@/components/lessons'
 import { ExercisePanel } from '@/components/widgets/ExercisePanel'
 import { DiffusionNoiseWidget } from '@/components/widgets/DiffusionNoiseWidget'
@@ -221,7 +222,7 @@ export function TheDiffusionIdeaLesson() {
           />
           <div className="space-y-4">
             <p className="text-muted-foreground">
-              In <strong>Exploring Latent Spaces</strong>, you experienced
+              In <LessonLink slug="exploring-latent-spaces">Exploring Latent Spaces</LessonLink>, you experienced
               generation firsthand&mdash;sampling random vectors from a trained
               VAE and watching novel images appear. You also saw the quality
               ceiling: blurry, soft, recognizable but never sharp. That
@@ -264,7 +265,7 @@ export function TheDiffusionIdeaLesson() {
         </Row.Content>
         <Row.Aside>
           <InsightBlock title="The Bridge">
-            In <strong>Exploring Latent Spaces</strong>, you were told:
+            In <LessonLink slug="exploring-latent-spaces">Exploring Latent Spaces</LessonLink>, you were told:
             &ldquo;The VAE proved the concept. Diffusion delivers the
             quality.&rdquo; This lesson explains <em>how</em>.
           </InsightBlock>
@@ -756,7 +757,7 @@ export function TheDiffusionIdeaLesson() {
         </Row.Content>
         <Row.Aside>
           <InsightBlock title="The Pattern Continues">
-            In <strong>From Classification to Generation</strong> you learned:
+            In <LessonLink slug="from-classification-to-generation">From Classification to Generation</LessonLink> you learned:
             &ldquo;Same building blocks, different question.&rdquo; That mental
             model applies again. Conv layers, MSE loss, backprop&mdash;the
             revolution is in what you ask the network to do, not in how you

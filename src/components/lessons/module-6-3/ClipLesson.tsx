@@ -16,6 +16,7 @@ import {
   SummaryBlock,
   NextStepBlock,
   ReferencesBlock,
+  LessonLink,
 } from '@/components/lessons'
 import { CodeBlock } from '@/components/common/CodeBlock'
 import { MermaidDiagram } from '@/components/widgets/MermaidDiagram'
@@ -76,10 +77,10 @@ export function ClipLesson() {
         </Row.Content>
         <Row.Aside>
           <TipBlock title="What You Already Know">
-            In <strong>Embeddings and Position</strong>, you saw tokens cluster by
-            meaning in embedding space. In <strong>Exploring Latent Spaces</strong>,
+            In <LessonLink slug="embeddings-and-position">Embeddings and Position</LessonLink>, you saw tokens cluster by
+            meaning in embedding space. In <LessonLink slug="exploring-latent-spaces">Exploring Latent Spaces</LessonLink>,
             you saw images organize by similarity in VAE latent space. In{' '}
-            <strong>Queries and Keys</strong>, you used dot products to measure
+            <LessonLink slug="queries-and-keys">Queries and Keys</LessonLink>, you used dot products to measure
             similarity. All of these building blocks come together in CLIP.
           </TipBlock>
         </Row.Aside>
@@ -200,7 +201,7 @@ export function ClipLesson() {
                   <li>&bull; A CNN (ResNet) or Vision Transformer (ViT)</li>
                   <li>&bull; Input: an image (224&times;224 pixels)</li>
                   <li>&bull; Output: a single vector (e.g., 512 dimensions)</li>
-                  <li>&bull; Like the feature extractor from <strong>Transfer Learning</strong>&mdash;but with no classification head</li>
+                  <li>&bull; Like the feature extractor from <LessonLink slug="transfer-learning">Transfer Learning</LessonLink>&mdash;but with no classification head</li>
                 </ul>
               </GradientCard>
               <GradientCard title="Text Encoder" color="violet">
@@ -277,7 +278,7 @@ graph LR
             </p>
             <p className="text-muted-foreground">
               This is the same principle you experienced in the EmbeddingSpaceExplorer
-              from <strong>Embeddings and Position</strong>&mdash;but now{' '}
+              from <LessonLink slug="embeddings-and-position">Embeddings and Position</LessonLink>&mdash;but now{' '}
               <strong>both text and images</strong> live in the same space.
               &ldquo;Dog&rdquo; the word and a photo of a dog are neighbors.
             </p>
@@ -552,7 +553,7 @@ graph LR
             </div>
             <p className="text-xs text-muted-foreground text-center mt-1">
               Bright diagonal = matching pairs (high similarity). Dark off-diagonal = non-matching pairs.
-              Same shape as the attention weight matrices from <strong>Queries and Keys</strong>.
+              Same shape as the attention weight matrices from <LessonLink slug="queries-and-keys">Queries and Keys</LessonLink>.
             </p>
             <p className="text-muted-foreground">
               <strong>The goal of training: make the diagonal bright and everything
@@ -673,7 +674,7 @@ graph LR
         </Row.Content>
         <Row.Aside>
           <ConceptBlock title="The Temperature Parameter">
-            In <strong>What Is a Language Model</strong>, you divided logits by
+            In <LessonLink slug="what-is-a-language-model">What Is a Language Model</LessonLink>, you divided logits by
             temperature&mdash;higher T meant a <em>softer</em> distribution.
             Here, <InlineMath math="e^{\tau}" /> <em>multiplies</em> the
             logits, so higher <InlineMath math="\tau" /> means a{' '}
@@ -899,7 +900,7 @@ loss   = (loss_i + loss_t) / 2`}
           />
           <div className="space-y-4">
             <p className="text-muted-foreground">
-              In <strong>Transfer Learning</strong>, you used a pretrained ResNet
+              In <LessonLink slug="transfer-learning">Transfer Learning</LessonLink>, you used a pretrained ResNet
               on a new dataset by replacing the classification head and fine-tuning.
               Feature extraction required retraining the head on the new classes.
               CLIP does not even need that.
@@ -925,7 +926,7 @@ loss   = (loss_i + loss_t) / 2`}
         </Row.Content>
         <Row.Aside>
           <InsightBlock title="Beyond Transfer Learning">
-            In <strong>Transfer Learning</strong>, you replaced the classification
+            In <LessonLink slug="transfer-learning">Transfer Learning</LessonLink>, you replaced the classification
             head and retrained on the new dataset. CLIP skips both steps. The
             shared embedding space already encodes the relationship between
             visual concepts and their text descriptions.

@@ -16,6 +16,7 @@ import {
   GradientCard,
   ComparisonRow,
   PhaseCard,
+  LessonLink,
 } from '@/components/lessons'
 import { CodeBlock } from '@/components/common/CodeBlock'
 import { ExternalLink } from 'lucide-react'
@@ -153,7 +154,7 @@ export function ExploringLatentSpacesLesson() {
           />
           <div className="space-y-4">
             <p className="text-muted-foreground">
-              In <strong>From Classification to Generation</strong>, you asked
+              In <LessonLink slug="from-classification-to-generation">From Classification to Generation</LessonLink>, you asked
               the question: &ldquo;What does it mean to create?&rdquo; Now you
               have an answer. Sample a random vector{' '}
               <InlineMath math="z" /> from{' '}
@@ -283,8 +284,8 @@ show_grid(images, nrow=5)`}
           <div className="space-y-4">
             <p className="text-muted-foreground">
               You have a smooth latent space with roads connecting everything
-              (the city map analogy from <strong>Variational
-              Autoencoders</strong>). What happens when you <em>walk</em> along
+              (the city map analogy from <LessonLink slug="variational-autoencoders">Variational
+              Autoencoders</LessonLink>). What happens when you <em>walk</em> along
               those roads? You get <strong>interpolation</strong>&mdash;a
               smooth transition between two images that passes through coherent
               intermediate forms.

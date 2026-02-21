@@ -18,6 +18,7 @@ import {
   ModuleCompleteBlock,
   NextStepBlock,
   ReferencesBlock,
+  LessonLink,
 } from '@/components/lessons'
 import { ExternalLink } from 'lucide-react'
 import 'katex/dist/katex.min.css'
@@ -818,7 +819,7 @@ export function FlowMatchingLesson() {
               <li>
                 From noise to score:{' '}
                 <InlineMath math="\text{score} = -\epsilon / \sqrt{1-\bar\alpha_t}" />{' '}
-                (from <strong>Score Functions &amp; SDEs</strong>)
+                (from <LessonLink slug="score-functions-and-sdes">Score Functions &amp; SDEs</LessonLink>)
               </li>
               <li>
                 From velocity to noise:{' '}

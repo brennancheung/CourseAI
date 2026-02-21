@@ -16,6 +16,7 @@ import {
   NextStepBlock,
   ReferencesBlock,
   ModuleCompleteBlock,
+  LessonLink,
 } from '@/components/lessons'
 import { CodeBlock } from '@/components/common/CodeBlock'
 import { MermaidDiagram } from '@/components/widgets/MermaidDiagram'
@@ -111,7 +112,7 @@ export function FromPixelsToLatentsLesson() {
           />
           <div className="space-y-4">
             <p className="text-muted-foreground">
-              In <strong>Variational Autoencoders</strong>, you built a VAE that
+              In <LessonLink slug="variational-autoencoders">Variational Autoencoders</LessonLink>, you built a VAE that
               learned to compress Fashion-MNIST images into a 32-number latent
               code and reconstruct them. Remember the analogy: describing a shoe
               in 32 words instead of listing 784 pixel values. The encoder
@@ -138,8 +139,8 @@ export function FromPixelsToLatentsLesson() {
         <Row.Content>
           <div className="space-y-4">
             <p className="text-muted-foreground">
-              The key property you proved in <strong>Exploring Latent
-              Spaces</strong>: you interpolated between a T-shirt and a sneaker
+              The key property you proved in <LessonLink slug="exploring-latent-spaces">Exploring Latent
+              Spaces</LessonLink>: you interpolated between a T-shirt and a sneaker
               in latent space and got coherent intermediate images at every
               step. You sampled random points and got plausible Fashion-MNIST
               items. The KL regularization organized the space so that{' '}
@@ -175,7 +176,7 @@ export function FromPixelsToLatentsLesson() {
           />
           <div className="space-y-4">
             <p className="text-muted-foreground">
-              In <strong>Build a Diffusion Model</strong>, you generated 64
+              In <LessonLink slug="build-a-diffusion-model">Build a Diffusion Model</LessonLink>, you generated 64
               tiny 28×28 MNIST images. It took minutes. You calculated what
               512×512 would cost and the numbers were terrifying: 512×512 has
               roughly 335× more pixels than 28×28. If your model took T minutes
@@ -598,7 +599,7 @@ generated_image = vae.decode(denoised_latent)  # shape: (1, 3, 512, 512)`}
               individual pixel noise patterns.
             </p>
             <p className="text-muted-foreground">
-              You proved in <strong>Exploring Latent Spaces</strong> that
+              You proved in <LessonLink slug="exploring-latent-spaces">Exploring Latent Spaces</LessonLink> that
               interpolation in latent space produces coherent intermediate
               images. That continuity means the denoising trajectory stays in
               semantically meaningful territory at every step. The VAE built

@@ -1,4 +1,5 @@
 import { ReactNode } from 'react'
+import Link from 'next/link'
 import {
   Target,
   Fence,
@@ -677,6 +678,28 @@ export function ModuleCompleteBlock({
         Next up: <strong>Module {nextModule} — {nextTitle}</strong>
       </p>
     </div>
+  )
+}
+
+// =============================================================================
+// LESSON LINK
+// Inline link to another lesson in the course
+// =============================================================================
+
+interface LessonLinkProps {
+  /** Lesson slug (e.g., "clip", "transfer-learning") */
+  slug: string
+  children: ReactNode
+}
+
+export function LessonLink({ slug, children }: LessonLinkProps) {
+  return (
+    <Link
+      href={`/app/lesson/${slug}`}
+      className="font-semibold text-primary hover:underline"
+    >
+      {children}
+    </Link>
   )
 }
 

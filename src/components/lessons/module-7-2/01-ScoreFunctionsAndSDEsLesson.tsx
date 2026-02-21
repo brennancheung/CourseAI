@@ -16,6 +16,7 @@ import {
   SummaryBlock,
   NextStepBlock,
   ReferencesBlock,
+  LessonLink,
 } from '@/components/lessons'
 import { ExternalLink } from 'lucide-react'
 import 'katex/dist/katex.min.css'
@@ -117,7 +118,7 @@ export function ScoreFunctionsAndSDEsLesson() {
             </p>
             <p className="text-muted-foreground">
               <strong>The ODE perspective.</strong> In{' '}
-              <strong>Samplers and Efficiency</strong>, you learned that
+              <LessonLink slug="samplers-and-efficiency">Samplers and Efficiency</LessonLink>, you learned that
               DDIM is approximately Euler&rsquo;s method on the diffusion ODE.
               The model&rsquo;s noise predictions define a trajectory from noise
               to data. Different samplers follow that trajectory with different
@@ -680,8 +681,8 @@ export function ScoreFunctionsAndSDEsLesson() {
             </ul>
             <p className="text-muted-foreground">
               Let&rsquo;s see this concretely. The DDPM reverse step removes
-              noise with this term (from <strong>Sampling and
-              Generation</strong>):
+              noise with this term (from <LessonLink slug="sampling-and-generation">Sampling and
+              Generation</LessonLink>):
             </p>
             <div className="py-3 px-6 bg-muted/50 rounded-lg space-y-2">
               <p className="text-xs text-muted-foreground mb-1">
@@ -1042,7 +1043,7 @@ export function ScoreFunctionsAndSDEsLesson() {
             </p>
             <p className="text-muted-foreground">
               This <strong>IS</strong> the ODE from{' '}
-              <strong>Samplers and Efficiency</strong>. &ldquo;DDIM is
+              <LessonLink slug="samplers-and-efficiency">Samplers and Efficiency</LessonLink>. &ldquo;DDIM is
               approximately Euler&rsquo;s method on the probability flow
               ODE&rdquo;—now you know exactly what that ODE is.
             </p>
@@ -1094,14 +1095,14 @@ export function ScoreFunctionsAndSDEsLesson() {
             <p className="text-sm text-muted-foreground">
               The student already knows both: DDPM vs DDIM. Same landscape,
               different lens—the callback from{' '}
-              <strong>Samplers and Efficiency</strong>.
+              <LessonLink slug="samplers-and-efficiency">Samplers and Efficiency</LessonLink>.
             </p>
           </div>
         </Row.Content>
         <Row.Aside>
           <TipBlock title="Same Landscape, Different Lens">
             This is the &ldquo;same vehicle, different route&rdquo; analogy
-            from <strong>Samplers and Efficiency</strong>, formalized. DDPM
+            from <LessonLink slug="samplers-and-efficiency">Samplers and Efficiency</LessonLink>, formalized. DDPM
             (stochastic) and DDIM (deterministic) were always the reverse
             SDE and probability flow ODE. Now you know their proper names.
           </TipBlock>
@@ -1142,7 +1143,7 @@ export function ScoreFunctionsAndSDEsLesson() {
                 <p>
                   DPM-Solver++ is described as a &ldquo;higher-order ODE solver
                   for the probability flow ODE.&rdquo; Based on what you know
-                  from <strong>Samplers and Efficiency</strong>, what
+                  from <LessonLink slug="samplers-and-efficiency">Samplers and Efficiency</LessonLink>, what
                   does &ldquo;higher-order&rdquo; mean here, and why does it
                   help?
                 </p>
@@ -1155,7 +1156,7 @@ export function ScoreFunctionsAndSDEsLesson() {
                     nearby timesteps to estimate how the trajectory curves,
                     enabling larger steps with fewer evaluations. This is the
                     same insight from{' '}
-                    <strong>Samplers and Efficiency</strong>—DPM-Solver was
+                    <LessonLink slug="samplers-and-efficiency">Samplers and Efficiency</LessonLink>—DPM-Solver was
                     solving the probability flow ODE all along. You just did
                     not have the vocabulary for it yet.
                   </p>

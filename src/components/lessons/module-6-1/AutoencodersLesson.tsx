@@ -16,6 +16,7 @@ import {
   GradientCard,
   ComparisonRow,
   ReferencesBlock,
+  LessonLink,
 } from '@/components/lessons'
 import { AutoencoderBottleneckWidget } from '@/components/widgets/AutoencoderBottleneckWidget'
 import { ExercisePanel } from '@/components/widgets/ExercisePanel'
@@ -104,7 +105,7 @@ export function AutoencodersLesson() {
         <Row.Content>
           <div className="space-y-4">
             <p className="text-muted-foreground">
-              In <strong>From Classification to Generation</strong>, you learned what
+              In <LessonLink slug="from-classification-to-generation">From Classification to Generation</LessonLink>, you learned what
               generation means: sampling from a learned distribution of data. You
               understand the goal, but you have no idea how a neural network could
               actually learn a distribution over 784-dimensional images. This lesson
@@ -280,7 +281,7 @@ export function AutoencodersLesson() {
         <Row.Content>
           <div className="space-y-4">
             <p className="text-muted-foreground">
-              This connects directly to <strong>From Classification to Generation</strong>:
+              This connects directly to <LessonLink slug="from-classification-to-generation">From Classification to Generation</LessonLink>:
               the bottleneck forces structure learning. The network cannot memorize 60,000
               training images in 32 numbers. It must learn what shoes have in common&mdash;shape,
               sole, opening&mdash;and represent each shoe as a combination of those learned
@@ -719,7 +720,7 @@ for epoch in range(num_epochs):
           />
           <div className="space-y-4 mt-4">
             <p className="text-muted-foreground">
-              Remember from <strong>From Classification to Generation</strong>:
+              Remember from <LessonLink slug="from-classification-to-generation">From Classification to Generation</LessonLink>:
               generation means sampling from a learned distribution. The
               autoencoder&apos;s latent space is not a distribution you can sample
               from. It is a scattered collection of points with gaps between them.
