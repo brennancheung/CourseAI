@@ -146,6 +146,100 @@ const architectureAnalysis: CurriculumNode = {
 }
 
 /**
+ * Image Generation Landscape
+ *
+ * Module 8.4: Image Generation Landscape
+ * 1. Open Weight Image Generation Models
+ */
+const imageGenerationLandscape: CurriculumNode = {
+  slug: 'image-generation-landscape',
+  title: 'Image Generation Landscape',
+  children: [
+    {
+      slug: 'open-weight-image-gen',
+      title: 'The Open Weight Image Generation Landscape',
+      description:
+        'A comprehensive survey of every major open weight image generation model from 2022 to 2025\u2014organized by architecture, text encoding, and training objective into a navigable taxonomy with a reference comparison table.',
+      duration: '45-60 min',
+      category: 'Image Generation Landscape',
+      objectives: [
+        'Place any open weight image generation model into the architectural taxonomy by identifying its backbone type (U-Net, DiT, MMDiT, S3-DiT)',
+        'Trace the three independent evolution lines: backbone (U-Net \u2192 DiT \u2192 MMDiT \u2192 S3-DiT), text encoding (CLIP \u2192 multi-encoder \u2192 LLM), training objective (DDPM \u2192 flow matching \u2192 distillation)',
+        'Identify the key innovation each model contributed to the field and which innovations propagated to other models',
+        'Use the five-question framework to place new model announcements into the landscape',
+        'Explain why ecosystem maturity can matter as much as architectural quality for practical adoption',
+      ],
+      skills: [
+        'model-landscape-navigation',
+        'architecture-taxonomy',
+        'innovation-attribution',
+        'model-lineage-tracing',
+        'ecosystem-evaluation',
+      ],
+      prerequisites: [
+        'sdxl',
+        'diffusion-transformers',
+        'sd3-and-flux',
+        'z-image',
+        'flow-matching',
+        'consistency-models',
+      ],
+    },
+  ],
+}
+
+/**
+ * Preference Optimization Deep Dives
+ *
+ * Module 8.5: Preference Optimization Deep Dives
+ * 1. Direct Preference Optimization
+ */
+const preferenceOptimizationDeepDives: CurriculumNode = {
+  slug: 'preference-optimization-deep-dives',
+  title: 'Preference Optimization Deep Dives',
+  children: [
+    {
+      slug: 'direct-preference-optimization',
+      title: 'Direct Preference Optimization',
+      description:
+        'Deriving the DPO loss from first principles\u2014starting from the RLHF objective, finding the closed-form optimal policy, and substituting into the Bradley-Terry preference model to eliminate the reward model entirely.',
+      duration: '40 min',
+      category: 'Preference Optimization Deep Dives',
+      objectives: [
+        'State the Bradley-Terry preference model and explain how it converts reward differences into preference probabilities',
+        'Write the RLHF objective (KL-constrained reward maximization) and explain each term',
+        'Derive the closed-form optimal policy and explain why the reference model appears in it',
+        'Trace the substitution that produces the DPO loss and explain why it is not an approximation',
+        'Walk through a numerical DPO training step with specific log-probabilities',
+        'Explain why the reference model is structurally essential (not optional regularization)',
+        'Describe the implicit reward model insight\u2014any policy paired with a reference defines a reward',
+      ],
+      skills: [
+        'bradley-terry-model',
+        'dpo-derivation',
+        'dpo-loss-function',
+        'implicit-reward-model',
+        'preference-optimization-math',
+      ],
+      prerequisites: ['rlhf-and-alignment', 'alignment-techniques-landscape'],
+      exercise: {
+        constraints: [
+          'Focus on understanding the derivation before implementing',
+          'Use small models (GPT-2 small) for tractable training',
+          'Exercises are cumulative\u2014each builds on the previous',
+        ],
+        steps: [
+          'Verify the DPO loss formula by hand on pre-computed log-probabilities',
+          'Implement the DPO loss function in PyTorch',
+          'Train a small model with DPO on preference pairs',
+          'Extract and analyze the implicit reward model',
+        ],
+      },
+    },
+  ],
+}
+
+/**
  * Special Topics
  *
  * Series 8: Standalone deep dives into interesting models, techniques,
@@ -161,5 +255,7 @@ export const specialTopics: CurriculumNode = {
     visionAndVisionLanguage,
     safetyAndContentModeration,
     architectureAnalysis,
+    imageGenerationLandscape,
+    preferenceOptimizationDeepDives,
   ],
 }

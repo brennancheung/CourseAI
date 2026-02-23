@@ -53,6 +53,31 @@ function TreeNode({ node, depth, currentSlug, expandedSlugs, onToggle }: TreeNod
     )
   }
 
+  // Single-lesson group = render the lesson directly, skip the dropdown
+  const onlyChild = node.children?.length === 1 ? node.children[0] : null
+  if (onlyChild && isLesson(onlyChild)) {
+    const isChildCurrent = onlyChild.slug === currentSlug
+    return (
+      <Link
+        href={`/app/lesson/${onlyChild.slug}`}
+        className={cn(
+          'flex items-center gap-2 py-1.5 px-2 rounded-md text-sm transition-colors',
+          depthStyles.text,
+          isChildCurrent
+            ? 'bg-primary/10 text-foreground font-medium'
+            : 'text-muted-foreground hover:bg-muted hover:text-foreground'
+        )}
+        style={{ paddingLeft: `${depth * 12 + 8}px` }}
+      >
+        <span className={cn(
+          'w-1.5 h-1.5 rounded-full flex-shrink-0',
+          isChildCurrent ? 'bg-primary' : 'bg-muted-foreground/30'
+        )} />
+        <span className="truncate">{onlyChild.title}</span>
+      </Link>
+    )
+  }
+
   // Group node = collapsible header
   return (
     <div>

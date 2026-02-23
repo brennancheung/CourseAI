@@ -48,6 +48,8 @@ Take a software engineer from "uses AI tools" to "understands how models actuall
 | 8.1 | Vision & Vision-Language Models | 2 of 2 | complete |
 | 8.2 | Safety & Content Moderation | 1 of 1 | complete |
 | 8.3 | Architecture Analysis | 1 of ? | active |
+| 8.4 | Image Generation Landscape | 1 of 1 | complete |
+| 8.5 | Preference Optimization Deep Dives | 1 of 1 | complete |
 
 ## Progression
 Series 1 (Foundations) establishes the complete path from "what is learning?" through linear models, neural networks, and training. Series 2 (PyTorch) bridges theory to practice — hands-on implementation right after the concepts. Series 3 (CNNs) covers convolutional architectures with PyTorch in hand, needed for understanding U-Net in Stable Diffusion. Series 4-7 cover the target domains: LLMs and generative models. Series 8 (Special Topics) is an open-ended catch-all for standalone deep dives into any topic worth exploring.
