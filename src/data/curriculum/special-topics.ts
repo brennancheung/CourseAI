@@ -66,6 +66,44 @@ const visionAndVisionLanguage: CurriculumNode = {
 }
 
 /**
+ * Safety & Content Moderation
+ *
+ * Module 8.2: Safety & Content Moderation
+ * 1. Image Generation Safety
+ */
+const safetyAndContentModeration: CurriculumNode = {
+  slug: 'safety-and-content-moderation',
+  title: 'Safety & Content Moderation',
+  children: [
+    {
+      slug: 'image-generation-safety',
+      title: 'Image Generation Safety',
+      description:
+        'How production image generation systems prevent harmful content through a multi-layered defense stack\u2014from keyword blocklists through inference-time guidance to model-level concept erasure.',
+      duration: '35 min',
+      category: 'Safety & Content Moderation',
+      objectives: [
+        'Explain the multi-layered safety stack pattern and why no single technique is sufficient',
+        'Describe how prompt-level filtering works: keyword blocklists, text embedding classifiers, and LLM-based prompt analysis',
+        'Trace how Safe Latent Diffusion adds a safety guidance term to the CFG formula to steer generation away from unsafe content',
+        'Explain how the Stable Diffusion safety checker uses CLIP cosine similarity against 17 concept embeddings with thresholds',
+        'Describe how Erased Stable Diffusion (ESD) uses CFG-style guidance at training time to remove concepts from model weights',
+        'Compare how DALL-E 3, Midjourney, and Stability AI compose their safety stacks differently',
+      ],
+      skills: [
+        'safety-stack-pattern',
+        'prompt-filtering',
+        'safe-latent-diffusion',
+        'clip-safety-checker',
+        'concept-erasure',
+        'defense-in-depth',
+      ],
+      prerequisites: ['clip', 'text-conditioning-and-guidance'],
+    },
+  ],
+}
+
+/**
  * Special Topics
  *
  * Series 8: Standalone deep dives into interesting models, techniques,
@@ -77,5 +115,5 @@ export const specialTopics: CurriculumNode = {
   icon: 'Telescope',
   description:
     'Standalone deep dives into modern vision models, vision-language models, and other interesting topics\u2014self-contained lessons that build on the full course',
-  children: [visionAndVisionLanguage],
+  children: [visionAndVisionLanguage, safetyAndContentModeration],
 }
