@@ -104,6 +104,48 @@ const safetyAndContentModeration: CurriculumNode = {
 }
 
 /**
+ * Architecture Analysis
+ *
+ * Module 8.3: Architecture Analysis
+ * 1. Nano Banana Pro (Gemini 3 Pro Image)
+ */
+const architectureAnalysis: CurriculumNode = {
+  slug: 'architecture-analysis',
+  title: 'Architecture Analysis',
+  children: [
+    {
+      slug: 'nano-banana-pro',
+      title: 'Nano Banana Pro',
+      description:
+        'How Google\u2019s Gemini 3 Pro image generator likely works\u2014and why autoregressive generation is a viable alternative to diffusion that excels at text rendering. Constructs an informed architectural hypothesis from observable behavior, disclosed fragments, and published precedents.',
+      duration: '35 min',
+      category: 'Architecture Analysis',
+      objectives: [
+        'Explain how discrete visual tokenization (VQ-VAE/ViT-VQGAN) maps images to integer tokens, bridging from continuous VAE latent spaces',
+        'Describe autoregressive image generation: the same predict-next-token loop as GPT, applied to visual tokens',
+        'Articulate why autoregressive generation inherently excels at text rendering while diffusion struggles',
+        'Construct a plausible architectural hypothesis for Nano Banana Pro from disclosed facts, observable behavior, and published precedents',
+        'Explain why the mandatory thinking step is architecturally motivated for autoregressive generation',
+      ],
+      skills: [
+        'discrete-visual-tokenization',
+        'autoregressive-image-generation',
+        'architectural-analysis',
+        'vq-vae-codebook',
+        'paradigm-comparison',
+      ],
+      prerequisites: [
+        'building-nanogpt',
+        'variational-autoencoders',
+        'sampling-and-generation',
+        'text-conditioning-and-guidance',
+        'diffusion-transformers',
+      ],
+    },
+  ],
+}
+
+/**
  * Special Topics
  *
  * Series 8: Standalone deep dives into interesting models, techniques,
@@ -115,5 +157,9 @@ export const specialTopics: CurriculumNode = {
   icon: 'Telescope',
   description:
     'Standalone deep dives into modern vision models, vision-language models, and other interesting topics\u2014self-contained lessons that build on the full course',
-  children: [visionAndVisionLanguage, safetyAndContentModeration],
+  children: [
+    visionAndVisionLanguage,
+    safetyAndContentModeration,
+    architectureAnalysis,
+  ],
 }
