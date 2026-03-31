@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Textual inversion training flow</title>
+<style>
+:root {
+  --bg-primary: #ffffff;
+  --bg-secondary: #f5f5f0;
+  --text-primary: #1a1a1a;
+  --text-secondary: #6b6b65;
+  --text-tertiary: #9c9a92;
+  --border-default: rgba(0,0,0,0.15);
+  --border-hover: rgba(0,0,0,0.3);
+  --font-sans: system-ui, -apple-system, "Segoe UI", sans-serif;
+
+  --purple-50: #EEEDFE; --purple-100: #CECBF6; --purple-200: #AFA9EC;
+  --purple-400: #7F77DD; --purple-600: #534AB7; --purple-800: #3C3489; --purple-900: #26215C;
+  --coral-50: #FAECE7; --coral-100: #F5C4B3; --coral-200: #F0997B;
+  --coral-400: #D85A30; --coral-600: #993C1D; --coral-800: #712B13; --coral-900: #4A1B0C;
+  --gray-50: #F1EFE8; --gray-100: #D3D1C7; --gray-200: #B4B2A9;
+  --gray-400: #888780; --gray-600: #5F5E5A; --gray-800: #444441; --gray-900: #2C2C2A;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg-primary: #1a1a1a;
+    --bg-secondary: #2c2c2a;
+    --text-primary: #e8e6df;
+    --text-secondary: #9c9a92;
+    --text-tertiary: #6b6b65;
+    --border-default: rgba(255,255,255,0.15);
+    --border-hover: rgba(255,255,255,0.3);
+  }
+}
+
+body {
+  margin: 0;
+  padding: 20px;
+  background: var(--bg-primary);
+  font-family: var(--font-sans);
+}
+
+.t  { font-family: var(--font-sans); font-size: 14px; font-weight: 400; fill: var(--text-primary); }
+.ts { font-family: var(--font-sans); font-size: 12px; font-weight: 400; fill: var(--text-secondary); }
+.th { font-family: var(--font-sans); font-size: 14px; font-weight: 500; fill: var(--text-primary); }
+.box { fill: var(--bg-secondary); stroke: var(--border-default); }
+.arr { stroke: var(--text-tertiary); stroke-width: 1.5; }
+.node { cursor: pointer; }
+.node:hover { opacity: 0.8; }
+.node:active { opacity: 0.65; }
+.node:focus-visible { outline: 2px solid var(--purple-400); outline-offset: 2px; }
+
+.c-purple > rect { fill: var(--purple-50); stroke: var(--purple-600); }
+.c-purple > .th  { fill: var(--purple-800); }
+.c-purple > .ts  { fill: var(--purple-600); }
+
+.c-coral > rect { fill: var(--coral-50); stroke: var(--coral-600); }
+.c-coral > .th  { fill: var(--coral-800); }
+.c-coral > .ts  { fill: var(--coral-600); }
+
+.c-gray > rect { fill: var(--gray-50); stroke: var(--gray-600); }
+.c-gray > .th  { fill: var(--gray-800); }
+.c-gray > .ts  { fill: var(--gray-600); }
+
+@media (prefers-color-scheme: dark) {
+  .c-purple > rect { fill: var(--purple-900); stroke: var(--purple-200); }
+  .c-purple > .th  { fill: var(--purple-100); }
+  .c-purple > .ts  { fill: var(--purple-200); }
+
+  .c-coral > rect { fill: var(--coral-900); stroke: var(--coral-200); }
+  .c-coral > .th  { fill: var(--coral-100); }
+  .c-coral > .ts  { fill: var(--coral-200); }
+
+  .c-gray > rect { fill: var(--gray-900); stroke: var(--gray-200); }
+  .c-gray > .th  { fill: var(--gray-100); }
+  .c-gray > .ts  { fill: var(--gray-200); }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .gradient-flow {
+    stroke-dasharray: 6 4;
+    animation: flow 1.2s linear infinite;
+  }
+}
+@keyframes flow { to { stroke-dashoffset: -20; } }
+</style>
+</head>
+<body>
+<svg xmlns="http://www.w3.org/2000/svg" width="100%" viewBox="0 0 680 280">
+<defs>
+  <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5"
+          markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke"
+          stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+  <marker id="arrow-purple" viewBox="0 0 10 10" refX="8" refY="5"
+          markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M2 1L8 5L2 9" fill="none" stroke="var(--purple-400)"
+          stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+</defs>
+
+<!-- ===== FORWARD PATH LABEL ===== -->
+<text class="ts" x="340" y="28" text-anchor="middle" dominant-baseline="central" opacity="0.5">forward pass</text>
+
+<!-- ===== NODE 1: Embedding lookup (purple, trainable) ===== -->
+<!-- 16 chars "Embedding lookup" x 8 = 128. subtitle "ONE row TRAINABLE" 17 x 6.5 = 110. box = max(128,110)+48 = 176. Use 152, centered at x=40+76=116 -->
+<g class="node c-purple" data-action="prompt" data-target="How does textual inversion learn a new embedding?">
+  <rect x="40" y="48" width="108" height="56" rx="8" stroke-width="0.5"/>
+  <text class="th" x="94" y="68" text-anchor="middle" dominant-baseline="central">Embedding</text>
+  <text class="ts" x="94" y="88" text-anchor="middle" dominant-baseline="central">1 row trainable</text>
+</g>
+
+<!-- FORWARD ARROW: Embedding → CLIP -->
+<line x1="152" y1="76" x2="172" y2="76" class="arr" marker-end="url(#arrow)"/>
+
+<!-- ===== NODE 2: CLIP transformer (gray, frozen) ===== -->
+<g class="node c-gray" data-action="prompt" data-target="How does the CLIP text encoder work?">
+  <rect x="178" y="48" width="108" height="56" rx="8" stroke-width="0.5"/>
+  <text class="th" x="232" y="68" text-anchor="middle" dominant-baseline="central">CLIP encoder</text>
+  <text class="ts" x="232" y="88" text-anchor="middle" dominant-baseline="central">frozen</text>
+</g>
+
+<!-- FORWARD ARROW: CLIP → Cross-attn -->
+<line x1="290" y1="76" x2="310" y2="76" class="arr" marker-end="url(#arrow)"/>
+
+<!-- Tensor shape label on CLIP→Cross-attn arrow -->
+<text class="ts" x="300" y="62" text-anchor="middle" dominant-baseline="central">[77, 768]</text>
+
+<!-- ===== NODE 3: Cross-attention K/V (gray, frozen) ===== -->
+<g class="node c-gray" data-action="prompt" data-target="How does cross-attention inject text conditioning?">
+  <rect x="316" y="48" width="108" height="56" rx="8" stroke-width="0.5"/>
+  <text class="th" x="370" y="68" text-anchor="middle" dominant-baseline="central">Cross-attn K/V</text>
+  <text class="ts" x="370" y="88" text-anchor="middle" dominant-baseline="central">frozen</text>
+</g>
+
+<!-- FORWARD ARROW: Cross-attn → U-Net -->
+<line x1="428" y1="76" x2="448" y2="76" class="arr" marker-end="url(#arrow)"/>
+
+<!-- ===== NODE 4: U-Net denoise (gray, frozen) ===== -->
+<g class="node c-gray" data-action="prompt" data-target="How does the U-Net denoise in diffusion models?">
+  <rect x="454" y="48" width="108" height="56" rx="8" stroke-width="0.5"/>
+  <text class="th" x="508" y="68" text-anchor="middle" dominant-baseline="central">U-Net denoise</text>
+  <text class="ts" x="508" y="88" text-anchor="middle" dominant-baseline="central">frozen</text>
+</g>
+
+<!-- FORWARD ARROW: U-Net → MSE Loss -->
+<line x1="566" y1="76" x2="586" y2="76" class="arr" marker-end="url(#arrow)"/>
+
+<!-- ===== NODE 5: MSE Loss (coral) ===== -->
+<g class="node c-coral" data-action="prompt" data-target="How is the MSE loss computed in diffusion training?">
+  <rect x="592" y="56" width="56" height="40" rx="8" stroke-width="0.5"/>
+  <text class="th" x="620" y="76" text-anchor="middle" dominant-baseline="central">Loss</text>
+</g>
+
+<!-- ===== BACKWARD / GRADIENT PATH ===== -->
+<!-- Curved path going below all nodes from Loss back to Embedding -->
+<path d="M 620 96 L 620 148 L 94 148 L 94 108"
+      fill="none" stroke="var(--purple-400)" stroke-width="1.5"
+      stroke-dasharray="6 4" class="gradient-flow"
+      marker-end="url(#arrow-purple)"/>
+
+<!-- Gradient ticks at each frozen node (small upward stubs from the bottom path) -->
+<line x1="508" y1="148" x2="508" y2="108" stroke="var(--purple-400)" stroke-width="0.8" stroke-dasharray="3 3" opacity="0.5"/>
+<line x1="370" y1="148" x2="370" y2="108" stroke="var(--purple-400)" stroke-width="0.8" stroke-dasharray="3 3" opacity="0.5"/>
+<line x1="232" y1="148" x2="232" y2="108" stroke="var(--purple-400)" stroke-width="0.8" stroke-dasharray="3 3" opacity="0.5"/>
+
+<!-- Gradient path label -->
+<text class="ts" x="358" y="170" text-anchor="middle" dominant-baseline="central" opacity="0.5">gradient backpropagation</text>
+
+<!-- ===== LEGEND ===== -->
+<line x1="180" y1="220" x2="210" y2="220" class="arr" marker-end="url(#arrow)"/>
+<text class="ts" x="218" y="220" dominant-baseline="central" opacity="0.6">forward pass (all layers)</text>
+
+<line x1="180" y1="242" x2="210" y2="242" stroke="var(--purple-400)" stroke-width="1.5" stroke-dasharray="6 4" marker-end="url(#arrow-purple)"/>
+<text class="ts" x="218" y="242" dominant-baseline="central" opacity="0.6">gradient flows back (only embedding updates)</text>
+
+</svg>
+<script>
+document.querySelectorAll('.node[data-action]').forEach(node => {
+  node.setAttribute('tabindex', '0');
+  node.setAttribute('role', 'button');
+  node.setAttribute('aria-label', node.querySelector('.th')?.textContent || 'Diagram node');
+
+  function handleActivation() {
+    const action = node.dataset.action;
+    const target = node.dataset.target;
+    const label = node.querySelector('.th')?.textContent || '';
+    const detail = { action, target, label, node };
+
+    document.dispatchEvent(new CustomEvent('diagram-node-click', { detail }));
+
+    switch (action) {
+      case 'navigate':
+        if (target) window.location.href = target;
+        break;
+      case 'open':
+        if (target) window.open(target, '_blank');
+        break;
+      case 'prompt':
+        console.log(`[diagram] prompt: "${target || label}"`);
+        break;
+      case 'emit':
+        break;
+    }
+  }
+
+  node.addEventListener('click', handleActivation);
+  node.addEventListener('keydown', e => {
+    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleActivation(); }
+  });
+});
+</script>
+</body>
+</html>

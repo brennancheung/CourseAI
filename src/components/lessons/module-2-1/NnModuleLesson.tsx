@@ -16,7 +16,8 @@ import {
   NextStepBlock,
 } from '@/components/lessons'
 import { CodeBlock } from '@/components/common/CodeBlock'
-import { MermaidDiagram } from '@/components/widgets/MermaidDiagram'
+import { NnModuleNetworkDiagram } from './NnModuleNetworkDiagram'
+import { NnModuleResidualDiagram } from './NnModuleResidualDiagram'
 import { ExternalLink } from 'lucide-react'
 import 'katex/dist/katex.min.css'
 import { InlineMath } from 'react-katex'
@@ -398,19 +399,7 @@ y_hat = model(x)  # correct`}
               Here is how the code maps to the architecture:
             </p>
 
-            <MermaidDiagram chart={`
-              graph LR
-                Input["x<br/>(input)"] --> L1["self.layer1<br/>nn.Linear(1,1)"]
-                L1 --> ReLU["torch.clamp<br/>ReLU"]
-                ReLU --> L2["self.layer2<br/>nn.Linear(1,1)"]
-                L2 --> Output["y_hat<br/>(output)"]
-
-                style Input fill:#172554,stroke:#3b82f6,color:#e2e8f0
-                style L1 fill:#2e1065,stroke:#7c3aed,color:#e2e8f0
-                style ReLU fill:#1e293b,stroke:#475569,color:#e2e8f0
-                style L2 fill:#2e1065,stroke:#7c3aed,color:#e2e8f0
-                style Output fill:#172554,stroke:#3b82f6,color:#e2e8f0
-            `} />
+            <NnModuleNetworkDiagram />
 
             <p className="text-muted-foreground text-sm">
               Purple blocks are learnable layers (parameters live here). Slate block is the
@@ -849,20 +838,7 @@ print(model_with_act(x))  # Different — ReLU breaks the collapse`}
               it gives you full control over the computation graph.
             </p>
 
-            <MermaidDiagram chart={`
-              graph LR
-                X["x"] --> ReLU["ReLU<br/>torch.clamp(x, min=0)"]
-                X --> Add["+ (add)"]
-                ReLU --> Linear["nn.Linear(size, size)"]
-                Linear --> Add
-                Add --> Out["output"]
-
-                style X fill:#172554,stroke:#3b82f6,color:#e2e8f0
-                style Linear fill:#2e1065,stroke:#7c3aed,color:#e2e8f0
-                style ReLU fill:#1e293b,stroke:#475569,color:#e2e8f0
-                style Add fill:#1e293b,stroke:#475569,color:#e2e8f0
-                style Out fill:#172554,stroke:#3b82f6,color:#e2e8f0
-            `} />
+            <NnModuleResidualDiagram />
 
             <p className="text-muted-foreground">
               Skip connections were mentioned in Training Dynamics as the technique

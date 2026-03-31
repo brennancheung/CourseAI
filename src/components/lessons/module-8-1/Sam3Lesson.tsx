@@ -20,7 +20,8 @@ import {
   LessonLink,
 } from '@/components/lessons'
 import { CodeBlock } from '@/components/common/CodeBlock'
-import { MermaidDiagram } from '@/components/widgets/MermaidDiagram'
+import { SamArchitectureDiagram } from './SamArchitectureDiagram'
+import { SamEvolutionDiagram } from './SamEvolutionDiagram'
 import 'katex/dist/katex.min.css'
 import { InlineMath, BlockMath } from 'react-katex'
 
@@ -461,16 +462,7 @@ export function Sam3Lesson() {
             <p className="text-sm font-medium text-foreground">
               Architecture overview: three components, asymmetric compute
             </p>
-            <MermaidDiagram chart={`
-              graph LR
-                A["Image (1024x1024x3)"] --> B["ViT-H Image Encoder (~150ms, ONCE)"]
-                B --> C["Image Embedding (64x64x256)"]
-                D["User Prompt (point/box/text)"] --> E["Prompt Encoder (< 1ms)"]
-                E --> F["Prompt Tokens (1-4 tokens)"]
-                C --> G["Mask Decoder (~50ms, PER PROMPT)"]
-                F --> G
-                G --> H["3 Candidate Masks + Confidence Scores"]
-            `} />
+            <SamArchitectureDiagram />
             <p className="text-muted-foreground text-sm">
               The image encoder is the expensive part and runs <strong>once</strong>.
               The prompt encoder and mask decoder are lightweight and run{' '}
@@ -2213,11 +2205,7 @@ export function Sam3Lesson() {
             <p className="text-sm font-medium text-foreground">
               The SAM trajectory: each version is additive
             </p>
-            <MermaidDiagram chart={`
-              graph LR
-                A["SAM 1 (2023): Images"] -->|"+ memory"| B["SAM 2 (2024): + Video"]
-                B -->|"+ language"| C["SAM 3 (2025): + Concepts/Text"]
-            `} />
+            <SamEvolutionDiagram />
             <p className="text-muted-foreground text-sm">
               SAM 3 still supports point/box/mask prompts from SAM 1. Each
               version extends the previous one&mdash;the core architecture

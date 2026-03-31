@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DDPM Training Objective Flow</title>
+<style>
+:root {
+  --bg-primary: #ffffff;
+  --bg-secondary: #f5f5f0;
+  --text-primary: #1a1a1a;
+  --text-secondary: #6b6b65;
+  --text-tertiary: #9c9a92;
+  --border-default: rgba(0,0,0,0.15);
+  --border-hover: rgba(0,0,0,0.3);
+  --font-sans: system-ui, -apple-system, "Segoe UI", sans-serif;
+  --purple-50: #EEEDFE; --purple-100: #CECBF6; --purple-200: #AFA9EC;
+  --purple-400: #7F77DD; --purple-600: #534AB7; --purple-800: #3C3489; --purple-900: #26215C;
+  --teal-50: #E1F5EE; --teal-100: #9FE1CB; --teal-200: #5DCAA5;
+  --teal-400: #1D9E75; --teal-600: #0F6E56; --teal-800: #085041; --teal-900: #04342C;
+  --coral-50: #FAECE7; --coral-100: #F5C4B3; --coral-200: #F0997B;
+  --coral-400: #D85A30; --coral-600: #993C1D; --coral-800: #712B13; --coral-900: #4A1B0C;
+  --gray-50: #F1EFE8; --gray-100: #D3D1C7; --gray-200: #B4B2A9;
+  --gray-400: #888780; --gray-600: #5F5E5A; --gray-800: #444441; --gray-900: #2C2C2A;
+  --blue-50: #E6F1FB; --blue-100: #B5D4F4; --blue-200: #85B7EB;
+  --blue-400: #378ADD; --blue-600: #185FA5; --blue-800: #0C447C; --blue-900: #042C53;
+  --amber-50: #FAEEDA; --amber-100: #FAC775; --amber-200: #EF9F27;
+  --amber-400: #BA7517; --amber-600: #854F0B; --amber-800: #633806; --amber-900: #412402;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg-primary: #1a1a1a;
+    --bg-secondary: #2c2c2a;
+    --text-primary: #e8e6df;
+    --text-secondary: #9c9a92;
+    --text-tertiary: #6b6b65;
+    --border-default: rgba(255,255,255,0.15);
+    --border-hover: rgba(255,255,255,0.3);
+  }
+}
+body {
+  margin: 0;
+  padding: 20px;
+  background: var(--bg-primary);
+  font-family: var(--font-sans);
+}
+.t  { font-family: var(--font-sans); font-size: 14px; font-weight: 400; fill: var(--text-primary); }
+.ts { font-family: var(--font-sans); font-size: 12px; font-weight: 400; fill: var(--text-secondary); }
+.th { font-family: var(--font-sans); font-size: 14px; font-weight: 500; fill: var(--text-primary); }
+.box { fill: var(--bg-secondary); stroke: var(--border-default); }
+.arr { stroke: var(--text-tertiary); stroke-width: 1.5; }
+.node { cursor: pointer; }
+.node:hover { opacity: 0.8; }
+.node:active { opacity: 0.65; }
+.node:focus-visible { outline: 2px solid var(--blue-400); outline-offset: 2px; }
+.c-purple > rect { fill: var(--purple-50); stroke: var(--purple-600); }
+.c-purple > .th  { fill: var(--purple-800); }
+.c-purple > .ts  { fill: var(--purple-600); }
+.c-purple > .t   { fill: var(--purple-800); }
+.c-teal > rect { fill: var(--teal-50); stroke: var(--teal-600); }
+.c-teal > .th  { fill: var(--teal-800); }
+.c-teal > .ts  { fill: var(--teal-600); }
+.c-teal > .t   { fill: var(--teal-800); }
+.c-coral > rect { fill: var(--coral-50); stroke: var(--coral-600); }
+.c-coral > .th  { fill: var(--coral-800); }
+.c-coral > .ts  { fill: var(--coral-600); }
+.c-coral > .t   { fill: var(--coral-800); }
+.c-gray > rect { fill: var(--gray-50); stroke: var(--gray-600); }
+.c-gray > .th  { fill: var(--gray-800); }
+.c-gray > .ts  { fill: var(--gray-600); }
+.c-gray > .t   { fill: var(--gray-800); }
+.c-blue > rect { fill: var(--blue-50); stroke: var(--blue-600); }
+.c-blue > .th  { fill: var(--blue-800); }
+.c-blue > .ts  { fill: var(--blue-600); }
+.c-blue > .t   { fill: var(--blue-800); }
+.c-amber > rect { fill: var(--amber-50); stroke: var(--amber-600); }
+.c-amber > .th  { fill: var(--amber-800); }
+.c-amber > .ts  { fill: var(--amber-600); }
+.c-amber > .t   { fill: var(--amber-800); }
+@media (prefers-color-scheme: dark) {
+  .c-purple > rect { fill: var(--purple-900); stroke: var(--purple-200); }
+  .c-purple > .th  { fill: var(--purple-100); }
+  .c-purple > .ts  { fill: var(--purple-200); }
+  .c-purple > .t   { fill: var(--purple-100); }
+  .c-teal > rect { fill: var(--teal-900); stroke: var(--teal-200); }
+  .c-teal > .th  { fill: var(--teal-100); }
+  .c-teal > .ts  { fill: var(--teal-200); }
+  .c-teal > .t   { fill: var(--teal-100); }
+  .c-coral > rect { fill: var(--coral-900); stroke: var(--coral-200); }
+  .c-coral > .th  { fill: var(--coral-100); }
+  .c-coral > .ts  { fill: var(--coral-200); }
+  .c-coral > .t   { fill: var(--coral-100); }
+  .c-gray > rect { fill: var(--gray-900); stroke: var(--gray-200); }
+  .c-gray > .th  { fill: var(--gray-100); }
+  .c-gray > .ts  { fill: var(--gray-200); }
+  .c-gray > .t   { fill: var(--gray-100); }
+  .c-blue > rect { fill: var(--blue-900); stroke: var(--blue-200); }
+  .c-blue > .th  { fill: var(--blue-100); }
+  .c-blue > .ts  { fill: var(--blue-200); }
+  .c-blue > .t   { fill: var(--blue-100); }
+  .c-amber > rect { fill: var(--amber-900); stroke: var(--amber-200); }
+  .c-amber > .th  { fill: var(--amber-100); }
+  .c-amber > .ts  { fill: var(--amber-200); }
+  .c-amber > .t   { fill: var(--amber-100); }
+}
+</style>
+</head>
+<body>
+<svg xmlns="http://www.w3.org/2000/svg" width="100%" viewBox="0 0 680 724">
+<defs>
+  <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5"
+          markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke"
+          stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+</defs>
+
+<!-- ===== ROW 1 (y=40, h=56): Three inputs ===== -->
+
+<g class="node c-blue" data-action="emit" data-target="input-x0">
+  <rect x="50" y="40" width="170" height="56" rx="8" stroke-width="0.5"/>
+  <text class="th" x="135" y="58" text-anchor="middle" dominant-baseline="central">x&#x2080; clean image</text>
+  <text class="ts" x="135" y="78" text-anchor="middle" dominant-baseline="central">Training sample</text>
+</g>
+
+<g class="node c-amber" data-action="emit" data-target="input-t">
+  <rect x="248" y="40" width="184" height="56" rx="8" stroke-width="0.5"/>
+  <text class="th" x="340" y="58" text-anchor="middle" dominant-baseline="central">t ~ Uniform(1,T)</text>
+  <text class="ts" x="340" y="78" text-anchor="middle" dominant-baseline="central">Random timestep</text>
+</g>
+
+<g class="node c-teal" data-action="emit" data-target="input-epsilon">
+  <rect x="460" y="40" width="170" height="56" rx="8" stroke-width="0.5"/>
+  <text class="th" x="545" y="58" text-anchor="middle" dominant-baseline="central">&#x03B5; ~ N(0,I)</text>
+  <text class="ts" x="545" y="78" text-anchor="middle" dominant-baseline="central">Pure noise sample</text>
+</g>
+
+<!-- ===== ROW 2 (y=148, h=44): Closed-form formula ===== -->
+
+<g class="node c-gray" data-action="emit" data-target="closed-form">
+  <rect x="190" y="148" width="260" height="44" rx="8" stroke-width="0.5"/>
+  <text class="th" x="320" y="170" text-anchor="middle" dominant-baseline="central">Closed-form formula</text>
+</g>
+
+<!-- ===== ROW 3 (y=244, h=44): Noisy image ===== -->
+
+<g class="node c-gray" data-action="emit" data-target="noisy-image">
+  <rect x="220" y="244" width="200" height="44" rx="8" stroke-width="0.5"/>
+  <text class="th" x="320" y="266" text-anchor="middle" dominant-baseline="central">x&#x209C; noisy image</text>
+</g>
+
+<!-- ===== ROW 4 (y=340, h=56): Neural network ===== -->
+
+<g class="node c-purple" data-action="emit" data-target="neural-network">
+  <rect x="210" y="340" width="220" height="56" rx="8" stroke-width="0.5"/>
+  <text class="th" x="320" y="358" text-anchor="middle" dominant-baseline="central">Neural network</text>
+  <text class="ts" x="320" y="378" text-anchor="middle" dominant-baseline="central">Predicts the noise</text>
+</g>
+
+<!-- ===== ROW 5 (y=448, h=44): Predicted noise ===== -->
+
+<g class="node c-purple" data-action="emit" data-target="predicted-noise">
+  <rect x="195" y="448" width="250" height="44" rx="8" stroke-width="0.5"/>
+  <text class="th" x="320" y="470" text-anchor="middle" dominant-baseline="central">Predicted noise &#x03B5;&#x03B8;</text>
+</g>
+
+<!-- ===== ROW 6 (y=544, h=44): MSE loss ===== -->
+
+<g class="node c-coral" data-action="emit" data-target="mse-loss">
+  <rect x="250" y="544" width="140" height="44" rx="8" stroke-width="0.5"/>
+  <text class="th" x="320" y="566" text-anchor="middle" dominant-baseline="central">MSE loss</text>
+</g>
+
+<!-- ===== ROW 7 (y=640, h=44): Backprop + update ===== -->
+
+<g class="node c-coral" data-action="emit" data-target="backprop">
+  <rect x="218" y="640" width="204" height="44" rx="8" stroke-width="0.5"/>
+  <text class="th" x="320" y="662" text-anchor="middle" dominant-baseline="central">Backprop + update</text>
+</g>
+
+<!-- ===== ARROWS: Main vertical flow ===== -->
+
+<!-- x₀ (cx=135, bottom=96) → closed-form (top=148): L-path via y=122 -->
+<path d="M135 96 L135 122 L260 122 L260 148" fill="none" class="arr" marker-end="url(#arrow)"/>
+
+<!-- t (cx=340, bottom=96) → closed-form (cx=320, top=148): straight -->
+<line x1="340" y1="96" x2="320" y2="138" class="arr" marker-end="url(#arrow)"/>
+
+<!-- ε (cx=545, bottom=96) → closed-form (top=148): L-path via y=122 -->
+<path d="M545 96 L545 122 L380 122 L380 148" fill="none" class="arr" marker-end="url(#arrow)"/>
+
+<!-- closed-form (cx=320, bottom=192) → xₜ (cx=320, top=244) -->
+<line x1="320" y1="192" x2="320" y2="234" class="arr" marker-end="url(#arrow)"/>
+
+<!-- xₜ (cx=320, bottom=288) → neural network (cx=320, top=340) -->
+<line x1="320" y1="288" x2="320" y2="330" class="arr" marker-end="url(#arrow)"/>
+
+<!-- neural network (cx=320, bottom=396) → εθ (cx=320, top=448) -->
+<line x1="320" y1="396" x2="320" y2="438" class="arr" marker-end="url(#arrow)"/>
+
+<!-- εθ (cx=320, bottom=492) → MSE loss (cx=320, top=544) -->
+<line x1="320" y1="492" x2="320" y2="534" class="arr" marker-end="url(#arrow)"/>
+
+<!-- MSE loss (cx=320, bottom=588) → backprop (cx=320, top=640) -->
+<line x1="320" y1="588" x2="320" y2="630" class="arr" marker-end="url(#arrow)"/>
+
+<!-- ===== ARROWS: Side routes (secondary connections) ===== -->
+
+<!-- t → neural network: right side route -->
+<!-- From t right edge (x=432, y=68) → right to x=596 → down to y=368 → left to neural net right edge (x=430, y=368) -->
+<path d="M432 68 L596 68 L596 368 L440 368" fill="none" stroke="var(--amber-400)" stroke-width="1.5" marker-end="url(#arrow)" opacity="0.6"/>
+
+<!-- ε → MSE loss: right side route -->
+<!-- From ε right edge (x=630, y=68) → right to x=632 → down to y=566 → left to MSE right edge (x=390, y=566) -->
+<path d="M630 68 L636 68 L636 566 L400 566" fill="none" stroke="var(--teal-400)" stroke-width="1.5" marker-end="url(#arrow)" opacity="0.6"/>
+
+</svg>
+<script>
+document.querySelectorAll('.node[data-action]').forEach(node => {
+  node.setAttribute('tabindex', '0');
+  node.setAttribute('role', 'button');
+  node.setAttribute('aria-label', node.querySelector('.th')?.textContent || 'Diagram node');
+  function handleActivation() {
+    const action = node.dataset.action;
+    const target = node.dataset.target;
+    const label = node.querySelector('.th')?.textContent || '';
+    const detail = { action, target, label, node };
+    document.dispatchEvent(new CustomEvent('diagram-node-click', { detail }));
+    if (action === 'navigate' && target) window.location.href = target;
+    if (action === 'open' && target) window.open(target, '_blank');
+  }
+  node.addEventListener('click', handleActivation);
+  node.addEventListener('keydown', e => {
+    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleActivation(); }
+  });
+});
+</script>
+</body>
+</html>

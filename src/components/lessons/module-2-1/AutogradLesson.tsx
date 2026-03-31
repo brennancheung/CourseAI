@@ -19,7 +19,7 @@ import {
 import { CodeBlock } from '@/components/common/CodeBlock'
 import { ExercisePanel } from '@/components/widgets/ExercisePanel'
 import { AutogradExplorer } from '@/components/widgets/AutogradExplorer'
-import { MermaidDiagram } from '@/components/widgets/MermaidDiagram'
+import { AutogradComputationalGraphDiagram } from '@/components/lessons/module-2-1/AutogradComputationalGraphDiagram'
 import { ExternalLink } from 'lucide-react'
 import 'katex/dist/katex.min.css'
 import { InlineMath } from 'react-katex'
@@ -392,31 +392,7 @@ print(f"b2.grad = {b2.grad:.4f}")   # -2.2600`}
               walks this same graph right to left, computing gradients (red) at every node:
             </p>
 
-            <MermaidDiagram chart={`
-              graph LR
-                x["x = 2.0"] --> mul1["w1*x = 1.0"]
-                w1["w1 = 0.5<br/><span style='color:#f87171'>grad: 1.3560</span>"] --> mul1
-                mul1 --> add1["z1 = 1.1"]
-                b1["b1 = 0.1<br/><span style='color:#f87171'>grad: 0.6780</span>"] --> add1
-                add1 --> relu["ReLU<br/>a1 = 1.1"]
-                relu --> mul2["w2*a1 = -0.33"]
-                w2["w2 = -0.3<br/><span style='color:#f87171'>grad: -2.4860</span>"] --> mul2
-                mul2 --> add2["y-hat = -0.13"]
-                b2["b2 = 0.2<br/><span style='color:#f87171'>grad: -2.2600</span>"] --> add2
-                add2 --> mse["MSE Loss<br/>1.2769"]
-
-                style w1 fill:#2e1065,stroke:#7c3aed,color:#e2e8f0
-                style b1 fill:#2e1065,stroke:#7c3aed,color:#e2e8f0
-                style w2 fill:#2e1065,stroke:#7c3aed,color:#e2e8f0
-                style b2 fill:#2e1065,stroke:#7c3aed,color:#e2e8f0
-                style x fill:#172554,stroke:#3b82f6,color:#e2e8f0
-                style mse fill:#4c0519,stroke:#f43f5e,color:#e2e8f0
-                style mul1 fill:#1e293b,stroke:#475569,color:#e2e8f0
-                style add1 fill:#1e293b,stroke:#475569,color:#e2e8f0
-                style relu fill:#1e293b,stroke:#475569,color:#e2e8f0
-                style mul2 fill:#1e293b,stroke:#475569,color:#e2e8f0
-                style add2 fill:#1e293b,stroke:#475569,color:#e2e8f0
-            `} />
+            <AutogradComputationalGraphDiagram />
 
             <p className="text-muted-foreground text-sm">
               Parameter nodes (purple) have <code className="text-sm bg-muted px-1.5 py-0.5 rounded">requires_grad=True</code>&mdash;these

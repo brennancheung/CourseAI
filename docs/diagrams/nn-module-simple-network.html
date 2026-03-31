@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Simple network architecture</title>
+<style>
+:root {
+  --bg-primary: #ffffff;
+  --bg-secondary: #f5f5f0;
+  --text-primary: #1a1a1a;
+  --text-secondary: #6b6b65;
+  --text-tertiary: #9c9a92;
+  --border-default: rgba(0,0,0,0.15);
+  --border-hover: rgba(0,0,0,0.3);
+  --font-sans: system-ui, -apple-system, "Segoe UI", sans-serif;
+
+  --purple-50: #EEEDFE; --purple-100: #CECBF6; --purple-200: #AFA9EC;
+  --purple-400: #7F77DD; --purple-600: #534AB7; --purple-800: #3C3489; --purple-900: #26215C;
+  --gray-50: #F1EFE8; --gray-100: #D3D1C7; --gray-200: #B4B2A9;
+  --gray-400: #888780; --gray-600: #5F5E5A; --gray-800: #444441; --gray-900: #2C2C2A;
+  --blue-50: #E6F1FB; --blue-100: #B5D4F4; --blue-200: #85B7EB;
+  --blue-400: #378ADD; --blue-600: #185FA5; --blue-800: #0C447C; --blue-900: #042C53;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg-primary: #1a1a1a;
+    --bg-secondary: #2c2c2a;
+    --text-primary: #e8e6df;
+    --text-secondary: #9c9a92;
+    --text-tertiary: #6b6b65;
+    --border-default: rgba(255,255,255,0.15);
+    --border-hover: rgba(255,255,255,0.3);
+  }
+}
+
+body {
+  margin: 0;
+  padding: 20px;
+  background: var(--bg-primary);
+  font-family: var(--font-sans);
+}
+
+.t  { font-family: var(--font-sans); font-size: 14px; font-weight: 400; fill: var(--text-primary); }
+.ts { font-family: var(--font-sans); font-size: 12px; font-weight: 400; fill: var(--text-secondary); }
+.th { font-family: var(--font-sans); font-size: 14px; font-weight: 500; fill: var(--text-primary); }
+
+.box { fill: var(--bg-secondary); stroke: var(--border-default); }
+.arr { stroke: var(--text-tertiary); stroke-width: 1.5; }
+
+.node { cursor: pointer; }
+.node:hover { opacity: 0.8; }
+.node:active { opacity: 0.65; }
+.node:focus-visible { outline: 2px solid var(--blue-400); outline-offset: 2px; }
+
+.c-purple > rect { fill: var(--purple-50); stroke: var(--purple-600); }
+.c-purple > .th  { fill: var(--purple-800); }
+.c-purple > .ts  { fill: var(--purple-600); }
+
+.c-gray > rect { fill: var(--gray-50); stroke: var(--gray-600); }
+.c-gray > .th  { fill: var(--gray-800); }
+.c-gray > .ts  { fill: var(--gray-600); }
+
+.c-blue > rect { fill: var(--blue-50); stroke: var(--blue-600); }
+.c-blue > .th  { fill: var(--blue-800); }
+.c-blue > .ts  { fill: var(--blue-600); }
+
+@media (prefers-color-scheme: dark) {
+  .c-purple > rect { fill: var(--purple-900); stroke: var(--purple-200); }
+  .c-purple > .th  { fill: var(--purple-100); }
+  .c-purple > .ts  { fill: var(--purple-200); }
+
+  .c-gray > rect { fill: var(--gray-900); stroke: var(--gray-200); }
+  .c-gray > .th  { fill: var(--gray-100); }
+  .c-gray > .ts  { fill: var(--gray-200); }
+
+  .c-blue > rect { fill: var(--blue-900); stroke: var(--blue-200); }
+  .c-blue > .th  { fill: var(--blue-100); }
+  .c-blue > .ts  { fill: var(--blue-200); }
+}
+</style>
+</head>
+<body>
+<svg xmlns="http://www.w3.org/2000/svg" width="100%" viewBox="0 0 680 136">
+<defs>
+  <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5"
+          markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke"
+          stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+</defs>
+
+<g class="node c-blue" data-action="emit" data-target="input">
+  <rect x="62" y="40" width="70" height="56" rx="8" stroke-width="0.5"/>
+  <text class="th" x="97" y="58" text-anchor="middle" dominant-baseline="central">x</text>
+  <text class="ts" x="97" y="78" text-anchor="middle" dominant-baseline="central">input</text>
+</g>
+
+<line x1="132" y1="68" x2="144" y2="68" class="arr" marker-end="url(#arrow)"/>
+
+<g class="node c-purple" data-action="emit" data-target="layer1">
+  <rect x="150" y="40" width="124" height="56" rx="8" stroke-width="0.5"/>
+  <text class="th" x="212" y="58" text-anchor="middle" dominant-baseline="central">self.layer1</text>
+  <text class="ts" x="212" y="78" text-anchor="middle" dominant-baseline="central">nn.Linear(1,1)</text>
+</g>
+
+<line x1="274" y1="68" x2="286" y2="68" class="arr" marker-end="url(#arrow)"/>
+
+<g class="node c-gray" data-action="emit" data-target="relu">
+  <rect x="292" y="40" width="112" height="56" rx="8" stroke-width="0.5"/>
+  <text class="th" x="348" y="58" text-anchor="middle" dominant-baseline="central">torch.clamp</text>
+  <text class="ts" x="348" y="78" text-anchor="middle" dominant-baseline="central">ReLU</text>
+</g>
+
+<line x1="404" y1="68" x2="416" y2="68" class="arr" marker-end="url(#arrow)"/>
+
+<g class="node c-purple" data-action="emit" data-target="layer2">
+  <rect x="422" y="40" width="124" height="56" rx="8" stroke-width="0.5"/>
+  <text class="th" x="484" y="58" text-anchor="middle" dominant-baseline="central">self.layer2</text>
+  <text class="ts" x="484" y="78" text-anchor="middle" dominant-baseline="central">nn.Linear(1,1)</text>
+</g>
+
+<line x1="546" y1="68" x2="558" y2="68" class="arr" marker-end="url(#arrow)"/>
+
+<g class="node c-blue" data-action="emit" data-target="output">
+  <rect x="564" y="40" width="70" height="56" rx="8" stroke-width="0.5"/>
+  <text class="th" x="599" y="58" text-anchor="middle" dominant-baseline="central">y_hat</text>
+  <text class="ts" x="599" y="78" text-anchor="middle" dominant-baseline="central">output</text>
+</g>
+
+</svg>
+<script>
+document.querySelectorAll('.node[data-action]').forEach(node => {
+  node.setAttribute('tabindex', '0');
+  node.setAttribute('role', 'button');
+  node.setAttribute('aria-label', node.querySelector('.th')?.textContent || 'Diagram node');
+
+  function handleActivation() {
+    const action = node.dataset.action;
+    const target = node.dataset.target;
+    const label = node.querySelector('.th')?.textContent || '';
+    const detail = { action, target, label, node };
+    document.dispatchEvent(new CustomEvent('diagram-node-click', { detail }));
+  }
+
+  node.addEventListener('click', handleActivation);
+  node.addEventListener('keydown', e => {
+    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleActivation(); }
+  });
+});
+</script>
+</body>
+</html>

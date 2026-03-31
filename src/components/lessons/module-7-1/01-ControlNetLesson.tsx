@@ -19,7 +19,7 @@ import {
   LessonLink,
 } from '@/components/lessons'
 import { CodeBlock } from '@/components/common/CodeBlock'
-import { MermaidDiagram } from '@/components/widgets/MermaidDiagram'
+import { ControlNetArchitectureDiagram } from './ControlNetArchitectureDiagram'
 import 'katex/dist/katex.min.css'
 import { InlineMath } from 'react-katex'
 import { ExternalLink } from 'lucide-react'
@@ -269,66 +269,16 @@ export function ControlNetLesson() {
       {/* Architecture diagram */}
       <Row>
         <Row.Content>
-          <MermaidDiagram chart={`
-            graph TB
-              subgraph FROZEN["Frozen SD Model"]
-                direction TB
-                E1["Encoder Block 1<br/>64×64 ❄️"]:::frozen
-                E2["Encoder Block 2<br/>32×32 ❄️"]:::frozen
-                E3["Encoder Block 3<br/>16×16 ❄️"]:::frozen
-                E4["Encoder Block 4<br/>8×8 ❄️"]:::frozen
-                BN["Bottleneck ❄️"]:::frozen
-                D4["Decoder Block 4<br/>8×8 ❄️"]:::frozen
-                D3["Decoder Block 3<br/>16×16 ❄️"]:::frozen
-                D2["Decoder Block 2<br/>32×32 ❄️"]:::frozen
-                D1["Decoder Block 1<br/>64×64 ❄️"]:::frozen
-
-                ADD3("+"):::merge
-                ADD2("+"):::merge
-                ADD1("+"):::merge
-
-                E1 --> E2 --> E3 --> E4 --> BN --> D4
-
-                E3 -. "skip" .-> ADD3 --> D3
-                E2 -. "skip" .-> ADD2 --> D2
-                E1 -. "skip" .-> ADD1 --> D1
-                D4 --> D3 --> D2 --> D1
-              end
-
-              subgraph CONTROLNET["Trainable ControlNet Copy"]
-                direction TB
-                C1["Copy Block 1<br/>64×64 🔥"]:::trainable
-                C2["Copy Block 2<br/>32×32 🔥"]:::trainable
-                C3["Copy Block 3<br/>16×16 🔥"]:::trainable
-                C4["Copy Block 4<br/>8×8 🔥"]:::trainable
-
-                C1 --> C2 --> C3 --> C4
-              end
-
-              SM["Spatial Map<br/>(edges, depth, pose)"]:::input --> C1
-
-              C1 --> ZC1["zero conv ⚡"]:::zeroconv --> ADD1
-              C2 --> ZC2["zero conv ⚡"]:::zeroconv --> ADD2
-              C3 --> ZC3["zero conv ⚡"]:::zeroconv --> ADD3
-              C4 --> ZC4["zero conv ⚡"]:::zeroconv --> D4
-
-              NL["Noisy Latent z_t"]:::input --> E1
-
-              classDef frozen fill:#374151,stroke:#6b7280,color:#d1d5db
-              classDef trainable fill:#5b21b6,stroke:#8b5cf6,color:#f5f3ff
-              classDef zeroconv fill:#92400e,stroke:#f59e0b,color:#fef3c7
-              classDef input fill:#1e3a5f,stroke:#3b82f6,color:#dbeafe
-              classDef merge fill:#065f46,stroke:#10b981,color:#d1fae5
-          `} />
+          <ControlNetArchitectureDiagram />
           <div className="mt-3 flex flex-wrap gap-4 text-xs text-muted-foreground">
             <span className="flex items-center gap-1.5">
-              <span className="inline-block w-3 h-3 rounded bg-gray-600" /> Frozen (unchanged)
+              <span className="inline-block w-3 h-3 rounded bg-gray-600 dark:bg-gray-400" /> Frozen (unchanged)
             </span>
             <span className="flex items-center gap-1.5">
-              <span className="inline-block w-3 h-3 rounded bg-violet-800" /> Trainable (encoder copy)
+              <span className="inline-block w-3 h-3 rounded bg-violet-800 dark:bg-violet-400" /> Trainable (encoder copy)
             </span>
             <span className="flex items-center gap-1.5">
-              <span className="inline-block w-3 h-3 rounded bg-amber-800" /> Zero convolution (connection)
+              <span className="inline-block w-3 h-3 rounded bg-teal-700 dark:bg-teal-400" /> Zero convolution (connection)
             </span>
           </div>
         </Row.Content>

@@ -20,7 +20,7 @@ import {
 } from '@/components/lessons'
 import { CodeBlock } from '@/components/common/CodeBlock'
 import { NormalizationComparisonWidget } from '@/components/widgets/NormalizationComparisonWidget'
-import { MermaidDiagram } from '@/components/widgets/MermaidDiagram'
+import { AdagnResidualBlockDiagram } from './AdagnResidualBlockDiagram'
 import { ArchitectureDiagram } from '@/components/widgets/ArchitectureDiagram'
 import { UNET_CONDITIONING_DATA } from '@/components/widgets/ArchitectureDiagram/unet-conditioning-data'
 import { ExercisePanel } from '@/components/widgets/ExercisePanel'
@@ -646,26 +646,7 @@ def forward(self, x, t_emb):
               language="python"
               filename="residual_block.py"
             />
-            <MermaidDiagram chart={`
-graph LR
-    X["Input x"] --> CONV1["Conv1"]
-    CONV1 --> ADAGN1["AdaGN"]
-    ADAGN1 --> ACT1["Activation"]
-    ACT1 --> CONV2["Conv2"]
-    CONV2 --> ADAGN2["AdaGN"]
-    ADAGN2 --> ACT2["Activation"]
-    ACT2 --> ADD("+")
-    X --> ADD
-    ADD --> OUT["Output"]
-
-    TEMB["t_emb"] -.->|"γ₁(t), β₁(t)"| ADAGN1
-    TEMB -.->|"γ₂(t), β₂(t)"| ADAGN2
-
-    style ADAGN1 fill:#1e293b,stroke:#f59e0b,color:#e2e8f0
-    style ADAGN2 fill:#1e293b,stroke:#f59e0b,color:#e2e8f0
-    style TEMB fill:#1e293b,stroke:#f59e0b,color:#e2e8f0
-    style ADD fill:#1e293b,stroke:#a855f7,color:#e2e8f0
-`} />
+            <AdagnResidualBlockDiagram />
             <p className="text-sm text-muted-foreground italic">
               A single residual block. The timestep embedding (amber) enters at
               both AdaGN nodes, providing timestep-dependent scale and shift. The

@@ -19,7 +19,7 @@ import {
   LessonLink,
 } from '@/components/lessons'
 import { CodeBlock } from '@/components/common/CodeBlock'
-import { MermaidDiagram } from '@/components/widgets/MermaidDiagram'
+import { TextualInversionFlowDiagram } from './TextualInversionFlowDiagram'
 import { ExternalLink } from 'lucide-react'
 
 const NOTEBOOK_URL =
@@ -392,27 +392,7 @@ export function TextualInversionLesson() {
             </p>
           </div>
           <div className="mt-4">
-            <MermaidDiagram chart={`
-              graph LR
-                EMB["Embedding Lookup<br/>(ONE row TRAINABLE)"]:::trainable
-                CLIP["CLIP Transformer<br/>(frozen)"]:::frozen
-                CROSS["Cross-Attention K/V<br/>(frozen)"]:::frozen
-                UNET["U-Net Denoise<br/>(frozen)"]:::frozen
-                LOSS["MSE Loss"]:::loss
-
-                EMB -->|"forward"| CLIP
-                CLIP -->|"[77, 768]"| CROSS
-                CROSS -->|"spatial features"| UNET
-                UNET -->|"noise prediction"| LOSS
-                LOSS -.->|"gradient ∇"| UNET
-                UNET -.->|"gradient ∇"| CROSS
-                CROSS -.->|"gradient ∇"| CLIP
-                CLIP -.->|"gradient ∇ updates!"| EMB
-
-                classDef trainable fill:#7c3aed,stroke:#a78bfa,color:#f5f3ff
-                classDef frozen fill:#374151,stroke:#6b7280,color:#d1d5db
-                classDef loss fill:#065f46,stroke:#34d399,color:#d1fae5
-            `} />
+            <TextualInversionFlowDiagram />
           </div>
           <div className="space-y-4 mt-4">
             <p className="text-muted-foreground">

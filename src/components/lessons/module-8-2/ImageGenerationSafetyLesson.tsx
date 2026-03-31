@@ -21,7 +21,7 @@ import {
   TryThisBlock,
 } from '@/components/lessons'
 import { CodeBlock } from '@/components/common/CodeBlock'
-import { MermaidDiagram } from '@/components/widgets/MermaidDiagram'
+import { SafetyStackDiagram } from './SafetyStackDiagram'
 import { ExercisePanel } from '@/components/widgets/ExercisePanel'
 import { SafetyStackSimulator } from '@/components/widgets/SafetyStackSimulator'
 import 'katex/dist/katex.min.css'
@@ -156,25 +156,7 @@ export function ImageGenerationSafetyLesson() {
       {/* Defense stack architecture diagram */}
       <Row>
         <Row.Content>
-          <MermaidDiagram chart={`
-            graph LR
-              P["User Prompt"] --> L1["Layer 1: Prompt Filtering"]
-              L1 -->|pass| L2["Layer 2: Inference Guidance (SLD)"]
-              L2 --> L3["Layer 3: Output Classifier"]
-              L3 -->|pass| O["Delivered"]
-              L1 -->|blocked| R1["Rejected"]
-              L3 -->|blocked| R2["Rejected"]
-              ME["Layer 4: Model Erasure"] -.->|modifies weights| L2
-
-              style L1 fill:#78350f,stroke:#f59e0b,color:#fbbf24
-              style L2 fill:#312e81,stroke:#8b5cf6,color:#c4b5fd
-              style L3 fill:#064e3b,stroke:#10b981,color:#6ee7b7
-              style ME fill:#4c1d95,stroke:#a78bfa,color:#ddd6fe
-              style R1 fill:#7f1d1d,stroke:#ef4444,color:#fca5a5
-              style R2 fill:#7f1d1d,stroke:#ef4444,color:#fca5a5
-              style O fill:#064e3b,stroke:#10b981,color:#6ee7b7
-              style P fill:#1e293b,stroke:#64748b,color:#e2e8f0
-          `} />
+          <SafetyStackDiagram />
           <p className="text-xs text-muted-foreground text-center mt-2">
             The safety stack: each subsequent section fills in one layer of this diagram.
           </p>

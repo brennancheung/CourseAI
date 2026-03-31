@@ -19,7 +19,7 @@ import {
   ReferencesBlock,
   LessonLink,
 } from '@/components/lessons'
-import { MermaidDiagram } from '@/components/widgets/MermaidDiagram'
+import { DdpmTrainingFlowDiagram } from '@/components/lessons/module-6-2/DdpmTrainingFlowDiagram'
 import { ExercisePanel } from '@/components/widgets/ExercisePanel'
 import { TrainingStepSimulator } from '@/components/widgets/TrainingStepSimulator'
 import { ExternalLink } from 'lucide-react'
@@ -482,19 +482,7 @@ export function LearningToDenoiseLesson() {
               Here is the same algorithm as a data flow. Trace the path from the
               training image to the loss:
             </p>
-            <MermaidDiagram chart={`
-              graph LR
-                X0["x₀ (clean image)"] --> CF["Closed-form formula"]
-                T["t ~ Uniform(1,T)"] --> CF
-                E["ε ~ N(0,I)"] --> CF
-                CF --> XT["x_t (noisy image)"]
-                XT --> NN["Neural network"]
-                T --> NN
-                NN --> EP["predicted noise ε_θ"]
-                EP --> MSE["MSE Loss"]
-                E --> MSE
-                MSE --> BP["Backprop + Update"]
-            `} />
+            <DdpmTrainingFlowDiagram />
             <p className="text-muted-foreground text-sm">
               Three inputs (image, timestep, noise) flow through the
               closed-form formula to create the noisy image. The network

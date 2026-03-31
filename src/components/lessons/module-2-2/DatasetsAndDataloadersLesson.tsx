@@ -15,7 +15,7 @@ import {
   ComparisonRow,
 } from '@/components/lessons'
 import { CodeBlock } from '@/components/common/CodeBlock'
-import { MermaidDiagram } from '@/components/widgets/MermaidDiagram'
+import { DataPipelineDiagram } from './DataPipelineDiagram'
 import { ExternalLink } from 'lucide-react'
 import 'katex/dist/katex.min.css'
 import { InlineMath } from 'react-katex'
@@ -419,12 +419,7 @@ for batch_idx, (x_batch, y_batch) in enumerate(loader):
             <p className="text-muted-foreground">
               The data pipeline in one picture:
             </p>
-            <MermaidDiagram chart={`
-              graph LR
-                A["Raw Data<br/>(files, arrays, etc.)"] --> B["Dataset<br/>__getitem__(i) returns one sample"]
-                B --> C["DataLoader<br/>batches, shuffles, iterates"]
-                C --> D["Training Loop<br/>forward / loss / backward / step"]
-            `} />
+            <DataPipelineDiagram />
             <p className="text-muted-foreground text-sm">
               Each layer has a single responsibility. Change your data source? Write a
               new Dataset. Change your batch size? Reconfigure the DataLoader. The

@@ -19,7 +19,7 @@ import {
   TryThisBlock,
   LessonLink,
 } from '@/components/lessons'
-import { MermaidDiagram } from '@/components/widgets/MermaidDiagram'
+import { UnetArchitectureDiagram } from './UnetArchitectureDiagram'
 import { CodeBlock } from '@/components/common/CodeBlock'
 
 /**
@@ -395,41 +395,7 @@ export function UnetArchitectureLesson() {
               architecture is named for.
             </p>
           </div>
-          <MermaidDiagram chart={`
-graph TD
-    subgraph Encoder["Encoder (Downsampling)"]
-        E0["64×64×64<br/>Edges, textures"]
-        E1["32×32×128<br/>Shapes, parts"]
-        E2["16×16×256<br/>Object structure"]
-    end
-
-    subgraph BN["Bottleneck"]
-        B["8×8×512<br/>Global context"]
-    end
-
-    subgraph Decoder["Decoder (Upsampling)"]
-        D2["16×16×256<br/>+ encoder features"]
-        D1["32×32×128<br/>+ encoder features"]
-        D0["64×64×64<br/>+ encoder features"]
-    end
-
-    IN["Input: 64×64×3<br/>Noisy image"] --> E0
-    E0 -->|"downsample"| E1
-    E1 -->|"downsample"| E2
-    E2 -->|"downsample"| B
-    B -->|"upsample"| D2
-    D2 -->|"upsample"| D1
-    D1 -->|"upsample"| D0
-    D0 --> OUT["Output: 64×64×3<br/>Predicted noise"]
-
-    E2 -.->|"skip: concat"| D2
-    E1 -.->|"skip: concat"| D1
-    E0 -.->|"skip: concat"| D0
-
-    style IN fill:#1e293b,stroke:#6366f1,color:#e2e8f0
-    style OUT fill:#1e293b,stroke:#6366f1,color:#e2e8f0
-    style B fill:#1e293b,stroke:#a855f7,color:#e2e8f0
-`} />
+          <UnetArchitectureDiagram />
           <p className="text-sm text-muted-foreground italic mt-4">
             You might wonder: if skip connections bypass the bottleneck, why have
             a bottleneck at all? That is exactly the right question&mdash;the next

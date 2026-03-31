@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ControlNet Architecture</title>
+<style>
+:root {
+  --bg-primary: #ffffff;
+  --bg-secondary: #f5f5f0;
+  --text-primary: #1a1a1a;
+  --text-secondary: #6b6b65;
+  --text-tertiary: #9c9a92;
+  --border-default: rgba(0,0,0,0.15);
+  --border-hover: rgba(0,0,0,0.3);
+  --font-sans: system-ui, -apple-system, "Segoe UI", sans-serif;
+
+  --purple-50: #EEEDFE; --purple-100: #CECBF6; --purple-200: #AFA9EC;
+  --purple-400: #7F77DD; --purple-600: #534AB7; --purple-800: #3C3489; --purple-900: #26215C;
+  --teal-50: #E1F5EE; --teal-100: #9FE1CB; --teal-200: #5DCAA5;
+  --teal-400: #1D9E75; --teal-600: #0F6E56; --teal-800: #085041; --teal-900: #04342C;
+  --gray-50: #F1EFE8; --gray-100: #D3D1C7; --gray-200: #B4B2A9;
+  --gray-400: #888780; --gray-600: #5F5E5A; --gray-800: #444441; --gray-900: #2C2C2A;
+  --blue-50: #E6F1FB; --blue-100: #B5D4F4; --blue-200: #85B7EB;
+  --blue-400: #378ADD; --blue-600: #185FA5; --blue-800: #0C447C; --blue-900: #042C53;
+  --amber-50: #FAEEDA; --amber-100: #FAC775; --amber-200: #EF9F27;
+  --amber-400: #BA7517; --amber-600: #854F0B; --amber-800: #633806; --amber-900: #412402;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg-primary: #1a1a1a;
+    --bg-secondary: #2c2c2a;
+    --text-primary: #e8e6df;
+    --text-secondary: #9c9a92;
+    --text-tertiary: #6b6b65;
+    --border-default: rgba(255,255,255,0.15);
+    --border-hover: rgba(255,255,255,0.3);
+  }
+}
+
+body {
+  margin: 0;
+  padding: 20px;
+  background: var(--bg-primary);
+  font-family: var(--font-sans);
+}
+
+.t  { font-family: var(--font-sans); font-size: 14px; font-weight: 400; fill: var(--text-primary); }
+.ts { font-family: var(--font-sans); font-size: 12px; font-weight: 400; fill: var(--text-secondary); }
+.th { font-family: var(--font-sans); font-size: 14px; font-weight: 500; fill: var(--text-primary); }
+
+.box { fill: var(--bg-secondary); stroke: var(--border-default); }
+.arr { stroke: var(--text-tertiary); stroke-width: 1.5; }
+.leader { stroke: var(--text-tertiary); stroke-width: 0.5; stroke-dasharray: 3 2; fill: none; }
+
+.node { cursor: pointer; }
+.node:hover { opacity: 0.8; }
+.node:active { opacity: 0.65; }
+.node:focus-visible { outline: 2px solid var(--blue-400); outline-offset: 2px; }
+
+.c-gray > rect { fill: var(--gray-50); stroke: var(--gray-600); }
+.c-gray > .th  { fill: var(--gray-800); }
+.c-gray > .ts  { fill: var(--gray-600); }
+.c-gray > .t   { fill: var(--gray-800); }
+
+.c-purple > rect { fill: var(--purple-50); stroke: var(--purple-600); }
+.c-purple > .th  { fill: var(--purple-800); }
+.c-purple > .ts  { fill: var(--purple-600); }
+.c-purple > .t   { fill: var(--purple-800); }
+
+.c-teal > rect { fill: var(--teal-50); stroke: var(--teal-600); }
+.c-teal > .th  { fill: var(--teal-800); }
+.c-teal > .ts  { fill: var(--teal-600); }
+.c-teal > .t   { fill: var(--teal-800); }
+
+.c-blue > rect { fill: var(--blue-50); stroke: var(--blue-600); }
+.c-blue > .th  { fill: var(--blue-800); }
+.c-blue > .ts  { fill: var(--blue-600); }
+.c-blue > .t   { fill: var(--blue-800); }
+
+.c-amber > rect { fill: var(--amber-50); stroke: var(--amber-600); }
+.c-amber > .th  { fill: var(--amber-800); }
+.c-amber > .ts  { fill: var(--amber-600); }
+.c-amber > .t   { fill: var(--amber-800); }
+
+@media (prefers-color-scheme: dark) {
+  .c-gray > rect { fill: var(--gray-900); stroke: var(--gray-200); }
+  .c-gray > .th  { fill: var(--gray-100); }
+  .c-gray > .ts  { fill: var(--gray-200); }
+  .c-gray > .t   { fill: var(--gray-100); }
+
+  .c-purple > rect { fill: var(--purple-900); stroke: var(--purple-200); }
+  .c-purple > .th  { fill: var(--purple-100); }
+  .c-purple > .ts  { fill: var(--purple-200); }
+  .c-purple > .t   { fill: var(--purple-100); }
+
+  .c-teal > rect { fill: var(--teal-900); stroke: var(--teal-200); }
+  .c-teal > .th  { fill: var(--teal-100); }
+  .c-teal > .ts  { fill: var(--teal-200); }
+  .c-teal > .t   { fill: var(--teal-100); }
+
+  .c-blue > rect { fill: var(--blue-900); stroke: var(--blue-200); }
+  .c-blue > .th  { fill: var(--blue-100); }
+  .c-blue > .ts  { fill: var(--blue-200); }
+  .c-blue > .t   { fill: var(--blue-100); }
+
+  .c-amber > rect { fill: var(--amber-900); stroke: var(--amber-200); }
+  .c-amber > .th  { fill: var(--amber-100); }
+  .c-amber > .ts  { fill: var(--amber-200); }
+  .c-amber > .t   { fill: var(--amber-100); }
+}
+</style>
+</head>
+<body>
+<svg xmlns="http://www.w3.org/2000/svg" width="100%" viewBox="0 0 680 760">
+<defs>
+  <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5"
+          markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke"
+          stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+</defs>
+
+<!--
+  Layout:
+    Col A (Frozen encoder): boxes x=40..170, center=105
+    Col B (Frozen decoder): boxes x=235..365, center=300
+    Col C (ControlNet copy): boxes x=500..630, center=565
+
+    Merge (+) circles: x=218 (between encoder skip and decoder)
+    Zero conv boxes: x=405..495, center=450
+
+    Vertical rows (70px spacing):
+      y=60:  Input nodes (noisy latent, spatial map)
+      y=120: 64x64 level
+      y=190: 32x32 level
+      y=260: 16x16 level
+      y=330: 8x8 level
+      y=400: Bottleneck
+      y=470: Decoder 8x8
+      y=540: Decoder 16x16
+      y=610: Decoder 32x32
+      y=680: Decoder 64x64
+-->
+
+<!-- ========== CONTAINER: Frozen SD Model ========== -->
+<rect x="30" y="44" width="346" height="700" rx="16"
+      fill="none" stroke="var(--border-default)" stroke-width="0.5"
+      stroke-dasharray="6 4" opacity="0.4"/>
+<text class="ts" x="203" y="62" text-anchor="middle" opacity="0.6">Frozen SD model</text>
+
+<!-- ========== CONTAINER: ControlNet copy ========== -->
+<rect x="390" y="44" width="252" height="346" rx="16"
+      fill="none" stroke="var(--purple-400)" stroke-width="0.5"
+      stroke-dasharray="6 4" opacity="0.4"/>
+<text class="ts" x="516" y="62" text-anchor="middle" opacity="0.6"
+      style="fill: var(--purple-400)">Trainable ControlNet copy</text>
+
+<!-- ========== INPUT NODES ========== -->
+<g class="c-blue">
+  <rect x="40" y="76" width="130" height="34" rx="8" stroke-width="0.5"/>
+  <text class="th" x="105" y="93" text-anchor="middle" dominant-baseline="central">Noisy latent</text>
+</g>
+
+<g class="c-blue">
+  <rect x="500" y="76" width="130" height="34" rx="8" stroke-width="0.5"/>
+  <text class="th" x="565" y="93" text-anchor="middle" dominant-baseline="central">Spatial map</text>
+</g>
+
+<!-- Input arrows -->
+<line x1="105" y1="110" x2="105" y2="126" class="arr" marker-end="url(#arrow)"/>
+<line x1="565" y1="110" x2="565" y2="126" class="arr" marker-end="url(#arrow)"/>
+
+<!-- ========== FROZEN ENCODER (Col A, gray) ========== -->
+<g class="c-gray">
+  <rect x="40" y="130" width="130" height="44" rx="8" stroke-width="0.5"/>
+  <text class="th" x="105" y="145" text-anchor="middle" dominant-baseline="central">Enc 64x64</text>
+  <text class="ts" x="105" y="163" text-anchor="middle" dominant-baseline="central">frozen</text>
+</g>
+
+<g class="c-gray">
+  <rect x="40" y="200" width="130" height="44" rx="8" stroke-width="0.5"/>
+  <text class="th" x="105" y="215" text-anchor="middle" dominant-baseline="central">Enc 32x32</text>
+  <text class="ts" x="105" y="233" text-anchor="middle" dominant-baseline="central">frozen</text>
+</g>
+
+<g class="c-gray">
+  <rect x="40" y="270" width="130" height="44" rx="8" stroke-width="0.5"/>
+  <text class="th" x="105" y="285" text-anchor="middle" dominant-baseline="central">Enc 16x16</text>
+  <text class="ts" x="105" y="303" text-anchor="middle" dominant-baseline="central">frozen</text>
+</g>
+
+<g class="c-gray">
+  <rect x="40" y="340" width="130" height="44" rx="8" stroke-width="0.5"/>
+  <text class="th" x="105" y="355" text-anchor="middle" dominant-baseline="central">Enc 8x8</text>
+  <text class="ts" x="105" y="373" text-anchor="middle" dominant-baseline="central">frozen</text>
+</g>
+
+<!-- Encoder vertical arrows -->
+<line x1="105" y1="174" x2="105" y2="196" class="arr" marker-end="url(#arrow)"/>
+<line x1="105" y1="244" x2="105" y2="266" class="arr" marker-end="url(#arrow)"/>
+<line x1="105" y1="314" x2="105" y2="336" class="arr" marker-end="url(#arrow)"/>
+
+<!-- ========== BOTTLENECK ========== -->
+<g class="c-gray">
+  <rect x="40" y="410" width="130" height="44" rx="8" stroke-width="0.5"/>
+  <text class="th" x="105" y="432" text-anchor="middle" dominant-baseline="central">Bottleneck</text>
+</g>
+
+<!-- Encoder to bottleneck arrow -->
+<line x1="105" y1="384" x2="105" y2="406" class="arr" marker-end="url(#arrow)"/>
+
+<!-- Bottleneck to decoder: L-shaped path going right then down -->
+<path d="M 170 432 L 230 432 L 230 502 L 235 502" fill="none" class="arr" marker-end="url(#arrow)"/>
+
+<!-- ========== FROZEN DECODER (Col B, gray) ========== -->
+<g class="c-gray">
+  <rect x="235" y="480" width="130" height="44" rx="8" stroke-width="0.5"/>
+  <text class="th" x="300" y="495" text-anchor="middle" dominant-baseline="central">Dec 8x8</text>
+  <text class="ts" x="300" y="513" text-anchor="middle" dominant-baseline="central">frozen</text>
+</g>
+
+<g class="c-gray">
+  <rect x="235" y="550" width="130" height="44" rx="8" stroke-width="0.5"/>
+  <text class="th" x="300" y="565" text-anchor="middle" dominant-baseline="central">Dec 16x16</text>
+  <text class="ts" x="300" y="583" text-anchor="middle" dominant-baseline="central">frozen</text>
+</g>
+
+<g class="c-gray">
+  <rect x="235" y="620" width="130" height="44" rx="8" stroke-width="0.5"/>
+  <text class="th" x="300" y="635" text-anchor="middle" dominant-baseline="central">Dec 32x32</text>
+  <text class="ts" x="300" y="653" text-anchor="middle" dominant-baseline="central">frozen</text>
+</g>
+
+<g class="c-gray">
+  <rect x="235" y="690" width="130" height="44" rx="8" stroke-width="0.5"/>
+  <text class="th" x="300" y="705" text-anchor="middle" dominant-baseline="central">Dec 64x64</text>
+  <text class="ts" x="300" y="723" text-anchor="middle" dominant-baseline="central">frozen</text>
+</g>
+
+<!-- Decoder vertical arrows -->
+<line x1="300" y1="524" x2="300" y2="546" class="arr" marker-end="url(#arrow)"/>
+<line x1="300" y1="594" x2="300" y2="616" class="arr" marker-end="url(#arrow)"/>
+<line x1="300" y1="664" x2="300" y2="686" class="arr" marker-end="url(#arrow)"/>
+
+<!-- ========== MERGE (+) CIRCLES ========== -->
+<!-- Between skip connections and decoder inputs -->
+<!-- Merge at Dec 16x16 level (y=572) -->
+<circle cx="218" cy="572" r="12" fill="var(--bg-primary)" stroke="var(--teal-400)" stroke-width="1.5"/>
+<text x="218" y="572" text-anchor="middle" dominant-baseline="central"
+      style="font-size:14px; font-weight:600; fill: var(--teal-600)">+</text>
+<line x1="230" y1="572" x2="233" y2="572" stroke="var(--teal-400)" stroke-width="1.5"/>
+
+<!-- Merge at Dec 32x32 level (y=642) -->
+<circle cx="218" cy="642" r="12" fill="var(--bg-primary)" stroke="var(--teal-400)" stroke-width="1.5"/>
+<text x="218" y="642" text-anchor="middle" dominant-baseline="central"
+      style="font-size:14px; font-weight:600; fill: var(--teal-600)">+</text>
+<line x1="230" y1="642" x2="233" y2="642" stroke="var(--teal-400)" stroke-width="1.5"/>
+
+<!-- Merge at Dec 64x64 level (y=712) -->
+<circle cx="218" cy="712" r="12" fill="var(--bg-primary)" stroke="var(--teal-400)" stroke-width="1.5"/>
+<text x="218" y="712" text-anchor="middle" dominant-baseline="central"
+      style="font-size:14px; font-weight:600; fill: var(--teal-600)">+</text>
+<line x1="230" y1="712" x2="233" y2="712" stroke="var(--teal-400)" stroke-width="1.5"/>
+
+<!-- ========== SKIP CONNECTIONS (dashed, from encoder to merge nodes) ========== -->
+<!-- Enc 16x16 (bottom y=314) → merge at y=572 -->
+<path d="M 40 300 L 20 300 L 20 572 L 206 572" fill="none"
+      stroke="var(--gray-400)" stroke-width="1" stroke-dasharray="4 3"
+      marker-end="url(#arrow)"/>
+
+<!-- Enc 32x32 (bottom y=244) → merge at y=642 -->
+<path d="M 40 230 L 10 230 L 10 642 L 206 642" fill="none"
+      stroke="var(--gray-400)" stroke-width="1" stroke-dasharray="4 3"
+      marker-end="url(#arrow)"/>
+
+<!-- Enc 64x64 (bottom y=174) → merge at y=712 -->
+<path d="M 40 160 L 0 160 L 0 712 L 206 712" fill="none"
+      stroke="var(--gray-400)" stroke-width="1" stroke-dasharray="4 3"
+      marker-end="url(#arrow)" opacity="0.7"/>
+
+<!-- ========== CONTROLNET ENCODER COPY (Col C, purple) ========== -->
+<g class="c-purple">
+  <rect x="500" y="130" width="130" height="44" rx="8" stroke-width="0.5"/>
+  <text class="th" x="565" y="145" text-anchor="middle" dominant-baseline="central">Copy 64x64</text>
+  <text class="ts" x="565" y="163" text-anchor="middle" dominant-baseline="central">trainable</text>
+</g>
+
+<g class="c-purple">
+  <rect x="500" y="200" width="130" height="44" rx="8" stroke-width="0.5"/>
+  <text class="th" x="565" y="215" text-anchor="middle" dominant-baseline="central">Copy 32x32</text>
+  <text class="ts" x="565" y="233" text-anchor="middle" dominant-baseline="central">trainable</text>
+</g>
+
+<g class="c-purple">
+  <rect x="500" y="270" width="130" height="44" rx="8" stroke-width="0.5"/>
+  <text class="th" x="565" y="285" text-anchor="middle" dominant-baseline="central">Copy 16x16</text>
+  <text class="ts" x="565" y="303" text-anchor="middle" dominant-baseline="central">trainable</text>
+</g>
+
+<g class="c-purple">
+  <rect x="500" y="340" width="130" height="44" rx="8" stroke-width="0.5"/>
+  <text class="th" x="565" y="355" text-anchor="middle" dominant-baseline="central">Copy 8x8</text>
+  <text class="ts" x="565" y="373" text-anchor="middle" dominant-baseline="central">trainable</text>
+</g>
+
+<!-- ControlNet vertical arrows -->
+<line x1="565" y1="174" x2="565" y2="196" class="arr" marker-end="url(#arrow)"/>
+<line x1="565" y1="244" x2="565" y2="266" class="arr" marker-end="url(#arrow)"/>
+<line x1="565" y1="314" x2="565" y2="336" class="arr" marker-end="url(#arrow)"/>
+
+<!-- ========== ZERO CONVOLUTION NODES (teal, between ControlNet and decoder) ========== -->
+<!-- ZC from Copy 8x8 → Dec 8x8 -->
+<g class="c-teal">
+  <rect x="410" y="352" width="80" height="30" rx="6" stroke-width="0.5"/>
+  <text class="th" x="450" y="367" text-anchor="middle" dominant-baseline="central" style="font-size:12px">zero conv</text>
+</g>
+<line x1="500" y1="362" x2="494" y2="362" class="arr" stroke="var(--teal-400)" marker-start="url(#arrow)"/>
+<path d="M 410 367 L 390 367 L 390 502 L 367 502" fill="none"
+      stroke="var(--teal-400)" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+<!-- ZC from Copy 16x16 → merge at Dec 16x16 -->
+<g class="c-teal">
+  <rect x="410" y="282" width="80" height="30" rx="6" stroke-width="0.5"/>
+  <text class="th" x="450" y="297" text-anchor="middle" dominant-baseline="central" style="font-size:12px">zero conv</text>
+</g>
+<line x1="500" y1="292" x2="494" y2="292" class="arr" stroke="var(--teal-400)" marker-start="url(#arrow)"/>
+<path d="M 410 297 L 380 297 L 380 572 L 232 572" fill="none"
+      stroke="var(--teal-400)" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+<!-- ZC from Copy 32x32 → merge at Dec 32x32 -->
+<g class="c-teal">
+  <rect x="410" y="212" width="80" height="30" rx="6" stroke-width="0.5"/>
+  <text class="th" x="450" y="227" text-anchor="middle" dominant-baseline="central" style="font-size:12px">zero conv</text>
+</g>
+<line x1="500" y1="222" x2="494" y2="222" class="arr" stroke="var(--teal-400)" marker-start="url(#arrow)"/>
+<path d="M 410 227 L 370 227 L 370 642 L 232 642" fill="none"
+      stroke="var(--teal-400)" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+<!-- ZC from Copy 64x64 → merge at Dec 64x64 -->
+<g class="c-teal">
+  <rect x="410" y="142" width="80" height="30" rx="6" stroke-width="0.5"/>
+  <text class="th" x="450" y="157" text-anchor="middle" dominant-baseline="central" style="font-size:12px">zero conv</text>
+</g>
+<line x1="500" y1="152" x2="494" y2="152" class="arr" stroke="var(--teal-400)" marker-start="url(#arrow)"/>
+<path d="M 410 157 L 360 157 L 360 712 L 232 712" fill="none"
+      stroke="var(--teal-400)" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+</svg>
+<script>
+document.querySelectorAll('.node[data-action]').forEach(node => {
+  node.setAttribute('tabindex', '0');
+  node.setAttribute('role', 'button');
+  node.setAttribute('aria-label', node.querySelector('.th')?.textContent || 'Diagram node');
+
+  function handleActivation() {
+    const action = node.dataset.action;
+    const target = node.dataset.target;
+    const label = node.querySelector('.th')?.textContent || '';
+    const detail = { action, target, label, node };
+    document.dispatchEvent(new CustomEvent('diagram-node-click', { detail }));
+  }
+
+  node.addEventListener('click', handleActivation);
+  node.addEventListener('keydown', e => {
+    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleActivation(); }
+  });
+});
+</script>
+</body>
+</html>

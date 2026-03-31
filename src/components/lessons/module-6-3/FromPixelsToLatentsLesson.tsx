@@ -19,7 +19,7 @@ import {
   LessonLink,
 } from '@/components/lessons'
 import { CodeBlock } from '@/components/common/CodeBlock'
-import { MermaidDiagram } from '@/components/widgets/MermaidDiagram'
+import { PixelVsLatentDiagram } from './PixelVsLatentDiagram'
 import 'katex/dist/katex.min.css'
 import { InlineMath } from 'react-katex'
 
@@ -325,29 +325,7 @@ export function FromPixelsToLatentsLesson() {
             <p className="text-sm font-medium text-foreground">
               Pipeline comparison: pixel-space vs latent-space diffusion
             </p>
-            <MermaidDiagram chart={`
-graph LR
-    subgraph Pixel["Pixel-Space Diffusion"]
-        direction LR
-        P1["Image\\n512×512×3"] --> P2["Add noise +\\nU-Net denoise\\n×50 steps"] --> P3["Generated\\nimage\\n512×512×3"]
-    end
-
-    subgraph Latent["Latent-Space Diffusion"]
-        direction LR
-        L1["Image\\n512×512×3"] --> L2["VAE\\nEncode"] --> L3["Latent\\n64×64×4"] --> L4["Add noise +\\nU-Net denoise\\n×50 steps"] --> L5["Denoised\\nlatent\\n64×64×4"] --> L6["VAE\\nDecode"] --> L7["Generated\\nimage\\n512×512×3"]
-    end
-
-    style P1 fill:#1e293b,stroke:#f59e0b,color:#e2e8f0
-    style P2 fill:#1e293b,stroke:#f59e0b,color:#e2e8f0
-    style P3 fill:#1e293b,stroke:#f59e0b,color:#e2e8f0
-    style L1 fill:#1e293b,stroke:#8b5cf6,color:#e2e8f0
-    style L2 fill:#1e293b,stroke:#22c55e,color:#e2e8f0
-    style L3 fill:#1e293b,stroke:#8b5cf6,color:#e2e8f0
-    style L4 fill:#1e293b,stroke:#8b5cf6,color:#e2e8f0
-    style L5 fill:#1e293b,stroke:#8b5cf6,color:#e2e8f0
-    style L6 fill:#1e293b,stroke:#22c55e,color:#e2e8f0
-    style L7 fill:#1e293b,stroke:#8b5cf6,color:#e2e8f0
-`} />
+            <PixelVsLatentDiagram />
             <p className="text-sm text-muted-foreground italic mt-2">
               The denoising loop (middle) is <strong>identical</strong> in both
               pipelines. The only additions in latent diffusion are{' '}

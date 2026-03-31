@@ -19,7 +19,7 @@ import {
   LessonLink,
 } from '@/components/lessons'
 import { CodeBlock } from '@/components/common/CodeBlock'
-import { MermaidDiagram } from '@/components/widgets/MermaidDiagram'
+import { UnetAttentionBlocksDiagram } from './UnetAttentionBlocksDiagram'
 import 'katex/dist/katex.min.css'
 import { InlineMath, BlockMath } from 'react-katex'
 
@@ -652,21 +652,7 @@ export function TextConditioningAndGuidanceLesson() {
 
       <Row>
         <Row.Content>
-          <MermaidDiagram chart={`
-graph LR
-    RB1["Residual Block\\n(AdaGN + t_emb)"] --> SA1["Self-\\nAttention"]
-    SA1 --> CA1["Cross-\\nAttention\\n(text_emb)"]
-    CA1 --> RB2["Residual Block\\n(AdaGN + t_emb)"]
-    RB2 --> SA2["Self-\\nAttention"]
-    SA2 --> CA2["Cross-\\nAttention\\n(text_emb)"]
-
-    style RB1 fill:#1e293b,stroke:#f59e0b,color:#e2e8f0
-    style SA1 fill:#1e293b,stroke:#3b82f6,color:#e2e8f0
-    style CA1 fill:#1e293b,stroke:#8b5cf6,color:#e2e8f0
-    style RB2 fill:#1e293b,stroke:#f59e0b,color:#e2e8f0
-    style SA2 fill:#1e293b,stroke:#3b82f6,color:#e2e8f0
-    style CA2 fill:#1e293b,stroke:#8b5cf6,color:#e2e8f0
-`} />
+          <UnetAttentionBlocksDiagram />
           <p className="text-sm text-muted-foreground italic mt-2">
             Block ordering at an attention resolution (e.g., 16×16).{' '}
             <span className="text-amber-400">Amber</span> = timestep

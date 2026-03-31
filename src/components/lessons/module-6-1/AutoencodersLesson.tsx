@@ -20,7 +20,7 @@ import {
 } from '@/components/lessons'
 import { AutoencoderBottleneckWidget } from '@/components/widgets/AutoencoderBottleneckWidget'
 import { ExercisePanel } from '@/components/widgets/ExercisePanel'
-import { MermaidDiagram } from '@/components/widgets/MermaidDiagram'
+import { AutoencoderArchitectureDiagram } from './AutoencoderArchitectureDiagram'
 import { CodeBlock } from '@/components/common/CodeBlock'
 import { ExternalLink } from 'lucide-react'
 import 'katex/dist/katex.min.css'
@@ -384,21 +384,7 @@ export function AutoencodersLesson() {
             title="The Full Architecture"
             subtitle="The hourglass shape"
           />
-          <MermaidDiagram chart={`
-            graph LR
-              A["Input<br/>1×28×28"] --> B["Conv+ReLU<br/>16×14×14"]
-              B --> C["Conv+ReLU<br/>32×7×7"]
-              C --> D["Flatten<br/>1568"]
-              D --> E["<b>Bottleneck</b><br/>32"]
-              E --> F["Linear<br/>1568"]
-              F --> G["Unflatten<br/>32×7×7"]
-              G --> H["ConvT+ReLU<br/>16×14×14"]
-              H --> I["ConvT+Sigmoid<br/>1×28×28"]
-
-              style E fill:#7c3aed,stroke:#a78bfa,color:#fff
-              style A fill:#1e1e2e,stroke:#6366f1,color:#c4b5fd
-              style I fill:#1e1e2e,stroke:#6366f1,color:#c4b5fd
-          `} />
+          <AutoencoderArchitectureDiagram />
           <p className="text-muted-foreground text-sm mt-3">
             The hourglass shape: wide input, narrow bottleneck, wide output.
             The encoder (left half) is a CNN you already know. The decoder (right

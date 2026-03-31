@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LoRA injection in U-Net</title>
+<style>
+:root {
+  --bg-primary: #ffffff;
+  --bg-secondary: #f5f5f0;
+  --text-primary: #1a1a1a;
+  --text-secondary: #6b6b65;
+  --text-tertiary: #9c9a92;
+  --border-default: rgba(0,0,0,0.15);
+  --border-hover: rgba(0,0,0,0.3);
+  --font-sans: system-ui, -apple-system, "Segoe UI", sans-serif;
+
+  --purple-50: #EEEDFE; --purple-100: #CECBF6; --purple-200: #AFA9EC;
+  --purple-400: #7F77DD; --purple-600: #534AB7; --purple-800: #3C3489; --purple-900: #26215C;
+
+  --gray-50: #F1EFE8; --gray-100: #D3D1C7; --gray-200: #B4B2A9;
+  --gray-400: #888780; --gray-600: #5F5E5A; --gray-800: #444441; --gray-900: #2C2C2A;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg-primary: #1a1a1a;
+    --bg-secondary: #2c2c2a;
+    --text-primary: #e8e6df;
+    --text-secondary: #9c9a92;
+    --text-tertiary: #6b6b65;
+    --border-default: rgba(255,255,255,0.15);
+    --border-hover: rgba(255,255,255,0.3);
+  }
+}
+
+body {
+  margin: 0;
+  padding: 20px;
+  background: var(--bg-primary);
+  font-family: var(--font-sans);
+}
+
+.t  { font-family: var(--font-sans); font-size: 14px; font-weight: 400; fill: var(--text-primary); }
+.ts { font-family: var(--font-sans); font-size: 12px; font-weight: 400; fill: var(--text-secondary); }
+.th { font-family: var(--font-sans); font-size: 14px; font-weight: 500; fill: var(--text-primary); }
+
+.box { fill: var(--bg-secondary); stroke: var(--border-default); }
+.arr { stroke: var(--text-tertiary); stroke-width: 1.5; }
+
+.c-purple > rect { fill: var(--purple-50); stroke: var(--purple-600); }
+.c-purple > .th  { fill: var(--purple-800); }
+.c-purple > .ts  { fill: var(--purple-600); }
+.c-purple > .t   { fill: var(--purple-800); }
+
+.c-gray > rect { fill: var(--gray-50); stroke: var(--gray-600); }
+.c-gray > .th  { fill: var(--gray-800); }
+.c-gray > .ts  { fill: var(--gray-600); }
+.c-gray > .t   { fill: var(--gray-800); }
+
+@media (prefers-color-scheme: dark) {
+  .c-purple > rect { fill: var(--purple-900); stroke: var(--purple-200); }
+  .c-purple > .th  { fill: var(--purple-100); }
+  .c-purple > .ts  { fill: var(--purple-200); }
+  .c-purple > .t   { fill: var(--purple-100); }
+
+  .c-gray > rect { fill: var(--gray-900); stroke: var(--gray-200); }
+  .c-gray > .th  { fill: var(--gray-100); }
+  .c-gray > .ts  { fill: var(--gray-200); }
+  .c-gray > .t   { fill: var(--gray-100); }
+}
+</style>
+</head>
+<body>
+<svg xmlns="http://www.w3.org/2000/svg" width="100%" viewBox="0 0 680 590">
+<defs>
+  <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5"
+          markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke"
+          stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+</defs>
+
+<rect x="140" y="40" width="400" height="470" rx="20"
+      fill="var(--bg-secondary)" stroke="var(--border-default)" stroke-width="0.5"/>
+<text class="th" x="340" y="66" text-anchor="middle" dominant-baseline="central">U-Net residual block</text>
+
+<g class="c-gray">
+  <rect x="265" y="86" width="150" height="44" rx="8" stroke-width="0.5"/>
+  <text class="th" x="340" y="108" text-anchor="middle" dominant-baseline="central">Conv block</text>
+</g>
+
+<line x1="340" y1="130" x2="340" y2="150" class="arr" marker-end="url(#arrow)"/>
+
+<g class="c-gray">
+  <rect x="265" y="150" width="150" height="44" rx="8" stroke-width="0.5"/>
+  <text class="th" x="340" y="172" text-anchor="middle" dominant-baseline="central">Conv block</text>
+</g>
+
+<line x1="340" y1="194" x2="340" y2="214" class="arr" marker-end="url(#arrow)"/>
+
+<g class="c-gray">
+  <rect x="253" y="214" width="174" height="44" rx="8" stroke-width="0.5"/>
+  <text class="th" x="340" y="236" text-anchor="middle" dominant-baseline="central">Self-attention</text>
+</g>
+
+<line x1="340" y1="258" x2="340" y2="282" class="arr" marker-end="url(#arrow)"/>
+
+<rect x="168" y="282" width="344" height="152" rx="12"
+      fill="none" stroke="var(--purple-600)" stroke-width="0.5" stroke-dasharray="4 4" opacity="0.6"/>
+<text class="ts" x="340" y="300" text-anchor="middle" dominant-baseline="central"
+      style="fill: var(--purple-600)">Cross-attention</text>
+
+<g class="c-purple">
+  <rect x="185" y="314" width="150" height="44" rx="8" stroke-width="0.5"/>
+  <text class="th" x="260" y="336" text-anchor="middle" dominant-baseline="central">W_Q + LoRA</text>
+</g>
+
+<g class="c-purple">
+  <rect x="345" y="314" width="150" height="44" rx="8" stroke-width="0.5"/>
+  <text class="th" x="420" y="336" text-anchor="middle" dominant-baseline="central">W_K + LoRA</text>
+</g>
+
+<g class="c-purple">
+  <rect x="185" y="374" width="150" height="44" rx="8" stroke-width="0.5"/>
+  <text class="th" x="260" y="396" text-anchor="middle" dominant-baseline="central">W_V + LoRA</text>
+</g>
+
+<g class="c-purple">
+  <rect x="345" y="374" width="150" height="44" rx="8" stroke-width="0.5"/>
+  <text class="th" x="420" y="396" text-anchor="middle" dominant-baseline="central">W_out + LoRA</text>
+</g>
+
+<line x1="340" y1="434" x2="340" y2="456" class="arr" marker-end="url(#arrow)"/>
+
+<g class="c-gray">
+  <rect x="228" y="456" width="224" height="44" rx="8" stroke-width="0.5"/>
+  <text class="th" x="340" y="478" text-anchor="middle" dominant-baseline="central">Adaptive GroupNorm</text>
+</g>
+
+<rect x="56" y="530" width="14" height="14" rx="3"
+      fill="var(--gray-50)" stroke="var(--gray-600)" stroke-width="0.5"/>
+<text class="ts" x="78" y="537" dominant-baseline="central">Frozen</text>
+
+<rect x="130" y="530" width="14" height="14" rx="3"
+      fill="var(--purple-50)" stroke="var(--purple-600)" stroke-width="0.5"/>
+<text class="ts" x="152" y="537" dominant-baseline="central">Trainable (LoRA)</text>
+
+</svg>
+</body>
+</html>

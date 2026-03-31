@@ -19,7 +19,7 @@ import {
   LessonLink,
 } from '@/components/lessons'
 import { CodeBlock } from '@/components/common/CodeBlock'
-import { MermaidDiagram } from '@/components/widgets/MermaidDiagram'
+import { ClipDualEncoderDiagram } from './ClipDualEncoderDiagram'
 import 'katex/dist/katex.min.css'
 import { InlineMath, BlockMath } from 'react-katex'
 
@@ -234,19 +234,7 @@ export function ClipLesson() {
 
       <Row>
         <Row.Content>
-          <MermaidDiagram chart={`
-graph LR
-    IMG["Image\\n(224×224)"] --> IE["Image Encoder\\n(ResNet or ViT)"]
-    IE --> IV["Image Vector\\n(512-dim)"]
-    TXT["Caption\\n(tokens)"] --> TE["Text Encoder\\n(Transformer)"]
-    TE --> TV["Text Vector\\n(512-dim)"]
-    IV --> COS["Cosine\\nSimilarity"]
-    TV --> COS
-
-    style IE fill:#1e293b,stroke:#3b82f6,color:#e2e8f0
-    style TE fill:#1e293b,stroke:#8b5cf6,color:#e2e8f0
-    style COS fill:#1e293b,stroke:#f59e0b,color:#e2e8f0
-`} />
+          <ClipDualEncoderDiagram />
           <p className="text-sm text-muted-foreground italic mt-2">
             Two independent encoders produce vectors in the same 512-dimensional
             space. Cosine similarity measures how well they match.

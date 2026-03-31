@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IP-Adapter dual attention architecture</title>
+<style>
+:root {
+  --bg-primary: #ffffff;
+  --bg-secondary: #f5f5f0;
+  --text-primary: #1a1a1a;
+  --text-secondary: #6b6b65;
+  --text-tertiary: #9c9a92;
+  --border-default: rgba(0,0,0,0.15);
+  --border-hover: rgba(0,0,0,0.3);
+  --font-sans: system-ui, -apple-system, "Segoe UI", sans-serif;
+
+  --purple-50: #EEEDFE; --purple-100: #CECBF6; --purple-200: #AFA9EC;
+  --purple-400: #7F77DD; --purple-600: #534AB7; --purple-800: #3C3489; --purple-900: #26215C;
+  --teal-50: #E1F5EE; --teal-100: #9FE1CB; --teal-200: #5DCAA5;
+  --teal-400: #1D9E75; --teal-600: #0F6E56; --teal-800: #085041; --teal-900: #04342C;
+  --gray-50: #F1EFE8; --gray-100: #D3D1C7; --gray-200: #B4B2A9;
+  --gray-400: #888780; --gray-600: #5F5E5A; --gray-800: #444441; --gray-900: #2C2C2A;
+  --green-50: #EAF3DE; --green-100: #C0DD97; --green-200: #97C459;
+  --green-400: #639922; --green-600: #3B6D11; --green-800: #27500A; --green-900: #173404;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg-primary: #1a1a1a;
+    --bg-secondary: #2c2c2a;
+    --text-primary: #e8e6df;
+    --text-secondary: #9c9a92;
+    --text-tertiary: #6b6b65;
+    --border-default: rgba(255,255,255,0.15);
+    --border-hover: rgba(255,255,255,0.3);
+  }
+}
+
+body {
+  margin: 0;
+  padding: 20px;
+  background: var(--bg-primary);
+  font-family: var(--font-sans);
+}
+
+.t  { font-family: var(--font-sans); font-size: 14px; font-weight: 400; fill: var(--text-primary); }
+.ts { font-family: var(--font-sans); font-size: 12px; font-weight: 400; fill: var(--text-secondary); }
+.th { font-family: var(--font-sans); font-size: 14px; font-weight: 500; fill: var(--text-primary); }
+.box { fill: var(--bg-secondary); stroke: var(--border-default); }
+.arr { stroke: var(--text-tertiary); stroke-width: 1.5; }
+.node { cursor: pointer; }
+.node:hover { opacity: 0.8; }
+.node:active { opacity: 0.65; }
+.node:focus-visible { outline: 2px solid var(--purple-400); outline-offset: 2px; }
+
+.c-gray > rect { fill: var(--gray-50); stroke: var(--gray-600); }
+.c-gray > .th  { fill: var(--gray-800); }
+.c-gray > .ts  { fill: var(--gray-600); }
+.c-gray > .t   { fill: var(--gray-800); }
+
+.c-purple > rect { fill: var(--purple-50); stroke: var(--purple-600); }
+.c-purple > .th  { fill: var(--purple-800); }
+.c-purple > .ts  { fill: var(--purple-600); }
+.c-purple > .t   { fill: var(--purple-800); }
+
+.c-green > rect { fill: var(--green-50); stroke: var(--green-600); }
+.c-green > .th  { fill: var(--green-800); }
+.c-green > .ts  { fill: var(--green-600); }
+.c-green > .t   { fill: var(--green-800); }
+
+@media (prefers-color-scheme: dark) {
+  .c-gray > rect { fill: var(--gray-900); stroke: var(--gray-200); }
+  .c-gray > .th  { fill: var(--gray-100); }
+  .c-gray > .ts  { fill: var(--gray-200); }
+  .c-gray > .t   { fill: var(--gray-100); }
+
+  .c-purple > rect { fill: var(--purple-900); stroke: var(--purple-200); }
+  .c-purple > .th  { fill: var(--purple-100); }
+  .c-purple > .ts  { fill: var(--purple-200); }
+  .c-purple > .t   { fill: var(--purple-100); }
+
+  .c-green > rect { fill: var(--green-900); stroke: var(--green-200); }
+  .c-green > .th  { fill: var(--green-100); }
+  .c-green > .ts  { fill: var(--green-200); }
+  .c-green > .t   { fill: var(--green-100); }
+}
+</style>
+</head>
+<body>
+<svg xmlns="http://www.w3.org/2000/svg" width="100%" viewBox="0 0 680 530">
+<defs>
+  <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5"
+          markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke"
+          stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+</defs>
+
+<!-- ============================================================ -->
+<!-- TIER 0 (y=40): Input embeddings                              -->
+<!-- Spatial Features: center x=340, w=180, h=56, spans 250-430   -->
+<!-- Text Embeddings:  center x=130, w=170, h=56, spans 45-215    -->
+<!-- Image Embeddings: center x=550, w=170, h=56, spans 465-635   -->
+<!-- ============================================================ -->
+
+<g class="node c-gray" data-action="emit" data-target="spatial-features">
+  <rect x="250" y="40" width="180" height="56" rx="8" stroke-width="0.5"/>
+  <text class="th" x="340" y="58" text-anchor="middle" dominant-baseline="central">Spatial features</text>
+  <text class="ts" x="340" y="78" text-anchor="middle" dominant-baseline="central">From U-Net</text>
+</g>
+
+<g class="node c-gray" data-action="emit" data-target="text-embeddings">
+  <rect x="45" y="40" width="170" height="56" rx="8" stroke-width="0.5"/>
+  <text class="th" x="130" y="58" text-anchor="middle" dominant-baseline="central">Text embeddings</text>
+  <text class="ts" x="130" y="78" text-anchor="middle" dominant-baseline="central">77 tokens</text>
+</g>
+
+<g class="node c-purple" data-action="emit" data-target="image-embeddings">
+  <rect x="465" y="40" width="170" height="56" rx="8" stroke-width="0.5"/>
+  <text class="th" x="550" y="58" text-anchor="middle" dominant-baseline="central">Image embeddings</text>
+  <text class="ts" x="550" y="78" text-anchor="middle" dominant-baseline="central">257 tokens</text>
+</g>
+
+<!-- ============================================================ -->
+<!-- TIER 1 (y=130): Projection weights                           -->
+<!-- W_Q: center x=340, w=130, h=44, spans 275-405                -->
+<!-- W_K_text: center x=95, w=120, h=44, spans 35-155             -->
+<!-- W_V_text: center x=165 → actually let me spread more         -->
+<!-- Left pair: W_K_text cx=90, W_V_text cx=170                   -->
+<!-- Right pair: W_K_image cx=510, W_V_image cx=590               -->
+<!-- ============================================================ -->
+
+<!-- Arrows: Tier 0 → Tier 1 -->
+<line x1="340" y1="96" x2="340" y2="130" class="arr" marker-end="url(#arrow)"/>
+<line x1="100" y1="96" x2="90" y2="130" class="arr" marker-end="url(#arrow)"/>
+<line x1="160" y1="96" x2="170" y2="130" class="arr" marker-end="url(#arrow)"/>
+<line x1="520" y1="96" x2="510" y2="130" class="arr" marker-end="url(#arrow)"/>
+<line x1="580" y1="96" x2="590" y2="130" class="arr" marker-end="url(#arrow)"/>
+
+<g class="node c-gray" data-action="emit" data-target="wq">
+  <rect x="275" y="130" width="130" height="44" rx="8" stroke-width="0.5"/>
+  <text class="th" x="340" y="152" text-anchor="middle" dominant-baseline="central">W_Q (shared)</text>
+</g>
+
+<g class="node c-gray" data-action="emit" data-target="wk-text">
+  <rect x="40" y="130" width="100" height="44" rx="8" stroke-width="0.5"/>
+  <text class="th" x="90" y="152" text-anchor="middle" dominant-baseline="central">W_K_text</text>
+</g>
+
+<g class="node c-gray" data-action="emit" data-target="wv-text">
+  <rect x="155" y="130" width="100" height="44" rx="8" stroke-width="0.5"/>
+  <text class="th" x="205" y="152" text-anchor="middle" dominant-baseline="central">W_V_text</text>
+</g>
+
+<g class="node c-purple" data-action="emit" data-target="wk-image">
+  <rect x="445" y="130" width="110" height="44" rx="8" stroke-width="0.5"/>
+  <text class="th" x="500" y="152" text-anchor="middle" dominant-baseline="central">W_K_image</text>
+</g>
+
+<g class="node c-purple" data-action="emit" data-target="wv-image">
+  <rect x="570" y="130" width="100" height="44" rx="8" stroke-width="0.5"/>
+  <text class="th" x="620" y="152" text-anchor="middle" dominant-baseline="central">W_V_image</text>
+</g>
+
+<!-- ============================================================ -->
+<!-- TIER 2 (y=208): Q, K, V intermediate results                 -->
+<!-- Q: center x=340, w=60, h=40, spans 310-370                   -->
+<!-- K_text: cx=90, w=80, spans 50-130                             -->
+<!-- V_text: cx=205, w=80, spans 165-245                           -->
+<!-- K_image: cx=500, w=80, spans 460-540                          -->
+<!-- V_image: cx=620, w=80, spans 580-660 → tight but ok          -->
+<!-- ============================================================ -->
+
+<!-- Arrows: Tier 1 → Tier 2 -->
+<line x1="340" y1="174" x2="340" y2="208" class="arr" marker-end="url(#arrow)"/>
+<line x1="90" y1="174" x2="90" y2="208" class="arr" marker-end="url(#arrow)"/>
+<line x1="205" y1="174" x2="205" y2="208" class="arr" marker-end="url(#arrow)"/>
+<line x1="500" y1="174" x2="500" y2="208" class="arr" marker-end="url(#arrow)"/>
+<line x1="620" y1="174" x2="620" y2="208" class="arr" marker-end="url(#arrow)"/>
+
+<g class="node c-gray" data-action="emit" data-target="q">
+  <rect x="310" y="208" width="60" height="40" rx="8" stroke-width="0.5"/>
+  <text class="th" x="340" y="228" text-anchor="middle" dominant-baseline="central">Q</text>
+</g>
+
+<g class="node c-gray" data-action="emit" data-target="k-text">
+  <rect x="50" y="208" width="80" height="40" rx="8" stroke-width="0.5"/>
+  <text class="th" x="90" y="228" text-anchor="middle" dominant-baseline="central">K_text</text>
+</g>
+
+<g class="node c-gray" data-action="emit" data-target="v-text">
+  <rect x="165" y="208" width="80" height="40" rx="8" stroke-width="0.5"/>
+  <text class="th" x="205" y="228" text-anchor="middle" dominant-baseline="central">V_text</text>
+</g>
+
+<g class="node c-purple" data-action="emit" data-target="k-image">
+  <rect x="460" y="208" width="80" height="40" rx="8" stroke-width="0.5"/>
+  <text class="th" x="500" y="228" text-anchor="middle" dominant-baseline="central">K_image</text>
+</g>
+
+<g class="node c-purple" data-action="emit" data-target="v-image">
+  <rect x="580" y="208" width="80" height="40" rx="8" stroke-width="0.5"/>
+  <text class="th" x="620" y="228" text-anchor="middle" dominant-baseline="central">V_image</text>
+</g>
+
+<!-- ============================================================ -->
+<!-- TIER 3 (y=290): Attention operations                         -->
+<!-- Text attention: cx=170, w=170, h=44, spans 85-255            -->
+<!-- Image attention: cx=510, w=170, h=44, spans 425-595          -->
+<!-- ============================================================ -->
+
+<!-- Arrows: Q → both attention boxes (L-shaped to avoid crossing) -->
+<!-- Q bottom: (340, 248) → Text attention top: (170, 290) -->
+<path d="M 310 238 L 170 238 L 170 290" fill="none" class="arr" marker-end="url(#arrow)"/>
+<!-- Q bottom: (340, 248) → Image attention top: (510, 290) -->
+<path d="M 370 238 L 510 238 L 510 290" fill="none" class="arr" marker-end="url(#arrow)"/>
+
+<!-- K_text, V_text → Text attention -->
+<line x1="90" y1="248" x2="120" y2="290" class="arr" marker-end="url(#arrow)"/>
+<line x1="205" y1="248" x2="195" y2="290" class="arr" marker-end="url(#arrow)"/>
+
+<!-- K_image, V_image → Image attention -->
+<line x1="500" y1="248" x2="480" y2="290" class="arr" marker-end="url(#arrow)"/>
+<line x1="620" y1="248" x2="555" y2="290" class="arr" marker-end="url(#arrow)"/>
+
+<g class="node c-gray" data-action="emit" data-target="text-attention">
+  <rect x="85" y="290" width="170" height="44" rx="8" stroke-width="0.5"/>
+  <text class="th" x="170" y="312" text-anchor="middle" dominant-baseline="central">Text attention</text>
+</g>
+
+<g class="node c-purple" data-action="emit" data-target="image-attention">
+  <rect x="425" y="290" width="170" height="44" rx="8" stroke-width="0.5"/>
+  <text class="th" x="510" y="312" text-anchor="middle" dominant-baseline="central">Image attention</text>
+</g>
+
+<!-- ============================================================ -->
+<!-- TIER 4 (y=380): Weighted sum labels + arrows                 -->
+<!-- ============================================================ -->
+
+<!-- Label for text path weight -->
+<text class="ts" x="235" y="362" text-anchor="middle" dominant-baseline="central">text_out</text>
+<!-- Label for image path weight -->
+<text class="ts" x="445" y="362" text-anchor="middle" dominant-baseline="central">scale * image_out</text>
+
+<!-- Arrows from attention to sum node -->
+<!-- Text attention (170, 334) → plus node (340, 398) -->
+<path d="M 170 334 L 170 398 L 310 398" fill="none" class="arr" marker-end="url(#arrow)"/>
+<!-- Image attention (510, 334) → plus node (340, 398) -->
+<path d="M 510 334 L 510 398 L 370 398" fill="none" class="arr" marker-end="url(#arrow)"/>
+
+<!-- Plus / sum circle -->
+<circle cx="340" cy="398" r="16" fill="var(--bg-secondary)" stroke="var(--green-600)" stroke-width="1"/>
+<text x="340" y="398" text-anchor="middle" dominant-baseline="central"
+      style="font-size:16px; font-weight:500; fill: var(--green-600)">+</text>
+
+<!-- ============================================================ -->
+<!-- TIER 5 (y=440): Combined output                              -->
+<!-- cx=340, w=170, h=50, spans 255-425                           -->
+<!-- ============================================================ -->
+
+<line x1="340" y1="414" x2="340" y2="444" class="arr" marker-end="url(#arrow)"/>
+
+<g class="node c-green" data-action="emit" data-target="combined-output">
+  <rect x="255" y="444" width="170" height="50" rx="8" stroke-width="0.5"/>
+  <text class="th" x="340" y="462" text-anchor="middle" dominant-baseline="central">Combined output</text>
+  <text class="ts" x="340" y="480" text-anchor="middle" dominant-baseline="central">To next layer</text>
+</g>
+
+</svg>
+
+<script>
+document.querySelectorAll('.node[data-action]').forEach(node => {
+  node.setAttribute('tabindex', '0');
+  node.setAttribute('role', 'button');
+  node.setAttribute('aria-label', node.querySelector('.th')?.textContent || 'Diagram node');
+
+  function handleActivation() {
+    const action = node.dataset.action;
+    const target = node.dataset.target;
+    const label = node.querySelector('.th')?.textContent || '';
+    const detail = { action, target, label, node };
+    document.dispatchEvent(new CustomEvent('diagram-node-click', { detail }));
+
+    switch (action) {
+      case 'navigate':
+        if (target) window.location.href = target;
+        break;
+      case 'open':
+        if (target) window.open(target, '_blank');
+        break;
+      case 'prompt':
+        console.log(`[diagram] prompt: "${target || label}"`);
+        break;
+      case 'emit':
+        break;
+    }
+  }
+
+  node.addEventListener('click', handleActivation);
+  node.addEventListener('keydown', e => {
+    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleActivation(); }
+  });
+});
+</script>
+</body>
+</html>

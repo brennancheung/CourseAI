@@ -19,7 +19,7 @@ import {
   LessonLink,
 } from '@/components/lessons'
 import { CodeBlock } from '@/components/common/CodeBlock'
-import { MermaidDiagram } from '@/components/widgets/MermaidDiagram'
+import { LoraInjectionDiagram } from './LoraInjectionDiagram'
 import 'katex/dist/katex.min.css'
 import { InlineMath } from 'react-katex'
 import { ExternalLink } from 'lucide-react'
@@ -252,30 +252,7 @@ export function LoraFinetuningLesson() {
             </p>
           </div>
           <div className="mt-4">
-            <MermaidDiagram chart={`
-              graph TD
-                subgraph U-Net Residual Block
-                  CONV1[Conv Block ❄️]:::frozen
-                  CONV2[Conv Block ❄️]:::frozen
-                  SELF[Self-Attention ❄️]:::frozen
-                  subgraph Cross-Attention
-                    WQ["W_Q + LoRA 🔥"]:::lora
-                    WK["W_K + LoRA 🔥"]:::lora
-                    WV["W_V + LoRA 🔥"]:::lora
-                    WOUT["W_out + LoRA 🔥"]:::lora
-                  end
-                  NORM[Adaptive GroupNorm ❄️]:::frozen
-                end
-
-                CONV1 --> CONV2
-                CONV2 --> SELF
-                SELF --> WQ & WK & WV
-                WQ & WK & WV --> WOUT
-                WOUT --> NORM
-
-                classDef frozen fill:#374151,stroke:#6b7280,color:#d1d5db
-                classDef lora fill:#7c3aed,stroke:#a78bfa,color:#f5f3ff
-            `} />
+            <LoraInjectionDiagram />
           </div>
           <div className="space-y-4 mt-4">
             <p className="text-muted-foreground">

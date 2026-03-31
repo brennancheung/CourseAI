@@ -18,7 +18,7 @@ import {
   ReferencesBlock,
   LessonLink,
 } from '@/components/lessons'
-import { MermaidDiagram } from '@/components/widgets/MermaidDiagram'
+import { StableDiffusionPipelineDiagram } from './StableDiffusionPipelineDiagram'
 import { CodeBlock } from '@/components/common/CodeBlock'
 
 /**
@@ -471,30 +471,7 @@ export function StableDiffusionArchitectureLesson() {
             title="The Complete Pipeline"
             subtitle="One diagram, every component, every tensor shape"
           />
-          <MermaidDiagram chart={`
-graph LR
-    subgraph CLIP["CLIP (frozen, ~123M params)"]
-        T["Text Prompt"] --> TK["Tokenizer"]
-        TK -->|"[77] int IDs"| TE["Text Encoder"]
-    end
-
-    subgraph LOOP["Denoising Loop — U-Net (~860M params) × 50 steps"]
-        ZT["z_T ~ N(0,I)<br/>[4, 64, 64]"] --> STEP["Per step:<br/>1. Embed timestep<br/>2. U-Net pass (uncond)<br/>3. U-Net pass (cond)<br/>4. CFG combine<br/>5. Scheduler step"]
-        STEP --> Z0["z_0<br/>[4, 64, 64]"]
-    end
-
-    subgraph VAE["VAE Decoder (frozen, ~84M params)"]
-        DEC["Decoder"] --> IMG["Image<br/>[3, 512, 512]"]
-    end
-
-    TE -->|"[77, 768]<br/>text embeddings"| STEP
-    Z0 -->|"[4, 64, 64]"| DEC
-
-    style T fill:#1e293b,stroke:#6366f1,color:#e2e8f0
-    style IMG fill:#1e293b,stroke:#22c55e,color:#e2e8f0
-    style ZT fill:#1e293b,stroke:#a855f7,color:#e2e8f0
-    style Z0 fill:#1e293b,stroke:#a855f7,color:#e2e8f0
-`} />
+          <StableDiffusionPipelineDiagram />
           <p className="text-sm text-muted-foreground italic mt-4">
             Color-coded by component: CLIP (left), denoising loop with U-Net
             (center), VAE decoder (right). Every arrow is annotated with the

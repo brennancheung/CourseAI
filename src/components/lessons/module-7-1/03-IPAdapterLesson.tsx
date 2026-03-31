@@ -20,7 +20,7 @@ import {
   LessonLink,
 } from '@/components/lessons'
 import { CodeBlock } from '@/components/common/CodeBlock'
-import { MermaidDiagram } from '@/components/widgets/MermaidDiagram'
+import { IPAdapterAttentionDiagram } from './IPAdapterAttentionDiagram'
 import { ExternalLink } from 'lucide-react'
 
 const NOTEBOOK_URL =
@@ -291,36 +291,7 @@ export function IPAdapterLesson() {
       {/* Architecture diagram */}
       <Row>
         <Row.Content>
-          <MermaidDiagram chart={`
-            graph TD
-              SF["Spatial Features"]:::frozen --> WQ["W_Q (shared)"]:::frozen
-              WQ --> Q["Q"]:::frozen
-
-              TE["Text Embeddings (77 tokens)"]:::frozen --> WKt["W_K_text (frozen)"]:::frozen
-              TE --> WVt["W_V_text (frozen)"]:::frozen
-              WKt --> Kt["K_text"]:::frozen
-              WVt --> Vt["V_text"]:::frozen
-
-              IE["Image Embeddings (257 tokens)"]:::new --> WKi["W_K_image (trainable)"]:::new
-              IE --> WVi["W_V_image (trainable)"]:::new
-              WKi --> Ki["K_image"]:::new
-              WVi --> Vi["V_image"]:::new
-
-              Q --> ATTN_T["Attention(Q, K_text, V_text)"]:::frozen
-              Kt --> ATTN_T
-              Vt --> ATTN_T
-
-              Q --> ATTN_I["Attention(Q, K_image, V_image)"]:::new
-              Ki --> ATTN_I
-              Vi --> ATTN_I
-
-              ATTN_T --> ADD["text_out + scale × image_out"]:::output
-              ATTN_I --> ADD
-
-              classDef frozen fill:#374151,stroke:#6b7280,color:#d1d5db
-              classDef new fill:#5b21b6,stroke:#8b5cf6,color:#f5f3ff
-              classDef output fill:#065f46,stroke:#10b981,color:#d1fae5
-          `} />
+          <IPAdapterAttentionDiagram />
           <p className="mt-3 text-sm text-muted-foreground">
             Gray components are frozen (existing SD cross-attention). Violet
             components are new and trainable (IP-Adapter). The Q projection is

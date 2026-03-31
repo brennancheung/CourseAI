@@ -19,7 +19,7 @@ import {
 } from '@/components/lessons'
 import { TemperatureExplorer } from '@/components/widgets/TemperatureExplorer'
 import { ExercisePanel } from '@/components/widgets/ExercisePanel'
-import { MermaidDiagram } from '@/components/widgets/MermaidDiagram'
+import { AutoregressiveSamplingDiagram } from '@/components/lessons/module-4-1/AutoregressiveSamplingDiagram'
 import {
   BarChart,
   Bar,
@@ -616,19 +616,7 @@ export function WhatIsALanguageModelLesson() {
       {/* Autoregressive loop diagram */}
       <Row>
         <Row.Content>
-          <MermaidDiagram chart={`
-            graph LR
-              A["Context tokens"] --> B["Language<br/>Model"]
-              B --> C["Probability<br/>distribution"]
-              C --> D["Sample<br/>a token"]
-              D --> E["Append to<br/>context"]
-              E --> A
-              style A fill:#1e1b4b,stroke:#8b5cf6,color:#e9d5ff
-              style B fill:#1e1b4b,stroke:#8b5cf6,color:#e9d5ff
-              style C fill:#1e1b4b,stroke:#a78bfa,color:#e9d5ff
-              style D fill:#1e1b4b,stroke:#a78bfa,color:#e9d5ff
-              style E fill:#1e1b4b,stroke:#a78bfa,color:#e9d5ff
-          `} />
+          <AutoregressiveSamplingDiagram />
           <p className="text-xs text-muted-foreground text-center mt-2">
             The autoregressive generation loop: predict, sample, append, repeat.
           </p>

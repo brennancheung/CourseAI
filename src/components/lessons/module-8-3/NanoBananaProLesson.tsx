@@ -20,7 +20,8 @@ import {
   LessonLink,
 } from '@/components/lessons'
 import { CodeBlock } from '@/components/common/CodeBlock'
-import { MermaidDiagram } from '@/components/widgets/MermaidDiagram'
+import { VqvaeTokenizationDiagram } from './VqvaeTokenizationDiagram'
+import { ImageGenerationPipelineDiagram } from './ImageGenerationPipelineDiagram'
 
 /**
  * Nano Banana Pro (Gemini 3 Pro Image) — Architecture Analysis
@@ -335,14 +336,7 @@ export function NanoBananaProLesson() {
 
       <Row>
         <Row.Content>
-          <MermaidDiagram chart={`
-            graph LR
-              A["256×256 Image"] --> B["VQ-VAE Encoder"]
-              B --> C["32×32 Continuous Vectors"]
-              C --> D["Codebook Lookup"]
-              D --> E["1,024 Integer Tokens"]
-              E --> F["Same format as text tokens"]
-          `} />
+          <VqvaeTokenizationDiagram />
           <div className="mt-4">
             <p className="text-muted-foreground">
               <strong>ViT-VQGAN</strong> is Google&rsquo;s specific visual
@@ -736,20 +730,7 @@ for i in range(num_image_tokens):
 
       <Row>
         <Row.Content>
-          <MermaidDiagram chart={`
-            graph TD
-              A["User Prompt"] --> B["Gemini 3 Pro Backbone"]
-              B --> C["Thinking Tokens (composition planning)"]
-              C --> D["Autoregressive Image Token Generation (~1,120 tokens)"]
-              D --> E["GemPix 2 Decoder"]
-              E --> F["High-Resolution Image"]
-              style A fill:#1e293b,stroke:#6366f1,color:#e2e8f0
-              style B fill:#1e293b,stroke:#6366f1,color:#e2e8f0
-              style C fill:#1e293b,stroke:#f59e0b,color:#e2e8f0
-              style D fill:#1e293b,stroke:#8b5cf6,color:#e2e8f0
-              style E fill:#1e293b,stroke:#22c55e,color:#e2e8f0
-              style F fill:#1e293b,stroke:#22c55e,color:#e2e8f0
-          `} />
+          <ImageGenerationPipelineDiagram />
         </Row.Content>
         <Row.Aside>
           <ConceptBlock title="What Is GemPix 2?">

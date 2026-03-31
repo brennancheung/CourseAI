@@ -19,7 +19,7 @@ import {
   LessonLink,
 } from '@/components/lessons'
 import { CodeBlock } from '@/components/common/CodeBlock'
-import { MermaidDiagram } from '@/components/widgets/MermaidDiagram'
+import { ControlNetWorkflowDiagram } from './ControlNetWorkflowDiagram'
 import { ExternalLink } from 'lucide-react'
 
 const NOTEBOOK_URL =
@@ -175,22 +175,7 @@ edges = cv2.Canny(image, low_threshold=100, high_threshold=200)`}
       {/* Preprocessor pipeline diagram */}
       <Row>
         <Row.Content>
-          <MermaidDiagram chart={`
-            graph LR
-              P["Photograph"]:::input --> PRE["Preprocessor"]:::process
-              PRE --> SM["Spatial Map"]:::map
-              SM --> CN["ControlNet"]:::controlnet
-              CN --> SD["Stable Diffusion Pipeline"]:::pipeline
-              T["Text Prompt"]:::input --> SD
-              SD --> OUT["Generated Image"]:::output
-
-              classDef input fill:#1e3a5f,stroke:#3b82f6,color:#dbeafe
-              classDef process fill:#5b21b6,stroke:#8b5cf6,color:#f5f3ff
-              classDef map fill:#92400e,stroke:#f59e0b,color:#fef3c7
-              classDef controlnet fill:#065f46,stroke:#10b981,color:#d1fae5
-              classDef pipeline fill:#374151,stroke:#6b7280,color:#d1d5db
-              classDef output fill:#9f1239,stroke:#f43f5e,color:#ffe4e6
-          `} />
+          <ControlNetWorkflowDiagram />
           <p className="mt-3 text-sm text-muted-foreground">
             The full workflow: photograph goes through a preprocessor to produce
             a spatial map. The spatial map feeds ControlNet. ControlNet&rsquo;s

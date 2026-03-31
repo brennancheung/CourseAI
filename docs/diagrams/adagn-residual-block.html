@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Residual block with AdaGN timestep conditioning</title>
+<style>
+:root {
+  --bg-primary: #ffffff;
+  --bg-secondary: #f5f5f0;
+  --text-primary: #1a1a1a;
+  --text-secondary: #6b6b65;
+  --text-tertiary: #9c9a92;
+  --border-default: rgba(0,0,0,0.15);
+  --border-hover: rgba(0,0,0,0.3);
+  --font-sans: system-ui, -apple-system, "Segoe UI", sans-serif;
+
+  --purple-50: #EEEDFE; --purple-100: #CECBF6; --purple-200: #AFA9EC;
+  --purple-400: #7F77DD; --purple-600: #534AB7; --purple-800: #3C3489; --purple-900: #26215C;
+  --gray-50: #F1EFE8; --gray-100: #D3D1C7; --gray-200: #B4B2A9;
+  --gray-400: #888780; --gray-600: #5F5E5A; --gray-800: #444441; --gray-900: #2C2C2A;
+  --blue-50: #E6F1FB; --blue-100: #B5D4F4; --blue-200: #85B7EB;
+  --blue-400: #378ADD; --blue-600: #185FA5; --blue-800: #0C447C; --blue-900: #042C53;
+  --amber-50: #FAEEDA; --amber-100: #FAC775; --amber-200: #EF9F27;
+  --amber-400: #BA7517; --amber-600: #854F0B; --amber-800: #633806; --amber-900: #412402;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg-primary: #1a1a1a;
+    --bg-secondary: #2c2c2a;
+    --text-primary: #e8e6df;
+    --text-secondary: #9c9a92;
+    --text-tertiary: #6b6b65;
+    --border-default: rgba(255,255,255,0.15);
+    --border-hover: rgba(255,255,255,0.3);
+  }
+}
+
+body {
+  margin: 0;
+  padding: 20px;
+  background: var(--bg-primary);
+  font-family: var(--font-sans);
+}
+
+.t  { font-family: var(--font-sans); font-size: 14px; font-weight: 400; fill: var(--text-primary); }
+.ts { font-family: var(--font-sans); font-size: 12px; font-weight: 400; fill: var(--text-secondary); }
+.th { font-family: var(--font-sans); font-size: 14px; font-weight: 500; fill: var(--text-primary); }
+.box { fill: var(--bg-secondary); stroke: var(--border-default); }
+.arr { stroke: var(--text-tertiary); stroke-width: 1.5; }
+
+.c-purple > rect { fill: var(--purple-50); stroke: var(--purple-600); }
+.c-purple > .th  { fill: var(--purple-800); }
+.c-purple > .t   { fill: var(--purple-800); }
+
+.c-gray > rect { fill: var(--gray-50); stroke: var(--gray-600); }
+.c-gray > .th  { fill: var(--gray-800); }
+.c-gray > .t   { fill: var(--gray-800); }
+
+.c-blue > rect { fill: var(--blue-50); stroke: var(--blue-600); }
+.c-blue > .th  { fill: var(--blue-800); }
+.c-blue > .t   { fill: var(--blue-800); }
+
+.c-amber > rect { fill: var(--amber-50); stroke: var(--amber-600); }
+.c-amber > .th  { fill: var(--amber-800); }
+.c-amber > .t   { fill: var(--amber-800); }
+
+.c-purple > circle { fill: var(--purple-50); stroke: var(--purple-600); }
+
+@media (prefers-color-scheme: dark) {
+  .c-purple > rect { fill: var(--purple-900); stroke: var(--purple-200); }
+  .c-purple > .th  { fill: var(--purple-100); }
+  .c-purple > .t   { fill: var(--purple-100); }
+
+  .c-gray > rect { fill: var(--gray-900); stroke: var(--gray-200); }
+  .c-gray > .th  { fill: var(--gray-100); }
+  .c-gray > .t   { fill: var(--gray-100); }
+
+  .c-blue > rect { fill: var(--blue-900); stroke: var(--blue-200); }
+  .c-blue > .th  { fill: var(--blue-100); }
+  .c-blue > .t   { fill: var(--blue-100); }
+
+  .c-amber > rect { fill: var(--amber-900); stroke: var(--amber-200); }
+  .c-amber > .th  { fill: var(--amber-100); }
+  .c-amber > .t   { fill: var(--amber-100); }
+
+  .c-purple > circle { fill: var(--purple-900); stroke: var(--purple-200); }
+}
+</style>
+</head>
+<body>
+<svg xmlns="http://www.w3.org/2000/svg" width="100%" viewBox="0 0 680 230">
+<defs>
+  <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5"
+          markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke"
+          stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+  <marker id="arrow-amber" viewBox="0 0 10 10" refX="8" refY="5"
+          markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M2 1L8 5L2 9" fill="none" stroke="var(--amber-400)"
+          stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+</defs>
+
+<!--
+  Main flow row: y=60, box height=40
+  Nodes left to right with x positions:
+    Input x:    x=20,  w=64
+    Conv1:      x=94,  w=58
+    AdaGN 1:    x=162, w=62
+    Activation: x=234, w=76
+    Conv2:      x=320, w=58
+    AdaGN 2:    x=388, w=62
+    Activation: x=460, w=76
+    + add:      cx=556, r=18 (circle)
+    Output:     x=594, w=66
+
+  Gaps: 10px between boxes
+  Row total: 64+10+58+10+62+10+76+10+58+10+62+10+76+10+36+20+66 = 648
+  Safe area 20..660 = 640px. Fits.
+-->
+
+<!-- === Node 1: Input x (blue) === -->
+<g class="c-blue">
+  <rect x="20" y="60" width="64" height="40" rx="8" stroke-width="0.5"/>
+  <text class="th" x="52" y="80" text-anchor="middle" dominant-baseline="central">Input x</text>
+</g>
+
+<!-- Arrow: Input x -> Conv1 -->
+<line x1="84" y1="80" x2="94" y2="80" class="arr" marker-end="url(#arrow)"/>
+
+<!-- === Node 2: Conv1 (gray) === -->
+<g class="c-gray">
+  <rect x="96" y="60" width="56" height="40" rx="8" stroke-width="0.5"/>
+  <text class="th" x="124" y="80" text-anchor="middle" dominant-baseline="central">Conv1</text>
+</g>
+
+<!-- Arrow: Conv1 -> AdaGN 1 -->
+<line x1="152" y1="80" x2="162" y2="80" class="arr" marker-end="url(#arrow)"/>
+
+<!-- === Node 3: AdaGN 1 (amber) === -->
+<g class="c-amber">
+  <rect x="164" y="60" width="60" height="40" rx="8" stroke-width="0.5"/>
+  <text class="th" x="194" y="80" text-anchor="middle" dominant-baseline="central">AdaGN</text>
+</g>
+
+<!-- Arrow: AdaGN 1 -> Activation 1 -->
+<line x1="224" y1="80" x2="234" y2="80" class="arr" marker-end="url(#arrow)"/>
+
+<!-- === Node 4: Activation 1 (gray) === -->
+<g class="c-gray">
+  <rect x="236" y="60" width="74" height="40" rx="8" stroke-width="0.5"/>
+  <text class="th" x="273" y="80" text-anchor="middle" dominant-baseline="central">Activation</text>
+</g>
+
+<!-- Arrow: Activation 1 -> Conv2 -->
+<line x1="310" y1="80" x2="320" y2="80" class="arr" marker-end="url(#arrow)"/>
+
+<!-- === Node 5: Conv2 (gray) === -->
+<g class="c-gray">
+  <rect x="322" y="60" width="56" height="40" rx="8" stroke-width="0.5"/>
+  <text class="th" x="350" y="80" text-anchor="middle" dominant-baseline="central">Conv2</text>
+</g>
+
+<!-- Arrow: Conv2 -> AdaGN 2 -->
+<line x1="378" y1="80" x2="388" y2="80" class="arr" marker-end="url(#arrow)"/>
+
+<!-- === Node 6: AdaGN 2 (amber) === -->
+<g class="c-amber">
+  <rect x="390" y="60" width="60" height="40" rx="8" stroke-width="0.5"/>
+  <text class="th" x="420" y="80" text-anchor="middle" dominant-baseline="central">AdaGN</text>
+</g>
+
+<!-- Arrow: AdaGN 2 -> Activation 2 -->
+<line x1="450" y1="80" x2="460" y2="80" class="arr" marker-end="url(#arrow)"/>
+
+<!-- === Node 7: Activation 2 (gray) === -->
+<g class="c-gray">
+  <rect x="462" y="60" width="74" height="40" rx="8" stroke-width="0.5"/>
+  <text class="th" x="499" y="80" text-anchor="middle" dominant-baseline="central">Activation</text>
+</g>
+
+<!-- Arrow: Activation 2 -> + add -->
+<line x1="536" y1="80" x2="546" y2="80" class="arr" marker-end="url(#arrow)"/>
+
+<!-- === Node 8: + add (purple circle) === -->
+<g class="c-purple">
+  <circle cx="564" cy="80" r="18" stroke-width="0.5"/>
+  <text class="th" x="564" y="80" text-anchor="middle" dominant-baseline="central">+</text>
+</g>
+
+<!-- Arrow: + add -> Output -->
+<line x1="582" y1="80" x2="596" y2="80" class="arr" marker-end="url(#arrow)"/>
+
+<!-- === Node 9: Output (blue) === -->
+<g class="c-blue">
+  <rect x="598" y="60" width="62" height="40" rx="8" stroke-width="0.5"/>
+  <text class="th" x="629" y="80" text-anchor="middle" dominant-baseline="central">Output</text>
+</g>
+
+<!-- === Skip connection: Input x -> + add === -->
+<!-- Route: from Input x bottom center, down to y=120, across to + add bottom, up to + add -->
+<path d="M 52 100 L 52 120 L 564 120 L 564 98"
+      fill="none" stroke="var(--blue-400)" stroke-width="1.5"
+      stroke-dasharray="6 3" marker-end="url(#arrow)"/>
+<text class="ts" x="308" y="136" text-anchor="middle" dominant-baseline="central"
+      style="fill: var(--blue-600)">skip connection</text>
+
+<!-- === Node 10: t_emb (amber) — below the main flow === -->
+<g class="c-amber">
+  <rect x="258" y="172" width="164" height="40" rx="8" stroke-width="0.5"/>
+  <text class="th" x="340" y="192" text-anchor="middle" dominant-baseline="central">Timestep emb. t_emb</text>
+</g>
+
+<!-- === Dashed conditioning arrows from t_emb to both AdaGN nodes === -->
+
+<!-- t_emb -> AdaGN 1: route up-left -->
+<!-- From t_emb top-left area, up to AdaGN 1 bottom -->
+<path d="M 290 172 L 290 152 L 194 152 L 194 100"
+      fill="none" stroke="var(--amber-400)" stroke-width="1.2"
+      stroke-dasharray="4 3" marker-end="url(#arrow-amber)"/>
+<text class="ts" x="234" y="148" text-anchor="middle" dominant-baseline="central"
+      style="fill: var(--amber-600)">&#x03B3;&#x2081;(t), &#x03B2;&#x2081;(t)</text>
+
+<!-- t_emb -> AdaGN 2: route up-right -->
+<path d="M 390 172 L 390 152 L 420 152 L 420 100"
+      fill="none" stroke="var(--amber-400)" stroke-width="1.2"
+      stroke-dasharray="4 3" marker-end="url(#arrow-amber)"/>
+<text class="ts" x="454" y="148" text-anchor="middle" dominant-baseline="central"
+      style="fill: var(--amber-600)">&#x03B3;&#x2082;(t), &#x03B2;&#x2082;(t)</text>
+
+</svg>
+</body>
+</html>
